@@ -1,0 +1,9 @@
+# Already present in the project environment.
+torch>=2.0
+transformers>=4.40
+numpy>=1.24
+
+# Optional. A flat index is exact search either way, and rag/index.py falls back
+# to numpy with identical results. Install only if the corpus grows well beyond
+# the 800 passages this study uses.
+# faiss-cpu>=1.7

@@ -1,0 +1,121 @@
+\begin{thebibliography}{}
+
+\bibitem[Chen et~al., 2024]{chen2024rgb}
+Chen, J., Lin, H., Han, X., and Sun, L. (2024).
+\newblock Benchmarking large language models in retrieval-augmented generation.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence},
+  38:17754--17762.
+
+\bibitem[Es et~al., 2023]{es2023ragas}
+Es, S., James, J., Espinosa-Anke, L., and Schockaert, S. (2023).
+\newblock Ragas: Automated evaluation of retrieval augmented generation.
+
+\bibitem[Friel et~al., 2024]{friel2024ragbench}
+Friel, R., Belyi, M., and Sanyal, A. (2024).
+\newblock {RAGBench}: Explainable benchmark for retrieval-augmented generation
+  systems.
+
+\bibitem[Gao et~al., 2023]{gao2023alce}
+Gao, T., Yen, H., Yu, J., and Chen, D. (2023).
+\newblock Enabling large language models to generate text with citations.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}.
+
+\bibitem[Johnson et~al., 2021]{johnson2021faiss}
+Johnson, J., Douze, M., and J{\'e}gou, H. (2021).
+\newblock Billion-scale similarity search with {GPUs}.
+\newblock {\em IEEE Transactions on Big Data}, 7(3):535--547.
+
+\bibitem[Karpukhin et~al., 2020]{karpukhin2020dpr}
+Karpukhin, V., Oguz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D., and
+  Yih, W.-t. (2020).
+\newblock Dense passage retrieval for open-domain question answering.
+\newblock In {\em Proceedings of the 2020 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 6769--6781. Association for
+  Computational Linguistics.
+
+\bibitem[Kosti{\'c} et~al., 2026]{kostic2026samemeaning}
+Kosti{\'c}, B., Fallon, C., Risch, J., and L{\"o}ser, A. (2026).
+\newblock Same meaning, different scores: Lexical and syntactic sensitivity in
+  {LLM} evaluation.
+\newblock To appear in the Proceedings of the 2026 Joint International
+  Conference on Computational Linguistics, Language Resources and Evaluation
+  (LREC).
+
+\bibitem[Lewis et~al., 2020]{lewis2020rag}
+Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N.,
+  K{\"u}ttler, H., Lewis, M., Yih, W.-t., Rockt{\"a}schel, T., Riedel, S., and
+  Kiela, D. (2020).
+\newblock Retrieval-augmented generation for knowledge-intensive {NLP} tasks.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS)},
+  volume~33, pages 9459--9474.
+
+\bibitem[Mao et~al., 2024]{mao2024fitrag}
+Mao, Y., Dong, X., Xu, W., Gao, Y., Wei, B., and Zhang, Y. (2024).
+\newblock {FIT-RAG}: Black-box {RAG} with factual information and token
+  reduction.
+
+\bibitem[Nguyen et~al., 2016]{nguyen2016msmarco}
+Nguyen, T., Rosenberg, M., Song, X., Gao, J., Tiwary, S., Majumder, R., and
+  Deng, L. (2016).
+\newblock {MS MARCO}: A human generated {MA}chine {R}eading {CO}mprehension
+  dataset.
+
+\bibitem[Pearl, 2009]{pearl2009causality}
+Pearl, J. (2009).
+\newblock {\em Causality: Models, Reasoning, and Inference}.
+\newblock Cambridge University Press, Cambridge, 2 edition.
+
+\bibitem[Saad-Falcon et~al., 2024]{saadfalcon2024ares}
+Saad-Falcon, J., Khattab, O., Potts, C., and Zaharia, M. (2024).
+\newblock {ARES}: An automated evaluation framework for retrieval-augmented
+  generation systems.
+\newblock In {\em Proceedings of the 2024 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies (NAACL-HLT)}, pages 338--354.
+
+\bibitem[Salinas and Morstatter, 2024]{salinas2024butterfly}
+Salinas, A. and Morstatter, F. (2024).
+\newblock The butterfly effect of altering prompts: How small changes and
+  jailbreaks affect large language model performance.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  ACL 2024}.
+
+\bibitem[Sclar et~al., 2024]{sclar2024quantifying}
+Sclar, M., Choi, Y., Tsvetkov, Y., and Suhr, A. (2024).
+\newblock Quantifying language models' sensitivity to spurious features in
+  prompt design or: How i learned to start worrying about prompt formatting.
+\newblock In {\em International Conference on Learning Representations (ICLR)}.
+
+\bibitem[Wahle et~al., 2024]{wahle2024paraphrase}
+Wahle, J.~P., Ruas, T., Xu, Y., and Gipp, B. (2024).
+\newblock Paraphrase types elicit prompt engineering capabilities.
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 11004--11033, Miami, Florida,
+  USA. Association for Computational Linguistics.
+
+\bibitem[Yu et~al., 2024]{yu2024ragevalsurvey}
+Yu, H., Gan, A., Zhang, K., Tong, S., Liu, Q., and Liu, Z. (2024).
+\newblock Evaluation of retrieval-augmented generation: A survey.
+
+\bibitem[Zhan et~al., 2024]{zhan2024lexical}
+Zhan, P., Xu, Z., Tan, Q., Song, J., and Xie, R. (2024).
+\newblock Unveiling the lexical sensitivity of {LLM}s: Combinatorial
+  optimization for prompt enhancement.
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 5128--5154, Miami, Florida, USA.
+  Association for Computational Linguistics.
+
+\bibitem[Zhou et~al., 2023]{zhou2023ifeval}
+Zhou, J., Lu, T., Mishra, S., Brahma, S., Basu, S., Luan, Y., Zhou, D., and
+  Hou, L. (2023).
+\newblock Instruction-following evaluation for large language models.
+
+\bibitem[Zhuo et~al., 2024]{zhuo2024prosa}
+Zhuo, J., Zhang, S., Fang, X., Duan, H., Lin, D., and Chen, K. (2024).
+\newblock {ProSA}: Assessing and understanding the prompt sensitivity of
+  {LLM}s.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  EMNLP 2024}.
+
+\end{thebibliography}

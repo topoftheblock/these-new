@@ -1,0 +1,394 @@
+\begin{thebibliography}{}
+
+\bibitem[Abootorabi et~al., 2025]{abootorabi2025multimodalrag}
+Abootorabi, M.~M., Zobeiri, A., Dehghani, M., Mohammadkhani, M., Mohammadi, B.,
+  Ghahroodi, O., Baghshah, M.~S., and Asgari, E. (2025).
+\newblock Ask in any modality: A comprehensive survey on multimodal
+  retrieval-augmented generation.
+
+\bibitem[Asai et~al., 2024]{asai2024selfrag}
+Asai, A., Wu, Z., Wang, Y., Sil, A., and Hajishirzi, H. (2024).
+\newblock {Self-RAG}: Learning to retrieve, generate, and critique through
+  self-reflection.
+\newblock In {\em International Conference on Learning Representations (ICLR)}.
+
+\bibitem[Bush, 1945]{bush1945asmaythink}
+Bush, V. (1945).
+\newblock As we may think.
+\newblock {\em The Atlantic Monthly}, 176(1):101--108.
+
+\bibitem[Cheerla, 2025]{cheerla2025enterpriserag}
+Cheerla, C. (2025).
+\newblock Advancing retrieval-augmented generation for structured enterprise
+  and internal data.
+
+\bibitem[Chen et~al., 2024a]{chen2024rgb}
+Chen, J., Lin, H., Han, X., and Sun, L. (2024a).
+\newblock Benchmarking large language models in retrieval-augmented generation.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence},
+  38:17754--17762.
+
+\bibitem[Chen et~al., 2024b]{chen2024densex}
+Chen, T., Wang, H., Chen, S., Yu, W., Ma, K., Zhao, X., Zhang, H., and Yu, D.
+  (2024b).
+\newblock Dense {X} retrieval: What retrieval granularity should we use?
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 15159--15177.
+
+\bibitem[Cheng and Mastropaolo, 2026]{cheng2026systemprompts}
+Cheng, Z. and Mastropaolo, A. (2026).
+\newblock An empirical study on the effects of system prompts in
+  instruction-tuned models for code generation.
+
+\bibitem[Chow, 1970]{chow1970reject}
+Chow, C.~K. (1970).
+\newblock On optimum recognition error and reject tradeoff.
+\newblock {\em IEEE Transactions on Information Theory}, 16(1):41--46.
+
+\bibitem[Codd, 1970]{codd1970relational}
+Codd, E.~F. (1970).
+\newblock A relational model of data for large shared data banks.
+\newblock {\em Communications of the ACM}, 13(6):377--387.
+
+\bibitem[Cormack et~al., 2009]{cormack2009rrf}
+Cormack, G.~V., Clarke, C. L.~A., and B{\"u}ttcher, S. (2009).
+\newblock Reciprocal rank fusion outperforms condorcet and individual rank
+  learning methods.
+\newblock In {\em Proceedings of the 32nd International ACM SIGIR Conference on
+  Research and Development in Information Retrieval}, pages 758--759.
+
+\bibitem[Edge et~al., 2024]{edge2024graphrag}
+Edge, D., Trinh, H., Cheng, N., Bradley, J., Chao, A., Mody, A., Truitt, S.,
+  and Larson, J. (2024).
+\newblock From local to global: A graph {RAG} approach to query-focused
+  summarization.
+
+\bibitem[Es et~al., 2023]{es2023ragas}
+Es, S., James, J., Espinosa-Anke, L., and Schockaert, S. (2023).
+\newblock Ragas: Automated evaluation of retrieval augmented generation.
+
+\bibitem[Feder et~al., 2022]{feder2022causalnlp}
+Feder, A., Keith, K.~A., Manzoor, E., Pryzant, R., Sridhar, D., Wood-Doughty,
+  Z., Eisenstein, J., Grimmer, J., Reichart, R., Roberts, M.~E., Stewart,
+  B.~M., Veitch, V., and Yang, D. (2022).
+\newblock Causal inference in natural language processing: Estimation,
+  prediction, interpretation and beyond.
+\newblock {\em Transactions of the Association for Computational Linguistics},
+  10:1138--1158.
+
+\bibitem[Friel et~al., 2024]{friel2024ragbench}
+Friel, R., Belyi, M., and Sanyal, A. (2024).
+\newblock {RAGBench}: Explainable benchmark for retrieval-augmented generation
+  systems.
+
+\bibitem[Gao et~al., 2023a]{gao2023hyde}
+Gao, L., Ma, X., Lin, J., and Callan, J. (2023a).
+\newblock Precise zero-shot dense retrieval without relevance labels.
+\newblock In {\em Proceedings of the 61st Annual Meeting of the Association for
+  Computational Linguistics (ACL), Volume 1: Long Papers}, pages 1762--1777.
+
+\bibitem[Gao et~al., 2023b]{gao2023alce}
+Gao, T., Yen, H., Yu, J., and Chen, D. (2023b).
+\newblock Enabling large language models to generate text with citations.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}.
+
+\bibitem[Gao et~al., 2023c]{gao2023survey}
+Gao, Y., Xiong, Y., Gao, X., Jia, K., Pan, J., Bi, Y., Dai, Y., Sun, J., Wang,
+  M., and Wang, H. (2023c).
+\newblock Retrieval-augmented generation for large language models: A survey.
+
+\bibitem[Greshake et~al., 2023]{greshake2023notwhat}
+Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., and Fritz, M.
+  (2023).
+\newblock Not what you've signed up for: Compromising real-world
+  {LLM}-integrated applications with indirect prompt injection.
+\newblock In {\em Proceedings of the 16th ACM Workshop on Artificial
+  Intelligence and Security (AISec)}.
+
+\bibitem[He et~al., 2025]{he2025biomedicinerag}
+He, J., Zhang, B., Rouhizadeh, H., Chen, Y., Yang, R., Lu, J., Chen, X., Liu,
+  N., and Teodoro, D. (2025).
+\newblock Retrieval-augmented generation in biomedicine: A survey of
+  technologies, datasets, and clinical applications.
+
+\bibitem[Holtzman et~al., 2020]{holtzman2020degeneration}
+Holtzman, A., Buys, J., Du, L., Forbes, M., and Choi, Y. (2020).
+\newblock The curious case of neural text degeneration.
+\newblock In {\em International Conference on Learning Representations (ICLR)}.
+
+\bibitem[Hua et~al., 2025]{hua2025flaw}
+Hua, A., Tang, K., Gu, C., Gu, J., Wong, E., and Qin, Y. (2025).
+\newblock Flaw or artifact? rethinking prompt sensitivity in evaluating {LLM}s.
+\newblock In {\em Proceedings of the 2025 Conference on Empirical Methods in
+  Natural Language Processing}.
+
+\bibitem[Jeong et~al., 2024]{jeong2024adaptiverag}
+Jeong, S., Baek, J., Cho, S., Hwang, S.~J., and Park, J.~C. (2024).
+\newblock {Adaptive-RAG}: Learning to adapt retrieval-augmented large language
+  models through question complexity.
+\newblock In {\em Proceedings of the 2024 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies (NAACL-HLT), Volume 1: Long Papers}, pages 7036--7050.
+
+\bibitem[Jin et~al., 2025]{jin2025searchr1}
+Jin, B., Zeng, H., Yue, Z., Yoon, J., Arik, S., Wang, D., Zamani, H., and Han,
+  J. (2025).
+\newblock Search-{R1}: Training {LLM}s to reason and leverage search engines
+  with reinforcement learning.
+
+\bibitem[Johnson et~al., 2021]{johnson2021faiss}
+Johnson, J., Douze, M., and J{\'e}gou, H. (2021).
+\newblock Billion-scale similarity search with {GPUs}.
+\newblock {\em IEEE Transactions on Big Data}, 7(3):535--547.
+
+\bibitem[Karpukhin et~al., 2020]{karpukhin2020dpr}
+Karpukhin, V., Oguz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D., and
+  Yih, W.-t. (2020).
+\newblock Dense passage retrieval for open-domain question answering.
+\newblock In {\em Proceedings of the 2020 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 6769--6781. Association for
+  Computational Linguistics.
+
+\bibitem[Kosti{\'c} et~al., 2026]{kostic2026samemeaning}
+Kosti{\'c}, B., Fallon, C., Risch, J., and L{\"o}ser, A. (2026).
+\newblock Same meaning, different scores: Lexical and syntactic sensitivity in
+  {LLM} evaluation.
+\newblock To appear in the Proceedings of the 2026 Joint International
+  Conference on Computational Linguistics, Language Resources and Evaluation
+  (LREC).
+
+\bibitem[Lewis et~al., 2020]{lewis2020rag}
+Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N.,
+  K{\"u}ttler, H., Lewis, M., Yih, W.-t., Rockt{\"a}schel, T., Riedel, S., and
+  Kiela, D. (2020).
+\newblock Retrieval-augmented generation for knowledge-intensive {NLP} tasks.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS)},
+  volume~33, pages 9459--9474.
+
+\bibitem[Lin et~al., 2025]{lin2025llminference}
+Lin, Y.-H., Chen, Q.-H., Cheng, Y.-J., Zhang, J.-R., Liu, Y.-H., Hsia, L.-Y.,
+  and Chen, Y.-N. (2025).
+\newblock {LLM} inference enhanced by external knowledge: A survey.
+
+\bibitem[Liu et~al., 2024a]{liu2024lostmiddle}
+Liu, N.~F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F.,
+  and Liang, P. (2024a).
+\newblock Lost in the middle: How language models use long contexts.
+\newblock {\em Transactions of the Association for Computational Linguistics},
+  12:157--173.
+
+\bibitem[Liu et~al., 2024b]{liu2024chatqa}
+Liu, Z., Ping, W., Roy, R., Xu, P., Lee, C., Shoeybi, M., and Catanzaro, B.
+  (2024b).
+\newblock {ChatQA}: Surpassing {GPT-4} on conversational {QA} and {RAG}.
+\newblock In {\em Advances in Neural Information Processing Systems 37
+  (NeurIPS)}.
+
+\bibitem[Longpre et~al., 2021]{longpre2021conflicts}
+Longpre, S., Perisetla, K., Chen, A., Ramesh, N., DuBois, C., and Singh, S.
+  (2021).
+\newblock Entity-based knowledge conflicts in question answering.
+\newblock In {\em Proceedings of the 2021 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 7052--7063.
+
+\bibitem[Lu et~al., 2024]{lu2024sensitivity}
+Lu, S., Schuff, H., and Gurevych, I. (2024).
+\newblock How are prompts different in terms of sensitivity?
+\newblock In {\em Proceedings of the 2024 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies (NAACL-HLT)}, pages 5833--5856.
+
+\bibitem[Malkov and Yashunin, 2020]{malkov2020hnsw}
+Malkov, Y.~A. and Yashunin, D.~A. (2020).
+\newblock Efficient and robust approximate nearest neighbor search using
+  hierarchical navigable small world graphs.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  42(4):824--836.
+
+\bibitem[Mao et~al., 2024]{mao2024fitrag}
+Mao, Y., Dong, X., Xu, W., Gao, Y., Wei, B., and Zhang, Y. (2024).
+\newblock {FIT-RAG}: Black-box {RAG} with factual information and token
+  reduction.
+
+\bibitem[Mu et~al., 2025]{mu2025robustness}
+Mu, N., Lu, J., Lavery, M., and Wagner, D.~A. (2025).
+\newblock A closer look at system prompt robustness.
+
+\bibitem[Nguyen et~al., 2016]{nguyen2016msmarco}
+Nguyen, T., Rosenberg, M., Song, X., Gao, J., Tiwary, S., Majumder, R., and
+  Deng, L. (2016).
+\newblock {MS MARCO}: A human generated {MA}chine {R}eading {CO}mprehension
+  dataset.
+
+\bibitem[Niu et~al., 2024]{niu2024ragtruth}
+Niu, C., Wu, Y., Zhu, J., Xu, S., Shum, K., Zhong, R., Song, J., and Zhang, T.
+  (2024).
+\newblock {RAGTruth}: A hallucination corpus for developing trustworthy
+  retrieval-augmented language models.
+\newblock In {\em Proceedings of the 62nd Annual Meeting of the Association for
+  Computational Linguistics (ACL 2024)}.
+
+\bibitem[Oche et~al., 2025]{oche2025systematicreview}
+Oche, A.~J., Folashade, A.~G., Ghosal, T., and Biswas, A. (2025).
+\newblock A systematic review of key retrieval-augmented generation ({RAG})
+  systems: Progress, gaps, and future directions.
+
+\bibitem[Ovadia et~al., 2024]{ovadia2024finetuning}
+Ovadia, O., Brief, M., Mishaeli, M., and Elisha, O. (2024).
+\newblock Fine-tuning or retrieval? comparing knowledge injection in {LLMs}.
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 237--250.
+
+\bibitem[Pan et~al., 2024]{pan2024vectordb}
+Pan, J.~J., Wang, J., and Li, G. (2024).
+\newblock Survey of vector database management systems.
+\newblock {\em The VLDB Journal}, 33(5):1591--1615.
+
+\bibitem[Pandya and Bhatt, 2021]{pandya2021qasurvey}
+Pandya, H.~A. and Bhatt, B.~S. (2021).
+\newblock Question answering survey: Directions, challenges, datasets,
+  evaluation matrices.
+
+\bibitem[Pearl, 2009]{pearl2009causality}
+Pearl, J. (2009).
+\newblock {\em Causality: Models, Reasoning, and Inference}.
+\newblock Cambridge University Press, Cambridge, 2 edition.
+
+\bibitem[Pipitone and Alami, 2024]{pipitone2024legalbenchrag}
+Pipitone, N. and Alami, G.~H. (2024).
+\newblock {LegalBench-RAG}: A benchmark for retrieval-augmented generation in
+  the legal domain.
+
+\bibitem[Qin et~al., 2026]{qin2026interactions}
+Qin, R., Wang, Q., Wang, T., Wei, Z., and Shen, W. (2026).
+\newblock Evaluating and explaining prompt sensitivity of {LLM}s using
+  interactions.
+
+\bibitem[Robertson and Zaragoza, 2009]{robertson2009bm25}
+Robertson, S. and Zaragoza, H. (2009).
+\newblock The probabilistic relevance framework: {BM25} and beyond.
+\newblock {\em Foundations and Trends in Information Retrieval}, 3(4):333--389.
+
+\bibitem[Ruiz and Cardona-Betancourt, 2026]{ruiz2026promptcarefully}
+Ruiz, F.~J. and Cardona-Betancourt, V. (2026).
+\newblock Prompt carefully! {ChatGPT} displays rule-based insensitivity to
+  contingencies.
+\newblock {\em Journal of Contextual Behavioral Science}, 41:101012.
+
+\bibitem[Saad-Falcon et~al., 2024]{saadfalcon2024ares}
+Saad-Falcon, J., Khattab, O., Potts, C., and Zaharia, M. (2024).
+\newblock {ARES}: An automated evaluation framework for retrieval-augmented
+  generation systems.
+\newblock In {\em Proceedings of the 2024 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies (NAACL-HLT)}, pages 338--354.
+
+\bibitem[Salinas and Morstatter, 2024]{salinas2024butterfly}
+Salinas, A. and Morstatter, F. (2024).
+\newblock The butterfly effect of altering prompts: How small changes and
+  jailbreaks affect large language model performance.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  ACL 2024}.
+
+\bibitem[Salton et~al., 1975]{salton1975vectorspace}
+Salton, G., Wong, A., and Yang, C.~S. (1975).
+\newblock A vector space model for automatic indexing.
+\newblock {\em Communications of the ACM}, 18(11):613--620.
+
+\bibitem[Sclar et~al., 2024]{sclar2024quantifying}
+Sclar, M., Choi, Y., Tsvetkov, Y., and Suhr, A. (2024).
+\newblock Quantifying language models' sensitivity to spurious features in
+  prompt design or: How i learned to start worrying about prompt formatting.
+\newblock In {\em International Conference on Learning Representations (ICLR)}.
+
+\bibitem[Singh et~al., 2025]{singh2025agentic}
+Singh, A., Ehtesham, A., Kumar, S., Khoei, T.~T., and Vasilakos, A.~V. (2025).
+\newblock Agentic retrieval-augmented generation: A survey on agentic {RAG}.
+
+\bibitem[Wahle et~al., 2024]{wahle2024paraphrase}
+Wahle, J.~P., Ruas, T., Xu, Y., and Gipp, B. (2024).
+\newblock Paraphrase types elicit prompt engineering capabilities.
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 11004--11033, Miami, Florida,
+  USA. Association for Computational Linguistics.
+
+\bibitem[Wang et~al., 2024]{wang2024knowledgemechanisms}
+Wang, M., Yao, Y., Xu, Z., Qiao, S., Deng, S., Wang, P., Chen, X., Gu, J.-C.,
+  Jiang, Y., Xie, P., Huang, F., Chen, H., and Zhang, N. (2024).
+\newblock Knowledge mechanisms in large language models: A survey and
+  perspective.
+
+\bibitem[Yan et~al., 2024]{yan2024crag}
+Yan, S.-Q., Gu, J.-C., Zhu, Y., and Ling, Z.-H. (2024).
+\newblock Corrective retrieval augmented generation.
+
+\bibitem[Yang et~al., 2018]{yang2018hotpotqa}
+Yang, Z., Qi, P., Zhang, S., Bengio, Y., Cohen, W.~W., Salakhutdinov, R., and
+  Manning, C.~D. (2018).
+\newblock {HotpotQA}: A dataset for diverse, explainable multi-hop question
+  answering.
+\newblock In {\em Proceedings of the 2018 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 2369--2380.
+
+\bibitem[Ying et~al., 2024]{ying2024intuitive}
+Ying, J., Cao, Y., Xiong, K., Cui, L., He, Y., and Liu, Y. (2024).
+\newblock Intuitive or dependent? investigating {LLM}s' behavior style to
+  conflicting prompts.
+\newblock In {\em Proceedings of the 62nd Annual Meeting of the Association for
+  Computational Linguistics (ACL 2024)}, pages 4221--4246.
+
+\bibitem[Yu et~al., 2024]{yu2024ragevalsurvey}
+Yu, H., Gan, A., Zhang, K., Tong, S., Liu, Q., and Liu, Z. (2024).
+\newblock Evaluation of retrieval-augmented generation: A survey.
+
+\bibitem[Zhan et~al., 2024]{zhan2024lexical}
+Zhan, P., Xu, Z., Tan, Q., Song, J., and Xie, R. (2024).
+\newblock Unveiling the lexical sensitivity of {LLM}s: Combinatorial
+  optimization for prompt enhancement.
+\newblock In {\em Proceedings of the 2024 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 5128--5154, Miami, Florida, USA.
+  Association for Computational Linguistics.
+
+\bibitem[Zhang et~al., 2025]{zhang2025poisoning}
+Zhang, B., Xin, H., Li, J., Zhang, D., Fang, M., Liu, Z., Nie, L., and Liu, Z.
+  (2025).
+\newblock Benchmarking poisoning attacks against retrieval-augmented
+  generation.
+
+\bibitem[Zheng et~al., 2023]{zheng2023judge}
+Zheng, L., Chiang, W.-L., Sheng, Y., Zhuang, S., Wu, Z., Zhuang, Y., Lin, Z.,
+  Li, Z., Li, D., Xing, E.~P., Zhang, H., Gonzalez, J.~E., and Stoica, I.
+  (2023).
+\newblock Judging {LLM}-as-a-judge with {MT-Bench} and {Chatbot Arena}.
+\newblock In {\em Advances in Neural Information Processing Systems 36
+  (NeurIPS), Datasets and Benchmarks Track}.
+
+\bibitem[Zheng et~al., 2024]{zheng2024helpful}
+Zheng, M., Pei, J., Logeswaran, L., Lee, M., and Jurgens, D. (2024).
+\newblock When ``a helpful assistant'' is not really helpful: Personas in
+  system prompts do not improve performances of large language models.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  EMNLP 2024}, pages 15126--15154.
+
+\bibitem[Zhou et~al., 2023a]{zhou2023lima}
+Zhou, C., Liu, P., Xu, P., Iyer, S., Sun, J., Mao, Y., Ma, X., Efrat, A., Yu,
+  P., Yu, L., Zhang, S., Ghosh, G., Lewis, M., Zettlemoyer, L., and Levy, O.
+  (2023a).
+\newblock {LIMA}: Less is more for alignment.
+\newblock In {\em Advances in Neural Information Processing Systems 36
+  (NeurIPS)}.
+
+\bibitem[Zhou et~al., 2023b]{zhou2023ifeval}
+Zhou, J., Lu, T., Mishra, S., Brahma, S., Basu, S., Luan, Y., Zhou, D., and
+  Hou, L. (2023b).
+\newblock Instruction-following evaluation for large language models.
+
+\bibitem[Zhuo et~al., 2024]{zhuo2024prosa}
+Zhuo, J., Zhang, S., Fang, X., Duan, H., Lin, D., and Chen, K. (2024).
+\newblock {ProSA}: Assessing and understanding the prompt sensitivity of
+  {LLM}s.
+\newblock In {\em Findings of the Association for Computational Linguistics:
+  EMNLP 2024}.
+
+\end{thebibliography}

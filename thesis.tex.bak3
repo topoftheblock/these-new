@@ -1,0 +1,921 @@
+\documentclass[11pt,a4paper,twoside]{scrreprt}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,ngerman]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\newtheorem{assumption}{Assumption}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newcommand{\indep}{\mathrel{\perp\!\!\!\perp}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, margin=1.5cm, bindingoffset=1.5cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{acronym}
+\usepackage{natbib}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    % \includegraphics[width=0.5\textwidth]{goethe_logo.png} % Placeholder for the Goethe University logo
+    \vspace{1cm}
+    {\scshape\LARGE Goethe-Universität Frankfurt am Main \par}
+    \vspace{0.5cm}
+    {\scshape\Large Fachbereich Informatik \par}
+    \vspace{2cm}
+    {\huge\bfseries Instruction Robustness in RAG/GraphRAG Agent Pipelines \par}
+    \vspace{1.5cm}
+    {\Large\itshape Bachelor Thesis \par}
+    \vspace{2cm}
+    \begin{flushleft}
+        \large
+        \textbf{Name:} Christian Block \\
+        \textbf{Matriculation Number:} 6522508 \\
+        \textbf{First examiner:} Prof. Dr. Visvanathan Ramesh \\
+        \textbf{Date of Submission:}
+    \end{flushleft}
+    \vfill
+\end{titlepage}
+
+% Declaration
+\selectlanguage{ngerman}
+\chapter*{Erklärung zur Abschlussarbeit}
+gemäß § 35, Abs. 16 der Ordnung für den Bachelorstudiengang Informatik vom 17. Juni 2019:\\
+Hiermit erkläre ich (Nachname, Vorname) \textbf{Block, Christian}, dass ich die vorliegende Arbeit selbstständig und ohne Benutzung anderer als der angegebenen Quellen und Hilfsmittel verfasst habe. Ich bestätige außerdem, dass die vorliegende Arbeit nicht, auch nicht auszugsweise, für eine andere Prüfung oder Studienleistung verwendet wurde. Zudem versichere ich, dass alle eingereichten schriftlichen gebundenen Versionen meiner vorliegenden Bachelorarbeit mit der digital eingereichten elektronischen Version meiner Bachelorarbeit übereinstimmen.\\
+Frankfurt am Main, den DATUM \hfill \rule{5cm}{0.4pt}\\
+\hspace*{0pt}\hfill Unterschrift der/des Studierenden
+
+\selectlanguage{english}
+\chapter*{Abstract}
+
+Retrieval-Augmented Generation (RAG) systems combine information retrieval with language generation, letting a language model condition its output on external, updatable evidence instead of only on what it learned during training. Within such a system, the system prompt specifies the instructions, constraints, and output format the generator should follow. Because the system prompt is written in natural language, its effect on system behavior is hard to predict and hard to verify, and prior work on prompt sensitivity in language models has studied this almost entirely outside retrieval-augmented settings. This thesis addresses that gap by asking to what extent systematic changes in the system prompt alter the behavior and outcomes of a RAG system when the user input, knowledge base, retrieval mechanism, and underlying language model are held constant.
+
+The thesis develops a formal model of a RAG system, $F(q,D;S) = G(q,R(q;D);S)$, built from a retrieval function $R$ and a generation function $G$, with the system prompt represented as a parameter $S_\theta$ separating instructions, constraints, and output requirements. Five prompt conditions are defined: a canonical baseline and four controlled interventions, three of which vary only the wording of the instructions while holding their meaning fixed, and one that varies modal force to probe the boundary between wording and meaning.
+
+The model is developed as a structural causal model in which the change of system prompt is a causal intervention, the document corpus is a generated object with a known support structure, and what counts as a good answer is defined by a criterion function stated before any measurement. Building on this model, an experimental design is specified in which the same query set and retrieved context are reused across all five conditions, generations are repeated to account for decoding stochasticity, and eight metrics estimate the components of that criterion under a pre-specified, corrected statistical analysis plan with a single primary endpoint. The result is a controlled methodology for isolating the effect of a RAG system prompt's wording on system behavior.
+
+\selectlanguage{ngerman}
+\chapter*{Zusammenfassung}
+
+Retrieval-Augmented-Generation-Systeme (RAG-Systeme) verbinden Informationsretrieval mit Sprachgenerierung und ermöglichen es einem Sprachmodell, seine Ausgabe auf externe, aktualisierbare Evidenz zu stützen, anstatt sich ausschließlich auf während des Trainings erlernte Parameter zu verlassen. Innerhalb eines solchen Systems legt der System-Prompt die Anweisungen, Einschränkungen und Ausgabeanforderungen fest, denen der Generator folgen soll. Da der System-Prompt in natürlicher Sprache formuliert ist, lässt sich seine Wirkung auf das Systemverhalten nur schwer vorhersagen und überprüfen; bisherige Arbeiten zur Prompt-Sensitivität von Sprachmodellen wurden fast ausschließlich außerhalb von Retrieval-Augmented-Settings durchgeführt. Die vorliegende Arbeit adressiert diese Lücke, indem sie untersucht, in welchem Ausmaß systematische Änderungen des System-Prompts das Verhalten und die Ergebnisse eines RAG-Systems verändern, wenn Nutzereingabe, Wissensbasis, Retrieval-Mechanismus und zugrunde liegendes Sprachmodell konstant gehalten werden.
+
+Die Arbeit entwickelt ein formales Modell eines RAG-Systems, $F(q,D;S) = G(q,R(q;D);S)$, bestehend aus einer Retrieval-Funktion $R$ und einer Generierungsfunktion $G$, wobei der System-Prompt als Parameter $S_\theta$ dargestellt wird, der zwischen Anweisungen, Einschränkungen und Ausgabeanforderungen unterscheidet. Es werden fünf Prompt-Bedingungen definiert: eine kanonische Baseline sowie vier kontrollierte Interventionen, von denen drei ausschließlich die Formulierung der Anweisungen variieren, während deren Bedeutung konstant gehalten wird, sowie eine weitere, die die modale Kraft variiert, um die Grenze zwischen Formulierung und Bedeutung empirisch zu prüfen.
+
+Aufbauend auf diesem Modell wird ein experimentelles Design festgelegt, in dem dieselben Anfragen und derselbe retrievierte Kontext über alle fünf Bedingungen hinweg wiederverwendet werden, Generierungen wiederholt werden, um die Stochastizität der Dekodierung zu berücksichtigen, und sieben Metriken sowohl verhaltens- als auch ergebnisbezogene Effekte im Rahmen eines vorab festgelegten, korrigierten statistischen Analyseplans messen. Das Ergebnis ist eine kontrollierte Methodik zur Isolierung der Wirkung der Formulierung des System-Prompts auf das Verhalten eines RAG-Systems.
+
+\selectlanguage{english}
+\chapter*{Acknowledgments}
+I want to express my sincere gratitude to Professor Ramesh for his guidance and mentorship throughout this thesis.
+
+\tableofcontents
+
+\chapter*{Acronyms}
+\addcontentsline{toc}{chapter}{Acronyms}
+\begin{acronym}[LLM] % Longest acronym for alignment
+\acro{AA}{Abstention Accuracy.}
+\acro{AI}{Artificial Intelligence.}
+\acro{EP}{Evidence Precision.}
+\acro{ER}{Evidence Recall.}
+\acro{HR}{Hallucination Rate.}
+\acro{LLM}{Large Language Model.}
+\acro{RAG}{Retrieval-Augmented Generation.}
+\end{acronym}
+
+\chapter{Introduction}
+
+\section{Background}
+
+Retrieval-Augmented Generation (RAG) systems combine information retrieval with language generation. This design solves a problem with purely parametric large language models (LLMs): a model's knowledge is fixed at training time and cannot be updated without retraining or fine-tuning it. \citet{lewis2020rag} introduced RAG to address this problem by combining a pretrained retriever with a pretrained sequence-to-sequence generator, so the model can base its output on external, updatable evidence instead of only on what it learned during training. In a RAG system, a user query is first used to retrieve relevant information from an external knowledge base, typically a vector database. This retrieved information is then given to a language model, together with instructions for generating the final response.
+
+The system prompt connects the intended behavior of the system to its observable output. Unlike the retrieved evidence, which depends on the query and the knowledge base, the system prompt is written on purpose: it specifies how the model should behave, which instructions it should follow, which constraints it should respect, and which output format it should produce. Because the system prompt is written in natural language rather than a formal specification, its effect on behavior is hard to predict and hard to check in advance. This is why its influence on both intended behavior and actual output needs to be studied through controlled experiments.
+
+\section{Motivation and Research Objective}
+
+Understanding how a RAG system responds to its system prompt matters in practice. Whether a system reliably follows its instructions decides whether its behavior can be trusted once deployed, especially when the same retrieval and generation components are reused across many applications with only the system prompt changing. This raises the question of \textit{how systematic changes in the system prompt can be shown to alter the behavior and outcomes of a RAG system.}
+
+At the same time, isolating the effect of the system prompt is hard. Its influence overlaps with the influence of the retrieved evidence, the language model itself, and even the exact wording of the instructions. All of these must be controlled before any change in behavior can be attributed to the system prompt rather than to something else. Prior work on prompt sensitivity in language models has shown that even small, seemingly harmless changes in wording can cause large changes in model behavior (e.g., Salinas and Morstatter 2024; Mu et al. 2025), and that this sensitivity remains even under adversarial or conflicting user input. This is why the present thesis treats the system prompt as a controlled experimental variable, not just a minor setting.
+
+This thesis therefore focuses on one central research question: \textit{To what extent do systematic changes in the system prompt alter the behavior and outcomes of a RAG system when the user input, knowledge base, retrieval mechanism, and underlying language model are held constant?} Answering it requires two things: a formal model of the RAG system precise enough to isolate the system prompt as a controlled parameter, and an experimental design that holds every other source of variation fixed. The rest of this thesis builds both.
+
+\section{Thesis Structure}
+
+This thesis has seven chapters. Chapter 2 covers the background needed for the rest of the work: it traces how retrieval-augmented approaches to language generation developed, and introduces the components of a RAG system used throughout later chapters. Chapter 3 reviews the relevant literature in three parts, prompt sensitivity in language models, retrieval-augmented generation specifically, and adversarial instructions delivered through retrieved content, and identifies the resulting research gap. Chapter 4 builds a formal model of the RAG system used in this thesis: a structural causal model in which the system prompt is a causal intervention, a formalization of the document corpus as a generated object, and a definition of what counts as a good answer. Chapter 5 describes the experimental setup: how the corpus and query set are generated, and which estimators are used for the criterion defined in Chapter 4. Chapter 6 presents and discusses the results of the experiments. Chapter 7 concludes the thesis by summarizing the findings and outlining directions for future work.
+
+\section*{Notation}
+
+Throughout this thesis, the following notation is used:
+
+\begin{itemize}
+    \item $q \in \mathcal{Q}$ denotes a user query, drawn from the space of possible queries $\mathcal{Q}$.
+    \item $D = \{d_1, d_2, \ldots, d_N\} \in \mathcal{D}$ denotes the knowledge base, where each $d_i$ is a document, $N$ is the number of documents, and $\mathcal{D}$ is the space of possible knowledge bases.
+    \item $S \in \mathcal{S}$ denotes a system prompt, drawn from the space of possible system prompts $\mathcal{S}$.
+    \item $C \in \mathcal{C}$ denotes the retrieved context supplied to the language model.
+    \item $y \in \mathcal{Y}$ denotes the generated system output, drawn from the space of possible responses $\mathcal{Y}$.
+    \item $R: \mathcal{Q} \times \mathcal{D} \rightarrow \mathcal{C}$ denotes the retrieval function, and $G: \mathcal{Q} \times \mathcal{C} \times \mathcal{S} \rightarrow \mathcal{Y}$ denotes the generation function.
+    \item $\theta = (\theta_I, \theta_K, \theta_O)$ denotes the parameterization of a system prompt $S_\theta$, where $\theta_I$, $\theta_K$, and $\theta_O$ represent, respectively, the selected instructions, constraints, and output requirements.
+    \item $L(S_\theta)$ denotes the linguistic realization of a system prompt, and $\operatorname{Sem}(S_\theta)$ denotes its semantic content.
+\end{itemize}
+
+\chapter{Preliminaries}
+
+Chapter 1 established that the system prompt is the interface through which a RAG system's intended behavior is specified, and asked how systematically varying this interface changes system behavior and outcomes. Before that question can be answered formally, the components of a RAG system and the reasons behind its design need to be introduced. This chapter covers that background: Section 2.1 traces how retrieval-augmented approaches to language generation developed, Section 2.2 introduces the components of a RAG system used throughout later chapters, and Section 2.3 discusses typical use cases and the failure modes they expose.
+
+\section{Path towards RAG}
+
+The need to store knowledge outside of any single memory, and to retrieve it again on demand, predates computing by a wide margin. Inca administrators recorded census and tax data in knotted cords, quipu, that only specially trained officials could encode or decode, separating the record itself from the person consulting it. Centuries earlier, the Library of Alexandria's cataloger Callimachus organized its holdings by author and subject in the Pinakes, one of the first attempts to make a large external collection searchable rather than merely stored. \citet{bush1945asmaythink} made the need for machine-assisted retrieval explicit, proposing a device that could store a person's library and retrieve from it through associative links between related items rather than a single fixed order. \citet{codd1970relational} gave this idea a rigorous computational form, treating a knowledge store as a formally queryable structure, and \citet{salton1975vectorspace} extended retrieval from exact structured queries to similarity ranking over unstructured text, the direct ancestor of the embedding-based retrieval described later in this chapter.
+
+This same need, a mechanism to retrieve from an external store rather than to remember everything internally, carried directly into question-answering systems, which did not begin with language models either. Early systems relied on hand-crafted rules and pattern matching over the input question, mapping recognized syntactic patterns directly onto retrieval or answer-generation procedures \citep{pandya2021qasurvey}. As statistical and later neural methods replaced these rule-based components, the dominant approach shifted toward learning the mapping from question to answer directly from data, culminating in large language models that generate answers from parameters learned over large text corpora rather than from any explicit rule set.
+
+Large language models generate text using only parametric knowledge, that is, information encoded in their weights during training \citep{wang2024knowledgemechanisms}. This has two problems. First, a model's knowledge is fixed at the point its training data was collected: any event, fact, or document from after that point is unknown to the model unless it is retrained or fine-tuned, which is costly and has to be repeated every time knowledge changes. Second, purely parametric models are prone to hallucination: they can generate fluent, plausible-sounding statements that no evidence actually supports, because nothing in their design forces an output to trace back to a verifiable source.
+
+Both problems are the reason to give a language model access to an external, updatable source of evidence at inference time, instead of relying only on what is stored in its parameters \citep{lin2025llminference}. \citet{lewis2020rag} formalized this idea as Retrieval-Augmented Generation. It combines a pretrained neural retriever, which selects relevant passages from a document collection, with a pretrained sequence-to-sequence generator, which conditions its output on those retrieved passages in addition to the input query. This means the same language model can be paired with different or updated document collections without retraining, and a generated response can be grounded in, and in principle traced back to, specific retrieved evidence.
+
+Since it was introduced, RAG has developed beyond this original design. \citet{gao2023survey} describe three stages of this development: Naive RAG, where retrieval and generation run as one fixed pipeline; Advanced RAG, which adds steps such as query reformulation or re-ranking retrieved passages before generation; and Modular RAG, where retrieval, generation, and other steps are separate, swappable components that can be rearranged for different tasks. In all of these variants, retrieval and generation stay separate steps. This is why this thesis treats retrieval and generation as two distinct functions, so their interaction with the system prompt can be studied on its own, as formalized in Chapter 4.
+
+\section{Components of RAG}
+
+A RAG system has four components: the knowledge base that evidence is retrieved from, the retriever that selects relevant evidence for a given query, the generator that produces a response from the query and the retrieved evidence, and the system prompt that specifies how the generator should behave. This section introduces each component in turn; Chapter 4 treats them formally.
+
+\subsection{Knowledge Base / Vector Database}
+
+The knowledge base $D = \{d_1, d_2, \ldots, d_N\}$ is the collection of documents that evidence is retrieved from. In most modern RAG systems, documents are first split into smaller passages, called chunks. This is needed because a language model can only take in a limited amount of context, and retrieving a whole document would add mostly irrelevant text along with the relevant part. Each chunk is then mapped to a high-dimensional embedding vector by an embedding model, so that chunks with similar meaning end up close together in the embedding space. These embeddings are stored in a vector database, which supports fast nearest-neighbor search over large collections of chunks. This indexing step, in particular the choice of chunk size and embedding model, decides what evidence is even available to the retriever, regardless of how good the retriever itself is.
+
+\subsection{Retriever}
+
+Given a user query $q$ and a knowledge base $D$, the retriever selects the chunks that are relevant for answering $q$. The most common approach embeds the query with the same embedding model used for the knowledge base, and ranks chunks in $D$ by a similarity measure, typically cosine similarity, between the query embedding and each chunk embedding. The top-$k$ ranked chunks are then returned as the retrieved context. This makes the retriever a function that maps a query and a knowledge base to a retrieved context; Chapter 4 formalizes this function as $R: \mathcal{Q} \times \mathcal{D} \rightarrow \mathcal{C}$. Retrieval quality depends on both how many chunks are retrieved and how precise the similarity measure is: too few chunks risk missing needed evidence, while too many risk adding irrelevant or conflicting information to the generation step.
+
+\subsection{Generator}
+
+The generator is the language model that produces the final response. It takes the user query $q$, the retrieved context $C$, and the system prompt $S$ as input, and produces an output $y$ by autoregressive decoding: generating one token at a time, each conditioned on all previous tokens. In practice, the query, the retrieved context, and the system prompt are not passed to the model separately; they are combined, following a fixed template, into a single input sequence, usually with the system prompt placed first so it shapes how everything after it is read. Chapter 4 formalizes the generator as a function $G: \mathcal{Q} \times \mathcal{C} \times \mathcal{S} \rightarrow \mathcal{Y}$. Because the query, context, and system prompt together determine the model's input, changing any one of them can change the output. This is exactly why the other components must be held fixed, so that any observed change in behavior can be attributed to the system prompt alone.
+
+\subsection{System Prompt}
+
+The system prompt $S$ specifies the instructions, constraints, and output requirements the generator should follow, independent of the specific query or retrieved context. Unlike the query, which changes with every request, and the retrieved context, which changes with the query and the knowledge base, the system prompt is usually fixed across many requests. It defines the generator's role: for example, that it should answer only from the retrieved evidence, decline to answer when the evidence is insufficient, or respond in a particular tone or format. Because the system prompt is written in natural language, its effect on the generator's behavior faces the same instruction-following and prompt-sensitivity issues as any other natural-language instruction to a language model, discussed further in Chapter 3. This is why the system prompt, formalized in Chapter 4 as a parameter $S_\theta$, is the object of experimental control in this thesis.
+
+\section{Use-Case of RAG}
+
+RAG systems are typically used where the needed knowledge is too large, too specific, or changes too often to be captured reliably by a model's parametric knowledge alone. Concrete deployments illustrate this across several domains: question-answering over enterprise and internal document collections \citep{cheerla2025enterpriserag}, customer support systems that must answer from current product or policy documentation, coding assistants that retrieve from a specific codebase instead of relying on general programming knowledge, legal question-answering over case law and contract repositories \citep{pipitone2024legalbenchrag}, and clinical decision support that grounds its answers in current medical literature and institutional protocols \citep{he2025biomedicinerag}. In each of these cases, RAG is usually preferred over two alternatives. Fine-tuning the generator on the target document collection is costly to repeat every time the collection changes, a recurring requirement in enterprise settings where internal data is updated continuously \citep{cheerla2025enterpriserag}, and does not guarantee that the model's output can be traced back to a specific source document. Extending the model's context window to include the whole document collection avoids retraining, but does not scale to large collections and does not, by itself, make sure the model actually attends to the passages that are relevant to the query. In domains such as medicine, RAG additionally allows sensitive institutional data to remain in a controlled, external knowledge base rather than being absorbed into the model's parameters through fine-tuning, which is one reason it is preferred over fine-tuning in regulated settings \citep{he2025biomedicinerag}.
+
+Despite these advantages, RAG does not remove the failure modes of purely parametric generation; it shifts them, and in some cases only partly fixes them. \citet{chen2024rgb} show that current language models tolerate a moderate amount of irrelevant retrieved content reasonably well, but still struggle to reject a query when none of the retrieved evidence is enough to answer it, to combine evidence spread across multiple retrieved chunks, and to stay robust when retrieved evidence is outdated or contradictory. \citet{niu2024ragtruth} further show that language models keep producing hallucinated content even when relevant evidence has been retrieved and given to them in context. This means that grounding a model in retrieved evidence does not, by itself, guarantee that its output stays faithful to that evidence. These failure modes are why the literature review in Chapter 3 and the experimental design in Chapters 4 and 5 build the query set to include directly answerable, multi-hop, conflicting, and insufficient-evidence cases, so the system prompt's effect on exactly these failure modes can be measured.
+
+The RAG systems described above represent a baseline architecture rather than an endpoint. Current work extends retrieval into a multi-step agent workflow that decides when and what to retrieve, rather than retrieving once per query \citep{singh2025agentic}, into knowledge graphs that structure the retrieved evidence rather than treating it as a flat set of passages \citep{edge2024graphrag}, and into multiple modalities beyond text, including images, audio, and video \citep{abootorabi2025multimodalrag}. A recent systematic review of the field places all three directions within a single trajectory away from single-shot, text-only retrieval \citep{oche2025systematicreview}. Understanding the standard RAG architecture formalized in this thesis remains a prerequisite for these extensions: each of them varies the retrieval function $R$, the generation function $G$, or both, but none of them changes the underlying decomposition $F(q,D;S) = G(q,R(q;D);S)$ on which they still depend.
+
+\chapter{Literature Review}
+
+Chapter 2 introduced the components of a RAG system. This chapter reviews three areas of literature relevant to studying how the system prompt affects such a system: Section 3.1 covers prompt sensitivity and instruction-following in language models in general, Section 3.2 covers retrieval-augmented generation specifically, its architecture, evaluation, and known failure modes, and Section 3.3 covers adversarial and competing instructions delivered through retrieved content. Section 3.4 brings all three together into the specific research gap this thesis addresses.
+
+\section{Prompt Sensitivity and Instruction-Following in Language Models}
+
+The first branch of literature covers prompt sensitivity and instruction-following in language models in general, without any retrieval component. These studies show that system prompts are a measurable and controllable way of shaping model behavior, and that this mechanism is sensitive to change at several levels, from prompt specificity down to plain rewording.
+
+\citet{cheng2026systemprompts} study how different system prompts affect instruction-tuned language models for code generation, varying prompt specificity, prompting strategy, model, programming language, and decoding settings; their work directly motivates the controlled manipulation of system prompts in this thesis, while the present experiment extends the analysis to a RAG setting and focuses explicitly on system behaviour and system outcomes. \citet{mu2025robustness} investigate the robustness of system prompts as a mechanism for controlling LLM behaviour, particularly when system instructions interact with conflicting or adversarial user inputs, supporting the modelling of the system prompt as a behavioural control variable and motivating measuring whether a system actually follows the intended instructions. \citet{lu2024sensitivity} study prompt sensitivity across different models and tasks, examining how changes in prompt formulation affect model behaviour and output, which is relevant to the present research because it motivates distinguishing changes in the intended instruction from changes caused by the linguistic formulation of that instruction. \citet{zhuo2024prosa} propose methods for measuring and understanding prompt sensitivity across LLMs and tasks, investigating why seemingly small prompt changes can produce different model behaviour, and their work provides methodological support for treating prompt effects as measurable experimental phenomena rather than anecdotal observations.
+
+\citet{salinas2024butterfly} investigate the sensitivity of LLM decisions to small perturbations in prompts, demonstrating that minor changes in prompt construction can sometimes produce substantial changes in model outputs, which motivates the use of controlled, minimal prompt interventions in this thesis. \citet{zheng2024helpful} investigate the effects of assigning different personas or roles through system prompts and examine whether these changes improve model performance; their findings are relevant to the distinction between changes in intended system behaviour and actual improvements in objective system performance. \citet{ying2024intuitive} examine how LLMs respond to conflicting prompts and information, including situations relevant to retrieval-augmented generation, and their work is particularly relevant to the thesis' interest in how system instructions influence a system when retrieved evidence is incomplete, conflicting, or inconsistent with other information. \citet{ruiz2026promptcarefully} experimentally investigate how LLMs respond to explicit behavioural rules provided through prompts and how these rules interact with changing task contingencies, supporting the proposed view of system prompts as specifications of behavioural policies rather than only textual context.
+
+\citet{hua2025flaw} examine prompt sensitivity and show that some apparent differences between prompts can arise from the way model outputs are evaluated rather than from meaningful behavioural differences, which is important for the present research because it motivates using evaluation metrics that distinguish genuine changes in RAG behaviour and outcomes from superficial output variation. \citet{qin2026interactions} investigate prompt sensitivity through interactions between prompts and model inputs, moving beyond simple comparisons of final outputs to analyze how prompt changes affect model behaviour, and their approach is closely related to the present research's goal of developing a more structured account of how system prompts influence an AI system. \citet{sclar2024quantifying} show that language models are highly sensitive to meaning-preserving prompt formatting changes (e.g., delimiters, casing, list vs.\ prose), with performance swings of up to 76 accuracy points on some models despite no change in propositional content, which directly motivates isolating the Format condition ($S_{\theta_3}$) as a distinct linguistic axis in this thesis's experimental design, separate from lexical or syntactic variation.
+
+Together, these studies make two points that shape the experimental design of this thesis. First, system prompts are not incidental configuration details but a measurable behavioral control variable: their effect on a model's output can be isolated and measured given a properly controlled experimental setup \citep{mu2025robustness,ruiz2026promptcarefully}. Second, prompt effects are confounded by several sources of variation at once: the wording of an instruction as distinct from its meaning \citep{lu2024sensitivity,zhuo2024prosa,salinas2024butterfly}, purely formatting-level changes that alter no actual content \citep{sclar2024quantifying}, and the evaluation method used to detect a behavioral difference in the first place \citep{hua2025flaw}. None of these studies, however, look at system prompts inside a retrieval-augmented setting, where system behavior also depends on retrieved evidence that can itself be noisy, conflicting, or insufficient; \citet{ying2024intuitive} is a partial exception, discussed further below.
+
+\section{Retrieval-Augmented Generation: Architecture, Evaluation, and Failure Modes}
+
+The second branch of literature covers retrieval-augmented generation specifically: its architecture, its evaluation, and the failure modes it shows independent of any system-prompt manipulation.
+
+\citet{lewis2020rag} introduce Retrieval-Augmented Generation, combining a pretrained neural retriever with a pretrained sequence-to-sequence generator, and show that conditioning generation on retrieved evidence outperforms purely parametric models on knowledge-intensive tasks; their architecture is the direct basis for the $F(q,D;S)=G(q,R(q;D);S)$ decomposition formalized in Chapter 4 of this thesis. \citet{gao2023survey} survey the development of RAG systems through \textbf{Naive}, \textbf{Advanced}, and \textbf{Modular} paradigms, organizing the field around a tripartite retrieval-generation-augmentation structure; their taxonomy supports treating retrieval and generation as separable functions whose interaction with the system prompt can be studied independently, as this thesis does. Two later developments extend this taxonomy in directions this thesis deliberately does not follow. \citet{edge2024graphrag} restructure the retrieval side into a knowledge graph, grouped into thematic communities and pre-summarized by an LLM, so that a query is answered by traversing entities and community summaries rather than by a flat nearest-neighbor lookup over $D$. \citet{singh2025agentic} and \citet{jin2025searchr1} restructure the generation side into an agent loop, in which the model itself decides when and what to retrieve, calling $R$ repeatedly and adaptively rather than once per query; \citet{jin2025searchr1} train this behaviour directly with reinforcement learning and report large gains over standard RAG baselines. Both directions relax exactly the components Chapter 4 holds fixed, $R$ in the first case and the single-call structure of $G$ in the second. For that reason this thesis retains \citeauthor{gao2023survey}'s simplest, Naive-RAG form: any change in the outcomes measured here can then be attributed to the system prompt, rather than to the added architectural complexity of a graph-structured retriever or an agentic generation loop.
+
+\citet{es2023ragas} propose Ragas, a reference-free evaluation framework for RAG pipelines built around three metrics, \textbf{faithfulness}, \textbf{answer relevance}, and \textbf{context relevance}, that require no ground-truth human annotation; their faithfulness metric is closely related to the evidence-faithfulness measure used in this thesis, and motivates evaluating the effect of the system prompt independently of retrieval quality. \citet{chen2024rgb} construct the Retrieval-Augmented Generation Benchmark (RGB) and show that current language models tolerate a moderate amount of retrieval noise but struggle with negative rejection, information integration across multiple retrieved passages, and robustness to counterfactual or contradictory evidence; their four testbeds correspond closely to the directly-answerable, multi-hop, conflicting, and insufficient-evidence query categories used in the experimental design of this thesis. \citet{niu2024ragtruth} introduce RAGTruth, a manually annotated corpus of word-level hallucinations produced by RAG systems, and benchmark hallucination-detection methods across multiple language models; their finding that hallucination persists even when relevant evidence has been retrieved motivates measuring hallucination rate as an outcome distinct from retrieval quality, as this thesis does.
+
+Together, these studies establish the architecture, evaluation vocabulary, and known failure modes of RAG systems specifically. They show that a RAG system's output quality depends on both retrieval quality and how faithfully the generator uses the retrieved evidence \citep{es2023ragas,niu2024ragtruth}, and that current systems already struggle with certain evidence conditions, such as conflicting or insufficient retrieved evidence, even without any prompt manipulation \citep{chen2024rgb}. None of the studies in this branch, however, treat the system prompt as a controlled experimental variable; it is either fixed across conditions or not specified at all.
+
+\section{Adversarial and Competing Instructions in Retrieved Content}
+
+A third, closely related line of work studies what happens when instructions arrive not from the system prompt but from the retrieved content itself, competing with the system prompt for control of the model's behavior. Where the first branch shows that a model's own system prompt can be perturbed and still change behavior \citep{mu2025robustness,salinas2024butterfly}, \citet{greshake2023notwhat} show that an entirely different source of instruction, text hidden inside a document the model is told to process, can override the system prompt altogether. This is the adversarial extreme of the same instruction-competition problem, except the competing instruction arrives through the retrieved context $C$ rather than through $S$, a source this thesis deliberately holds fixed rather than varies. \citet{zhang2025poisoning} extend this observation into a RAG-specific benchmark, testing 13 poisoning attack methods and 7 defenses across 5 base question-answering datasets and 10 expanded variants; their findings sit alongside the observations of \citet{chen2024rgb} and \citet{niu2024ragtruth} from the second branch that retrieved evidence can already be noisy, incomplete, or contradictory, and show that it can also be made deliberately adversarial.
+
+\medskip
+Both studies, however, treat instruction competition exclusively as a security problem: an adversary deliberately crafts malicious content, and the goal is to detect or defend against it. Neither examines benign, non-adversarial linguistic variation of the system prompt itself, of the kind the prompt-sensitivity literature reviewed above studies outside of RAG, and of the kind this thesis's five conditions ($S_{\theta_0}$ through $S_{\theta_4}$) are built to isolate inside it. This distinction matters: this thesis is not concerned with whether a RAG system can be attacked, but with whether ordinary, well-intentioned rewordings of its own instructions change its behavior at all.
+
+\section{Synthesis and Research Gap}
+
+The first branch shows that system prompts are a measurable, controllable way of shaping language model behavior, sensitive even to small changes in wording, but studies this mostly outside of any retrieval-augmented setting. The second branch establishes the architecture, evaluation vocabulary, and known failure modes of RAG systems, including known problems with evidence integration, rejection, and faithfulness, but does not treat the system prompt as a controlled experimental variable. The third branch shows that instructions competing with the system prompt is a real and actively studied phenomenon in RAG systems, but only as a deliberate security threat delivered through retrieved content, never as benign, controlled linguistic variation of the system prompt itself. The overlap between all three branches is still largely unexamined. \citet{ying2024intuitive} is a partial exception: it looks at how LLMs respond to conflicting prompts and information in retrieval-relevant settings, but without holding retrieval and the underlying language model fixed as an explicit experimental control.
+
+This thesis addresses that gap directly. It treats the system prompt as a controlled experimental variable inside a RAG pipeline, varying only its wording rather than its intent, while holding the query, knowledge base, retrieval mechanism, and underlying language model fixed, so that any change in system behavior and outcomes can be traced to the system prompt's wording alone. Chapter 4 builds the formal model that makes this control precise, describing the RAG system as a retrieval function combined with a generation function, with the system prompt as an explicit parameter of the generation function.
+
+\chapter{Formal Model of a RAG System}
+
+Chapter 3 reviewed literature on prompt sensitivity in language models, on retrieval-augmented generation specifically, and on adversarial instructions delivered through retrieved content, and identified a research gap: the overlap between these branches is still largely unexamined, with existing work such as \citet{ying2024intuitive} addressing conflicting prompts and information in retrieval-relevant settings only, without holding retrieval and the underlying language model fixed as an explicit experimental control. Closing this gap needs a model of the RAG system precise enough to isolate the system prompt as a parameter that can be varied on its own. This chapter builds that model, based on the components introduced descriptively in Chapter 2: the knowledge base $D$, the retriever, the generator, and the system prompt $S$.
+
+Recall from the Notation section of Chapter 1 that $q \in \mathcal{Q}$ denotes a user query, $D = \{d_1, \ldots, d_N\} \in \mathcal{D}$ denotes the knowledge base, $S \in \mathcal{S}$ denotes a system prompt, $C \in \mathcal{C}$ denotes the retrieved context, and $y \in \mathcal{Y}$ denotes the generated output. A simple RAG system, without a system prompt, can be represented by the sequence
+\[
+q \longrightarrow C \longrightarrow y.
+\]
+The system prompt influences the generation stage:
+\[
+(q, C, S) \longrightarrow y.
+\]
+The complete system can therefore be represented as
+\[
+F(q, D; S) = G(q, R(q; D); S),
+\]
+where $R$ is the retrieval function and $G$ is the generation function, both introduced descriptively in Chapter 2 and formalized below.
+
+\subsection*{Retrieval Function}
+
+The retriever is defined as a function
+\[
+R: \mathcal{Q} \times \mathcal{D} \rightarrow \mathcal{C},
+\]
+where $\mathcal{D}$ denotes the space of knowledge bases and $\mathcal{C}$ denotes the space of retrieved contexts. For a query $q$ and knowledge base $D$,
+\[
+C = R(q; D).
+\]
+The retrieved context may consist of the top-$k$ documents according to a relevance function $r(q,d) \in \mathbb{R}$, where $k \in \mathbb{N}$ is the number of documents retrieved and $d \in D$ ranges over the documents in the knowledge base:
+\[
+C = R_k(q; D) = \operatorname{TopK}_{d \in D} r(q, d).
+\]
+Each element of $\mathcal{C}$ is realized as the concatenated text of the retrieved documents, in ranked order, so that $C$ can be inserted directly into the generator's input sequence. The precise implementation of $r$ is not the primary object of this thesis; it is therefore fixed throughout the experiment. This allows changes in system outcomes to be attributed primarily to changes in the system prompt.
+
+\subsection*{Generation Function}
+
+The generator is defined as
+\[
+G: \mathcal{Q} \times \mathcal{C} \times \mathcal{S} \rightarrow \mathcal{Y}.
+\]
+Given a user query $q$, retrieved context $C$, and system prompt $S$, the generator produces
+\[
+y = G(q, C; S).
+\]
+The generator includes the underlying language model and the prompt construction required to supply the model with the user query, retrieved context, and system instructions, as described in Chapter 2. The complete RAG system is therefore
+\[
+F(q, D; S) = G\left(q, R(q; D); S\right)
+\]
+This representation is as minimal as possible:
+\[
+\text{Input} \rightarrow \text{Retrieval} \rightarrow \text{Generation} \rightarrow \text{Output}
+\]
+with the system prompt as a controlled parameter of generation.
+
+\subsection*{Controlled Variables}
+
+This thesis estimates the effect of the system prompt $S$ on the output. The following variables are held constant across experimental conditions:
+\[
+q, \quad D, \quad R, \quad G.
+\]
+Holding $G$ constant also means holding the generator's decoding settings constant: the model checkpoint, decoding strategy, temperature, and any other sampling parameters. Repeated generations under the same condition then vary only because decoding is still random at a fixed setting, not because $G$ itself changed (Chapter 5).
+
+The experimental treatment is the system prompt:
+\[
+S = S_j,
+\]
+where $j$ indexes one prompt condition. In the notation introduced below (\S~Modeling the System Prompt), $S_j$ is the same as $S_{\theta_j}$; the two are used interchangeably from here on, with $S_0$ short for the baseline condition $S_{\theta_0}$. For a fixed query and knowledge base,
+\[
+y_j = F(q, D; S_j).
+\]
+The comparison between $y_i$ and $y_j$ shows the observed effect of changing the system prompt while keeping everything else fixed.
+
+\subsection*{Modeling the System Prompt}
+
+The system prompt is modeled as a parameter vector
+\[
+\theta = (\theta_I, \theta_K, \theta_O),
+\]
+where $\theta_I$ represents the selected instructions, $\theta_K$ represents the selected constraints, and $\theta_O$ represents the selected output requirements. The five prompt conditions introduced below vary $\theta_I$ only, holding $\theta_K$ and $\theta_O$ fixed; this isolates changes in how the instructions are worded from changes in what is required or constrained. The system prompt is then written as $S_\theta$, and the RAG system as
+\[
+y_\theta = G(q, R(q; D); S_\theta)
+\]
+The experimental objective becomes the comparison of
+\[
+y_{\theta_1}, y_{\theta_2}, \ldots, y_{\theta_m}
+\]
+while keeping all other variables fixed.
+
+\subsubsection*{Linguistic Realization}
+
+Since this thesis is specifically about system prompts, the wording of the instructions must also be controlled, separately from their meaning. Let $L(S_\theta)$ denote the particular wording used to express an instruction of a system prompt. Two system prompts can have roughly the same function while differing in wording,
+\[
+L(S_{\theta_1}) \neq L(S_{\theta_0}),
+\]
+while meaning the same thing,
+\[
+\operatorname{Sem}(S_{\theta_1}) \approx \operatorname{Sem}(S_{\theta_0}).
+\]
+In the main experiment, wording is not varied at the same time as meaning. The main comparison instead uses small, controlled changes to the prompt:
+\[
+S_{\theta_0} \rightarrow \left(S_{\theta_1} = S_{\theta_0} + \Delta S\right).
+\]
+Here, addition denotes a small, controlled edit applied to the wording of the prompt, not an algebraic operation on $\mathcal{S}$, which is not assumed to have any additive structure. The effect of the intervention is then measured as
+\[
+\Delta Y = M(y_{\theta_1}) - M(y_{\theta_0}),
+\]
+where $M$ is a real-valued functional of the output. What $M$ should measure is not settled by the notation: it follows from a definition of what a good answer is, which is given in the criterion function $\ell$ of Equation~\eqref{eq:loss} later in this chapter. Chapter 5 then constructs estimators for that criterion.
+
+\subsubsection*{Variation in System Prompts}
+
+A small number of prompt conditions is sufficient for the scope of this thesis:
+\begin{description}
+    \item[$S_{\theta_0}$ --- Canonical.] Plain imperative prose. The reference form.
+    \item[$S_{\theta_1}$ --- Lexical.] Synonym substitution, register held fixed. No syntactic change.
+    \item[$S_{\theta_2}$ --- Syntactic.] Clause reordering, active $\leftrightarrow$ passive, imperative $\leftrightarrow$ declarative. Lexicon held as close as possible.
+    \item[$S_{\theta_3}$ --- Format.] Prose $\rightarrow$ bulleted list, punctuation, casing, delimiters. Propositional content held byte-identical where possible.
+    \item[$S_{\theta_4}$ --- Deontic.] Modal force: must / should / please try to.
+\end{description}
+The format condition, $S_{\theta_3}$, follows \citet{sclar2024quantifying}, who show that language models are highly sensitive to formatting changes like this, even though the changes preserve meaning and alter no actual content. The final condition, $S_{\theta_4}$, is deliberately different from the others: modal force (must / should / please try to) may well carry meaning rather than being a purely surface-level feature, and it is included on purpose to test, empirically, where the line between wording and meaning actually falls. If $S_{\theta_4}$ produces much larger effects than $S_{\theta_1}$ through $S_{\theta_3}$, this is evidence for that boundary, rather than something assumed in advance. The working assumption is that the changes in $S_{\theta_1}$ through $S_{\theta_3}$ do not change the meaning of the system prompt.
+
+\subsection*{Causal Framework and Document Formalization}
+
+The model developed so far describes the RAG system as a composition of two total functions, $F(q,D;S) = G(q,R(q;D);S)$. That description fixes the interfaces between components and identifies the system prompt as the argument to be varied, but it says nothing about the process that generates the data on which the components operate. It contains no random variables, no statement of where randomness enters, and no formal definition of what it means to change $S$ while leaving the rest of the system alone. Without those elements, a difference between two measured outcomes is a description of two samples rather than an estimate of an effect. This subsection supplies them: it places a data-generating process underneath the pipeline, defines the change of system prompt as a causal intervention, formalizes the document corpus as a generated object rather than an unstructured set, and states what a good answer is. All of this precedes the discussion of measurement in Chapter 5, so that the quantities measured there can be introduced as estimators of quantities defined here rather than as definitions in their own right.
+
+\subsubsection*{Two Modeling Cultures}
+
+\citet{breiman2001twocultures} distinguishes two ways of using statistical models to draw conclusions from data. In the \textit{data modeling} culture, the analyst assumes a stochastic mechanism that generated the data and reasons about the relationships inside it, which yields interpretable statements about why a system behaves as it does. In the \textit{algorithmic modeling} culture, the mechanism is treated as unknown, a flexible algorithm is fitted, and the only question asked of the result is how well it predicts held-out data. Breiman's argument is that the second culture had been unduly neglected; the reverse concern applies to the present setting, where the generator is already an opaque learned algorithm and the risk is that the surrounding study inherits the same opacity.
+
+A study that varies five system prompts, records outcomes, and compares averages sits entirely within the algorithmic culture: the system is a black box, and the evidence produced is a table of end-to-end performance under a handful of conditions. This is the position that the systems-engineering literature on performance characterization was developed to move beyond. \citet{ramesh1995performance} defines performance characterization as the task of establishing the correspondence between random perturbations in the input to an algorithm and random perturbations in its output, given an ideal input model, an input perturbation model, an output perturbation model, and a criterion function; \citet{haralick1994performance} makes the same case for treating vision algorithms as objects whose behavior under perturbation must be modeled rather than only measured. The distinction that matters for this thesis is between black-box evaluation, which reports what a system did on a particular dataset, and white-box modeling, which treats each component as an estimator whose behavior is derived as a function of its inputs. The remainder of this chapter follows the second route for the parts of the pipeline that are under experimental control, while acknowledging that the language model itself remains a fitted algorithm whose internal mechanism is not modeled here.
+
+\subsubsection*{Structural Causal Model of the Pipeline}
+
+The pipeline is represented as a structural causal model in the sense of \citet{pearl2009causality}: a set of variables, a structural equation assigning each variable a value as a deterministic function of its parents and of an exogenous noise term, and a joint distribution over the exogenous terms. Beyond the symbols already introduced, let $\Phi \subseteq \mathcal{P}$ denote the set of true propositions over a finite proposition space $\mathcal{P}$, representing the state of the world the corpus describes; let $\chi$ denote the chunking function that maps documents to the units actually indexed; let $w$ denote the parameter vector of the language model, which carries what the model learned before any evidence is retrieved; let $B$ denote an observable behavioral variable defined below; and let $\varepsilon$ denote the randomness of decoding. The exogenous terms $U_\Phi, U_D, U_q, U_S$ and $\varepsilon$ are assumed mutually independent.
+
+\begin{equation}
+\label{eq:scm}
+\mathcal{M}:\quad
+\left\{
+\begin{aligned}
+\Phi &:= f_\Phi(U_\Phi) \\
+D &:= f_D(\Phi, U_D) \\
+q &:= f_q(\Phi, U_q) \\
+S &:= f_S(U_S) \\
+C &:= R\bigl(q, \chi(D)\bigr) \\
+y &:= G\bigl(q, C, S, w; \varepsilon\bigr)
+\end{aligned}
+\right.
+\end{equation}
+
+Equation~\eqref{eq:scm} differs from the composition $F(q,D;S)$ in one respect that carries all of the consequences: the generator is written as a deterministic function of an explicit noise term rather than as a stochastic map. This is what makes the model a causal model rather than a notational one, and it is available in closed form for autoregressive language models. Writing $x = \pi(q,C,S)$ for the encoded prompt, $\mathcal{V}$ for the vocabulary, $T$ for the decoding temperature, and $y = (y_1,\dots,y_L)$ for the generated token sequence, sampling at temperature $T$ is exactly equivalent to taking an argmax over log-probabilities perturbed by independent Gumbel noise \citep{maddison2014astar}:
+
+\begin{equation}
+\label{eq:gumbel}
+\boxed{\;
+y_t \;=\; \argmax_{v \in \mathcal{V}} \left\{ \frac{1}{T}\log p_w\bigl(v \mid x, y_{<t}\bigr) \;+\; \varepsilon_{t,v} \right\},
+\qquad \varepsilon_{t,v} \stackrel{\text{iid}}{\sim} \mathrm{Gumbel}(0,1).
+\;}
+\end{equation}
+
+Equation~\eqref{eq:gumbel} localizes every source of within-condition randomness in the single term $\varepsilon$, and it makes precise the sense in which $w$ acts as a prior: $p_w(\cdot \mid x, y_{<t})$ is the distribution over continuations the model brings to the task before the retrieved evidence in $C$ has been conditioned on. Two properties of $\varepsilon$ are used later. It is independent of $S$, because the noise is drawn independently of which prompt was supplied, and it factorizes across token positions, because the Gumbel draws are independent across $t$.
+
+Three assumptions make the model usable and each one is falsifiable rather than definitional.
+
+\begin{assumption}[No prompt-to-retrieval path]
+\label{as:noedge}
+The system prompt does not influence the retrieved context, so that $C$ has no $S$ in its structural equation. This holds by construction for the single-shot architecture of Chapter 2, in which $S$ enters only the generator call, and it is enforced experimentally by reusing a stored context across conditions. It would fail for an agentic pipeline in which the model rewrites the query before retrieval.
+\end{assumption}
+
+\begin{assumption}[Fixed mechanism]
+\label{as:fixed}
+The functions $R$, $G$, $\chi$, the parameters $w$, and the decoding temperature $T$ are identical across all conditions, so that the structural equations differ between conditions only in the value assigned to $S$.
+\end{assumption}
+
+\begin{assumption}[No interference between generations]
+\label{as:sutva}
+The output of one generation does not depend on which other conditions were run. This is not automatic for language model services, where response caching, batching, and stateful sessions can create dependence between requests, and it therefore constrains the implementation: each generation must be an independent, stateless call.
+\end{assumption}
+
+\subsubsection*{The System Prompt as a Causal Intervention}
+
+Changing the system prompt is formalized as an intervention on $\mathcal{M}$ rather than as a change of argument to a function. The intervention $\mathrm{do}(S = s)$ replaces the structural equation $S := f_S(U_S)$ by the constant assignment $S := s$, leaving every other equation in \eqref{eq:scm} unchanged, and yields a modified model $\mathcal{M}_s$ \citep{pearl2009causality}. The output of the modified model is the potential outcome
+
+\begin{equation}
+\label{eq:po}
+y^{s} \;=\; G\bigl(q, C, s, w; \varepsilon\bigr),
+\end{equation}
+
+that is, the answer that would have been produced for this query and this retrieved context had the system prompt been $s$, holding the realized decoding noise fixed. The same construction applies to the retrieved context. Reusing a stored $C_i$ across conditions rather than recomputing $R(q_i;D)$ is the intervention $\mathrm{do}(C := C_i)$, which sets the context rather than observing it and thereby removes the variance of retrieval from every comparison.
+
+For a real-valued functional $M$ of the output, the quantity the experiment targets is the average causal effect of moving from the baseline prompt $S_0$ to a prompt $S_j$, taken over the decoding noise and conditional on the query and its context:
+
+\begin{equation}
+\label{eq:estimand}
+\boxed{\;
+\tau_j(M \mid q_i, C_i) \;=\; \mathbb{E}_{\varepsilon}\Bigl[\, M\bigl(y^{S_j}\bigr) - M\bigl(y^{S_0}\bigr) \,\Bigm|\, q = q_i,\ C = C_i \,\Bigr],
+\;}
+\end{equation}
+
+with the population quantity obtained by averaging over the query distribution,
+
+\begin{equation}
+\label{eq:estimand-pop}
+\tau_j(M) \;=\; \mathbb{E}_{q}\bigl[\, \tau_j\bigl(M \mid q, R(q;\chi(D))\bigr) \,\bigr].
+\end{equation}
+
+Equations~\eqref{eq:estimand} and~\eqref{eq:estimand-pop} give the comparison of conditions a target. A difference between two observed averages is now an estimator of $\tau_j$, and the design of Chapter 5 can be assessed by whether it estimates that target without bias.
+
+\begin{proposition}[Identification by design]
+\label{prop:ident}
+Under Assumptions~\ref{as:noedge} to~\ref{as:sutva},
+\begin{equation}
+\label{eq:ident}
+P\bigl(y \mid \mathrm{do}(S = s),\, q,\, C\bigr) \;=\; P\bigl(y \mid S = s,\, q,\, C\bigr).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+In $\mathcal{M}_s$ the variable $S$ has no parents, so no path in the modified graph enters $S$. There is consequently no back-door path between $S$ and $y$, and the interventional and observational conditional distributions coincide \citep{pearl2009causality}. Assumption~\ref{as:noedge} rules out the alternative route from $S$ to $y$ through $C$, Assumption~\ref{as:fixed} guarantees that no other structural equation changes with the condition, and Assumption~\ref{as:sutva} guarantees that the potential outcomes of one generation do not depend on the treatment assigned to another.
+\end{proof}
+
+Proposition~\ref{prop:ident} is worth stating plainly rather than presenting as a result. Because the system prompt is assigned by the experimenter and is not caused by anything else in the model, identification of the effect was never in doubt, and the causal formalism does not rescue it. What the formalism contributes lies elsewhere: it names the quantity the experiment estimates, it distinguishes variables that lie on the causal path from variables that merely correlate with the outcome, and it supplies the decomposition developed next.
+
+\subsubsection*{Behavioral Mediation}
+
+A natural question is whether the system prompt changes outcomes \textit{through} a change in observable behavior, for instance by changing how the generator uses the retrieved evidence. Posing this question inside $\mathcal{M}$ shows that it must be stated carefully. Any property computed from the finished answer, whether it concerns adherence to a constraint, use of evidence, or output length, is a functional of the single variable $y$. Two such functionals stand in no causal relation to one another, because neither is a parent of the other in \eqref{eq:scm}; they are two measurements of one object. A mediator must be a variable that is structurally prior to the outcome.
+
+The autoregressive factorization supplies one. Fix a cut position $t^{*}$ and define the behavioral variable as a property of the generated prefix,
+
+\begin{equation}
+\label{eq:mediator}
+B \;=\; \psi\bigl(y_{1:t^{*}}\bigr),
+\end{equation}
+
+where $\psi$ records the commitment the generator makes at the beginning of its answer, such as whether it opens with a direct assertion, a hedge, an abstention marker, or a citation. The remainder of the answer is then generated conditionally on that prefix,
+
+\begin{equation}
+\label{eq:suffix}
+y_{t^{*}+1:L} \;:=\; h\bigl(q, C, S, w,\, y_{1:t^{*}};\, \varepsilon_{>t^{*}}\bigr),
+\end{equation}
+
+so that $B$ is a genuine intermediate variable. The natural direct and indirect effects of \citet{pearl2001direct} are then well defined, with $y^{\,s,\,b}$ denoting the answer produced under prompt $s$ when the prefix commitment is set to $b$:
+
+\begin{equation}
+\label{eq:nie}
+\mathrm{NIE}_j \;=\; \mathbb{E}\bigl[\, M\bigl(y^{\,S_0,\,B^{S_j}}\bigr) \,\bigr] - \mathbb{E}\bigl[\, M\bigl(y^{\,S_0,\,B^{S_0}}\bigr) \,\bigr],
+\end{equation}
+
+\begin{equation}
+\label{eq:nde}
+\mathrm{NDE}_j \;=\; \mathbb{E}\bigl[\, M\bigl(y^{\,S_j,\,B^{S_0}}\bigr) \,\bigr] - \mathbb{E}\bigl[\, M\bigl(y^{\,S_0,\,B^{S_0}}\bigr) \,\bigr],
+\end{equation}
+
+\begin{equation}
+\label{eq:decomp}
+\boxed{\;\tau_j \;=\; \mathrm{NDE}_j + \mathrm{NIE}_j.\;}
+\end{equation}
+
+\begin{proposition}[Identification of the natural effects]
+\label{prop:mediation}
+Under Assumptions~\ref{as:noedge} to~\ref{as:sutva} and the factorization in \eqref{eq:gumbel}, the cross-world quantity $y^{\,S_0,\,B^{S_j}}$ is identified.
+\end{proposition}
+
+\begin{proof}
+By \eqref{eq:gumbel} the noise variables satisfy $\varepsilon_{1:t^{*}} \indep \varepsilon_{>t^{*}}$, and by \eqref{eq:suffix} the prefix noise influences the suffix only through $y_{1:t^{*}}$. There is therefore no unmeasured variable that affects both $B$ and the remainder of the answer once $q$, $C$, $S$ and the prefix are fixed, which is the condition required for the natural effects to be identified \citep{pearl2001direct}.
+\end{proof}
+
+The counterfactual in Proposition~\ref{prop:mediation} is not only identified but directly realizable in the implementation, since $y^{\,S_0,\,B^{S_j}}$ is obtained by generating a prefix under $S_j$ and then continuing generation under $S_0$. The decomposition in \eqref{eq:decomp} therefore rests on an experiment rather than on an untestable assumption.
+
+Two consequences follow for variables that might otherwise be treated as nuisance covariates. Output length lies on a directed path from $S$ to the outcome whenever the prompt changes how much the model writes, so conditioning on length estimates a controlled direct effect and not the total effect in \eqref{eq:estimand}. The total effect and any length-controlled effect are therefore reported as distinct quantities rather than one being substituted for the other.
+
+\subsubsection*{Formalization of the Document Corpus}
+
+The knowledge base has so far been written as a set $D = \{d_1,\dots,d_N\}$ whose elements are unanalyzed. A causal account of the pipeline requires the same treatment for the evidence channel that \eqref{eq:scm} gives the generation channel, namely a statement of what an idealized document is and how observed documents deviate from it. Let $\mathcal{V}$ be the vocabulary and $\mathcal{T} = \mathcal{V}^{*}$ the discrete space of finite texts. Semantic content is given by a content map
+
+\begin{equation}
+\label{eq:contentmap}
+\sigma: \mathcal{T} \longrightarrow 2^{\mathcal{P}},
+\end{equation}
+
+assigning to each text the set of atomic propositions it asserts, with $\mathrm{Cn}(\cdot)$ denoting deductive closure and $d \models p$ abbreviating $p \in \mathrm{Cn}(\sigma(d))$. Documents are then generated rather than collected: each document is the rendering of a latent semantic content under a nuisance parameter that controls everything about its surface form,
+
+\begin{equation}
+\label{eq:docgen}
+\boxed{\;
+d \;=\; \Gamma(z, \nu), \qquad z \in \mathcal{Z} \subseteq \mathbb{R}^{k}, \quad \nu \in \mathcal{N}, \quad \Gamma: \mathcal{Z} \times \mathcal{N} \rightarrow \mathcal{T}.
+\;}
+\end{equation}
+
+Here $z$ is the continuous semantic latent variable encoding the proposition set the document carries and plays the role of the ideal input model, while $\nu$ collects verbosity, register, hedging, redundancy and ordering and plays the role of the input perturbation model, in the sense of \citet{ramesh1995performance}. The corpus is a sample $D = \{\Gamma(z_i,\nu_i)\}_{i=1}^{N}$ from a design over $(z,\nu)$ chosen by the experimenter. The construction mirrors the treatment of the system prompt earlier in this chapter, where $S_\theta$ was separated into semantic content and linguistic realization $L(S_\theta)$; documents and prompts are both texts that realize an underlying content, and both channels admit the same separation between content and surface form.
+
+The embedding used for retrieval is not the content map but a lossy measurement of it. Writing $E: \mathcal{T} \rightarrow \mathbb{S}^{k-1}$ for the embedding into the unit sphere,
+
+\begin{equation}
+\label{eq:embed}
+E\bigl(\Gamma(z,\nu)\bigr) \;=\; \Pi z \;+\; \eta(z,\nu),
+\end{equation}
+
+with $\Pi$ an unknown linear map and $\eta$ an error term that depends on the nuisance parameter as well as on the content. Two facts follow. The map $E$ is neither injective nor a homomorphism with respect to $\sigma$, so agreement of embeddings is not agreement of content and the retrieval failure modes of the system live in $\eta$. Further, $z$ is recoverable at best up to an orthogonal transformation, so only inner products between embeddings are well-defined functionals of the latent space, which is what justifies the relevance score $r(q,d) = \langle E(q), E(d) \rangle$ introduced earlier and at the same time explains why that score cannot certify that a document supports an answer.
+
+What the retriever indexes is not $D$ but its chunking $\chi(d) = (d^{(1)},\dots,d^{(m)})$, and content is not additive under chunking. Since a proposition may depend on material that a chunk boundary separates, such as an anaphor and its antecedent,
+
+\begin{equation}
+\label{eq:chunkloss}
+\bigcup_{j=1}^{m} \sigma\bigl(d^{(j)}\bigr) \;\subseteq\; \sigma(d),
+\qquad
+\mathrm{SL}(d,\chi) \;=\; \Bigl| \sigma(d) \setminus \bigcup_{j=1}^{m} \sigma\bigl(d^{(j)}\bigr) \Bigr|,
+\end{equation}
+
+where the inclusion is generally strict and $\mathrm{SL}(d,\chi)$ is the chunk-induced semantic loss. Any $\mathrm{SL}(d,\chi) > 0$ produces answers that are unsupported by the retrieved context for reasons that have nothing to do with the system prompt, which is why $\chi$ joins $R$ and $G$ among the variables held fixed across conditions.
+
+The retrieved context is an ordered tuple rather than a set, since its elements are concatenated in rank order and position within the prompt is itself a source of variation. For a query $q$ with answer target $a_q \in \mathcal{P}$, the support family collects the minimal bodies of retrievable evidence that entail the answer:
+
+\begin{equation}
+\label{eq:support}
+\mathcal{S}(q) \;=\; \Bigl\{\, \mathcal{E} \subseteq \chi(D) \;:\; \bigcup_{e \in \mathcal{E}} \sigma(e) \models a_q, \ \text{and no proper subset of } \mathcal{E} \text{ does} \,\Bigr\}.
+\end{equation}
+
+The categories of query used in the experimental design are then properties derived from \eqref{eq:support} rather than labels assigned by hand:
+
+\begin{equation}
+\label{eq:categories}
+\begin{aligned}
+q \in \mathcal{Q}_{\text{direct}} \quad&\Longleftrightarrow\quad \exists\, \mathcal{E} \in \mathcal{S}(q) \ \text{with} \ |\mathcal{E}| = 1, \\
+q \in \mathcal{Q}_{\text{multi-hop}} \quad&\Longleftrightarrow\quad \mathcal{S}(q) \neq \emptyset \ \text{and} \ \min_{\mathcal{E} \in \mathcal{S}(q)} |\mathcal{E}| \geq 2, \\
+q \in \mathcal{Q}_{\text{conflict}} \quad&\Longleftrightarrow\quad \exists\, e, e' \in \chi(D) \ \text{with} \ \sigma(e) \models a_q \ \text{and} \ \sigma(e') \models \neg a_q, \\
+q \in \mathcal{Q}_{\text{insufficient}} \quad&\Longleftrightarrow\quad \mathcal{S}(q) = \emptyset .
+\end{aligned}
+\end{equation}
+
+A distractor is a chunk $e$ with $r(q,e)$ high and $\sigma(e)$ containing no proposition relevant to $a_q$, which makes distractor density a parameter of the corpus design rather than a category of query. Constructing the corpus this way means the correspondence between questions and supporting documents is known by construction, which is the property the experimental design requires.
+
+\subsubsection*{What Counts as a Good Answer}
+
+An answer is a text, and many different texts express the same content, so the object to be defined is a set of acceptable answers rather than a single ideal string. Let $\alpha: \mathcal{Y} \rightarrow 2^{\mathcal{P}}$ be the assertion map giving the propositions an output asserts, constructed like $\sigma$ in \eqref{eq:contentmap}. Let $\Sigma$ denote the set of directives carried by the system prompt, where each directive $\pi_k$ is a predicate on outputs and $\alpha_k(q,C) \in \{0,1\}$ indicates whether it applies to the case at hand. The admissible contents are those that are responsive, grounded in the retrieved context, true of the world, and explicit about conflict:
+
+\begin{equation}
+\label{eq:admissible}
+\mathcal{P}^{*}(q,C,\Phi) = \Bigl\{ P \subseteq \mathcal{P} \;:\; \underbrace{P \models a_q \ \text{or} \ P \models \bot_q}_{\text{responsive or abstaining}}, \ \underbrace{P \subseteq \mathrm{Cn}(\sigma(C))}_{\text{grounded}}, \ \underbrace{P \subseteq \Phi}_{\text{veridical}}, \ \underbrace{\text{conflict}(C) \Rightarrow \mathrm{conf} \in P}_{\text{calibrated}} \Bigr\},
+\end{equation}
+
+where $\bot_q$ denotes an explicit abstention and $\mathrm{conf}$ denotes an explicit acknowledgment that the evidence disagrees. The ideal answer is then the set of texts whose content is admissible and which satisfy every applicable directive:
+
+\begin{equation}
+\label{eq:ideal}
+\boxed{\;
+\mathcal{Y}^{*}(q,C,\Phi) \;=\; \alpha^{-1}\bigl(\mathcal{P}^{*}(q,C,\Phi)\bigr) \;\cap\; \bigl\{\, y \in \mathcal{Y} \;:\; \pi_k(y) = 1 \ \ \text{for all } k \text{ with } \alpha_k(q,C) = 1 \,\bigr\}.
+\;}
+\end{equation}
+
+Definition~\eqref{eq:ideal} is a union of fibers of the assertion map, which is the formal statement that content adequacy and surface realization are separate questions, exactly as they are for the system prompt. Two consequences are worth drawing out because they are otherwise easy to assert without warrant. Groundedness and veridicality are distinct requirements, since $\sigma(C) \neq \Phi$ in general, so an answer can be true without being supported by the retrieved evidence and supported without being true. And the calibration requirement is a genuine condition on answers to conflicting evidence, which the design generates deliberately.
+
+Because the requirements in \eqref{eq:admissible} can be violated to different degrees and at different costs, a criterion function is defined that vanishes exactly on the ideal set:
+
+\begin{equation}
+\label{eq:loss}
+\ell(y; q, C, \Phi) = \lambda_{\text{hall}} \ell_{\text{hall}} + \lambda_{\text{omit}} \ell_{\text{omit}} + \lambda_{\text{abst}} \ell_{\text{abst}} + \lambda_{\text{conf}} \ell_{\text{conf}} + \lambda_{\text{comp}} \ell_{\text{comp}} + \lambda_{\text{cost}} \ell_{\text{cost}},
+\end{equation}
+
+\begin{equation}
+\label{eq:losszero}
+\ell(y; q, C, \Phi) = 0 \quad\Longleftrightarrow\quad y \in \mathcal{Y}^{*}(q,C,\Phi),
+\end{equation}
+
+whose components penalize, in order, unsupported assertions, omitted required content, failure to abstain when abstention is called for, silent resolution of conflicting evidence, violation of an applicable directive, and unnecessary length. The weights $\lambda_{\bullet}$ are not free parameters to be chosen for convenience. They encode the relative cost of each failure in the deployment context the system is built for, and they follow the mapping from context, task and performance requirements to system design that \citet{ramesh1995performance} places at the start of the design process rather than at its end. An unflagged conflict is a severe failure in a clinical setting and a minor one in a search summarizer, and the criterion function is the place where that difference is recorded.
+
+The ideal answer can now be characterized as a decision rather than as a description. Given a context $C$ that leaves some uncertainty about the world, the best answer is the one minimizing expected loss under the posterior over $\Phi$ induced by the evidence:
+
+\begin{equation}
+\label{eq:bayes}
+\boxed{\;
+y^{*}(q,C) \;\in\; \argmin_{y \in \mathcal{Y}} \ \mathbb{E}_{\Phi \sim P(\cdot \mid \sigma(C))} \bigl[\, \ell(y; q, C, \Phi) \,\bigr].
+\;}
+\end{equation}
+
+Writing \eqref{eq:bayes} makes abstention a consequence of the criterion rather than a separate stipulation.
+
+\begin{proposition}[Abstention threshold]
+\label{prop:chow}
+Let asserting a false answer incur cost $\lambda_{\text{hall}}$ and abstaining incur cost $\lambda_{\text{abst}}$, with $0 < \lambda_{\text{abst}} < \lambda_{\text{hall}}$. Then the answer defined in \eqref{eq:bayes} abstains if and only if
+\begin{equation}
+\label{eq:chow}
+\max_{a} P\bigl(a \mid \sigma(C)\bigr) \;\leq\; 1 - \frac{\lambda_{\text{abst}}}{\lambda_{\text{hall}}}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Asserting the answer $a$ incurs expected loss $\lambda_{\text{hall}}\bigl(1 - P(a \mid \sigma(C))\bigr)$, which is minimized by the most probable $a$, while abstaining incurs $\lambda_{\text{abst}}$. Asserting is preferred if and only if $\lambda_{\text{hall}}\bigl(1 - \max_a P(a \mid \sigma(C))\bigr) < \lambda_{\text{abst}}$, and rearranging gives \eqref{eq:chow}. This is the reject-option rule of \citet{chow1970reject}.
+\end{proof}
+
+Proposition~\ref{prop:chow} connects the criterion to the structure of the corpus. Call the retrieved context \textit{sufficient} for $q$ when the answer is invariant to whatever the evidence leaves undetermined, that is when $a_q(\Phi) = a_q(\Phi')$ for every pair of world states consistent with $\sigma(C)$, which holds exactly when the posterior $P(a_q \mid \sigma(C))$ is degenerate and, by \eqref{eq:support}, exactly when $\mathcal{S}(q) \neq \emptyset$. The queries in $\mathcal{Q}_{\text{insufficient}}$ are therefore precisely those for which the posterior is non-degenerate, and Proposition~\ref{prop:chow} says that abstention is the correct behavior there for any criterion in which a confident falsehood costs more than an admission of ignorance. A system prompt that instructs the model to abstain when evidence is lacking can accordingly be read as an attempt to shift the model's effective ratio $\lambda_{\text{abst}} / \lambda_{\text{hall}}$, which gives the deontic condition $S_{\theta_4}$ a precise interpretation.
+
+Finally, the criterion supplies a single quantity by which prompt conditions can be ranked. The risk of a system prompt is its expected loss over queries and decoding noise, and the causal effect of a prompt intervention is the difference of risks:
+
+\begin{equation}
+\label{eq:risk}
+\mathcal{R}(s) \;=\; \mathbb{E}_{q,\varepsilon}\Bigl[\, \ell\bigl(y^{\,s}; q, C, \Phi\bigr) \,\Bigr],
+\qquad
+\boxed{\;\tau_j \;=\; \mathcal{R}(S_j) - \mathcal{R}(S_0).\;}
+\end{equation}
+
+Equation~\eqref{eq:risk} is the specialization of the general estimand \eqref{eq:estimand} to the case where the functional $M$ is the criterion function itself. It is the primary quantity this thesis estimates. Chapter 5 constructs estimators for the components of $\ell$ in \eqref{eq:loss} and for the risk in \eqref{eq:risk}, and specifies the design under which those estimators recover $\tau_j$; every quantity measured there answers to a definition given here.
+
+\chapter{Experimental Set Up}
+
+Chapter 4 modeled the RAG system as the structural causal model $\mathcal{M}$ of Equation~\eqref{eq:scm}, defined a change of system prompt as the intervention $\mathrm{do}(S=S_j)$, and identified the quantity to be estimated as the causal effect $\tau_j$ of Equations~\eqref{eq:estimand} and~\eqref{eq:risk}. It also defined what a good answer is, through the ideal set $\mathcal{Y}^{*}$ of Equation~\eqref{eq:ideal} and the criterion function $\ell$ of Equation~\eqref{eq:loss}. This chapter turns those definitions into a concrete experimental procedure: it explains how the corpus and query set are generated, how the baseline and prompt interventions are run, how repeated, stochastic generations are handled, and how the components of $\ell$ are estimated from observable outputs. Nothing in this chapter defines what counts as good system behavior; every quantity introduced here is an estimator of a quantity already defined in Chapter 4.
+
+The experiment estimates $\tau_j$, the causal effect of the system prompt on the criterion, under the conditions that make the paired difference an unbiased estimator of it by Proposition~\ref{prop:ident}.\\
+\newline
+For each query $q_i$ and prompt condition $S_j$, define
+\[
+y_{ij} = F(q_i,D;S_j).
+\]
+\newline
+The experimental dataset consists of observations
+\[
+\mathcal{E} = \{(q_i,S_j,C_i,y_{ijr})\},
+\]
+where $r \in \{1,\ldots,n\}$ indexes the repeated generation introduced in Step 5, and
+\[
+C_i=R(q_i;D).
+\]
+\newline
+The same retrieved context should be used across prompt conditions since this is particularly important for isolating the effect of the system prompt.\\
+\subsubsection*{Step 1: Knowledge Base}
+The corpus is generated rather than collected, following Equation~\eqref{eq:docgen}. A finite proposition space $\mathcal{P}$ with a truth assignment is fixed first, and each document is produced as $d = \Gamma(z,\nu)$ from a latent semantic content $z$ and a nuisance parameter $\nu$ controlling surface form. This is what makes the correspondence between questions and supporting documents known by construction rather than by annotation: the support family $\mathcal{S}(q)$ of Equation~\eqref{eq:support} is computed from the proposition sets carried by the generated documents.\\
+\newline
+The design over $(z,\nu)$ fixes the following corpus parameters, which are held constant across all prompt conditions:
+\begin{enumerate}
+    \item redundancy, the number of documents carrying the same proposition
+    \item distractor density, the proportion of documents with high similarity to a query but no proposition relevant to its answer
+    \item contradiction rate, the density of documents asserting a proposition and its negation
+    \item realization noise in $\nu$, covering verbosity, hedging, and register
+    \item the chunking function $\chi$, which determines the units actually indexed
+\end{enumerate}
+The chunking function is fixed for the reason given in Chapter 4: a chunk boundary that separates a proposition from the material disambiguating it produces a semantic loss $\mathrm{SL}(d,\chi) > 0$ by Equation~\eqref{eq:chunkloss}, and any unfaithfulness it causes has nothing to do with the system prompt. A scale sufficient for the comparisons below is on the order of sixty propositions and forty documents, which keeps the closed world small enough to verify by hand.
+\subsubsection*{Step 2: Query Set}
+Let
+\[
+Q=\{q_1,q_2,\ldots,q_{N_Q}\}
+\]
+denote the experimental query set, where $N_Q$ is the total number of queries. The symbol $M$ denotes a real-valued functional of the output, in the sense of Equation~\eqref{eq:estimand}, and is never used for a query count.\\
+\newline
+Each query $q$ has an answer target $a_q \in \mathcal{P}$, which is known because the corpus was generated from $\mathcal{P}$ in Step 1.\\
+\newline
+The partition
+\[
+Q = \mathcal{Q}_{\text{direct}} \cup \mathcal{Q}_{\text{multi-hop}} \cup \mathcal{Q}_{\text{conflict}} \cup \mathcal{Q}_{\text{insufficient}}
+\]
+is not assigned by hand. Each query falls into exactly one category by the derivation in Equation~\eqref{eq:categories}, applied to the support family $\mathcal{S}(q)$ computed from the generated corpus. Queries whose category is not the intended one are regenerated rather than relabelled. This allows the effect of a prompt to be evaluated under different information conditions, with the information condition itself a verified property of the corpus. The total number of queries $N_Q$, and how they are split across these four categories, should be large enough to reliably detect the smallest effect size that matters for each metric defined later in this chapter. This thesis treats $N_Q$ as a value to be fixed and justified before data collection, not adjusted afterward.\\
+\subsubsection*{Step 3: Baseline}
+A baseline system is defined as
+\[
+F_0(q)=G(q,R(q;D);S_0),
+\]
+where $S_0$ is the baseline system prompt.\\
+\newline
+Every query is first evaluated using $S_0$. The resulting baseline establishes the reference values for the subsequent experimental comparisons.\\
+\newline
+For each query $q_i$, record:
+\[
+C_i=R(q_i;D)
+\]
+and
+\[
+y_{i0}=F_0(q_i).
+\]
+\newline
+The baseline should also record the retrieval results, model configuration, decoding parameters, and other implementation details.\\
+\subsubsection*{Step 4: Prompt Interventions}
+For each experimental prompt $S_j$, repeat the experiment using the same query set and the same retrieved context recorded in Step 3:
+\[
+y_{ij} = G(q_i,C_i;S_j).
+\]
+\newline
+Reusing the stored $C_i$, rather than invoking $R(q_i;D)$ a second time, is the intervention $\mathrm{do}(C := C_i)$ of Chapter 4: the context is set rather than observed, which holds it identical across conditions even if $R$ is not perfectly deterministic and removes the variance of retrieval from every comparison. The only intentional perturbation is the intervention
+\[
+\mathrm{do}(S := S_0) \rightarrow \mathrm{do}(S := S_j).
+\]
+Each generation is issued as an independent, stateless request, with response caching disabled, so that Assumption~\ref{as:sutva} holds.
+\newline
+The order in which $S_0$ through $S_4$ are administered for a given query is randomized independently per query, and the timestamp of each generation is recorded, so that any drift over the course of data collection can be checked as a covariate rather than being confounded with condition.\\
+\newline
+This creates a paired experimental design because the same query is evaluated under multiple prompt conditions.\\
+\subsubsection*{Step 5: Repeat Runs}
+Language-model generation is stochastic. Therefore, each condition should be repeated $n$ times.\\
+\newline
+Let
+\[
+y_{ijr}
+\]
+denote the output for query $q_i$, prompt $S_j$, and repetition $r$.\\
+\newline
+The number of repetitions $n$ should likewise be large enough to get a stable estimate of $\bar{M}_j$, given the variance that comes from random decoding, rather than chosen arbitrarily.\\
+\newline
+The empirical outcome for a condition can then be estimated by
+\[
+\bar{M}_{j} = \frac{1}{N_Q n} \sum_{i=1}^{N_Q}\sum_{r=1}^{n} M(y_{ijr}).
+\]
+where $M$ is an evaluation metric applied to each individual output $y_{ijr}$, and $\bar{M}_j$ is its mean over all queries and repetitions under condition $j$.
+\subsubsection*{Step 6: Intermediate System Behavior}
+Although the model is minimal, intermediate observations are to be logged.\\
+\newline
+Record for each query:
+\[
+(q_i,C_i,y_{ijr}).
+\]
+\newline
+If the system exposes citations, document identifiers, or other evidence references, these should also be recorded. This permits a distinction between
+retrieval and utilization of retrieved evidence. This distinction is important since a prompt may not alter which documents are retrieved but may alter how the generator uses those documents.\\
+\newline
+The prefix $y_{1:t^{*}}$ and its behavioral summary $B = \psi(y_{1:t^{*}})$, defined in Equation~\eqref{eq:mediator}, are recorded for every generation, together with the token position $t^{*}$ at which the cut was taken. These are required for the mediation analysis specified at the end of this chapter, which continues a prefix generated under one condition using the system prompt of another.\\
+\section*{Evaluation Metrics}
+
+The metrics below are estimators of the components of the criterion function $\ell$ defined in Equation~\eqref{eq:loss}. They do not define what a good answer is, which Equation~\eqref{eq:ideal} has already settled; each one estimates the extent to which a particular clause of the admissible set $\mathcal{P}^{*}$ in Equation~\eqref{eq:admissible} is violated. Answer Correctness estimates the veridicality clause, Evidence Faithfulness and Hallucination Rate the groundedness clause, Abstention Behavior the responsiveness clause, Conflict Acknowledgment the calibration clause, and Constraint Adherence and Tone and Style Adherence the directive clause.
+
+Each metric is computed over a specific subset of the query categories, and the subset is not chosen for convenience: a directive $\pi_k$ contributes to $\ell$ only where its applicability condition $\alpha_k(q,C)$ equals one, and a clause of $\mathcal{P}^{*}$ is only violable where it applies. Retrieval Utilization, Answer Correctness, Evidence Faithfulness, Constraint Adherence, and Tone and Style Adherence are therefore computed over $\mathcal{Q}_{\text{direct}} \cup \mathcal{Q}_{\text{multi-hop}} \cup \mathcal{Q}_{\text{conflict}}$, the categories for which $\mathcal{S}(q) \neq \emptyset$ and a gold evidence set exists. Abstention Behavior is computed exclusively over $\mathcal{Q}_{\text{insufficient}}$, which by Equation~\eqref{eq:categories} is exactly the set of queries whose posterior over the answer is non-degenerate and for which Proposition~\ref{prop:chow} makes abstention correct. Conflict Acknowledgment is computed exclusively over $\mathcal{Q}_{\text{conflict}}$. Hallucination Rate is computed over all four categories, since unsupported claims can occur regardless of whether sufficient evidence exists.
+
+\subsubsection*{1. Retrieval Utilization}
+
+Let $C_i$ denote the retrieved context for query $q_i$, and let $E_i(y)\subseteq C_i$ denote the subset of retrieved evidence explicitly or implicitly used to support the generated answer $y$. Let $\mathcal{G}_i = \bigcup \mathcal{S}(q_i)$ denote the gold-standard evidence set for query $q_i$, computed from the support family of Equation~\eqref{eq:support} rather than annotated by hand. The calligraphic symbol distinguishes it from the generation function $G$ of Chapter 4.\\
+\newline
+The evidence recall measure is
+\[
+ER(y) = \frac{|E_i(y)\cap \mathcal{G}_i|}{|\mathcal{G}_i|}.
+\]
+The evidence precision measure is
+\[
+EP(y) = \frac{|E_i(y)\cap \mathcal{G}_i|}{|E_i(y)|}.
+\]
+
+\subsubsection*{2. Hallucination Rate}
+
+Let $H(y)$ denote the number of unsupported factual claims in output $y$, and let $N(y)$ denote the total number of factual claims. Both are obtained by first decomposing $y$ into a list of atomic factual claims, using the judge model introduced below (\S~LLM as a Judge) prompted to extract one claim per proposition, and then having the same judge model label each claim as supported or unsupported given the retrieved context $C_i$.\\
+\newline
+Hallucination rate defined as
+\[
+HR(y)=\frac{H(y)}{N(y)}
+\]
+where a claim is considered hallucinated when it cannot be supported by the available evidence.\\
+\newline
+The aggregate hallucination rate for condition $S_j$ is
+\[
+\overline{HR}_j = \frac{1}{N_Q} \sum_{i=1}^{N_Q} HR(y_{ij}).
+\]
+\subsubsection*{3. Answer Correctness}
+Let
+\[
+\mathrm{Corr}(y,q)\in[0,1]
+\]
+denote the correctness of answer $y$ for query $q$, estimating the veridicality clause $\alpha(y) \subseteq \Phi$ of Equation~\eqref{eq:admissible}.\\
+\newline
+For binary evaluation,
+\[
+\mathrm{Corr}(y,q)\in\{0,1\}.
+\]
+\newline
+The mean answer correctness under prompt $S_j$ is
+\[
+\overline{\mathrm{Corr}}_j = \frac{1}{N_Q} \sum_{i=1}^{N_Q} \mathrm{Corr}(y_{ij},q_i).
+\]
+
+\subsubsection*{4. Evidence Faithfulness}
+Let
+\[
+\mathrm{Faith}(y,C)\in[0,1]
+\]
+measure the extent to which factual claims in $y$ are supported by the retrieved context $C$, estimating the groundedness clause $\alpha(y) \subseteq \mathrm{Cn}(\sigma(C))$ of Equation~\eqref{eq:admissible}.\\
+\newline
+That this metric is distinct from answer correctness is a consequence of the model rather than a separate assertion: groundedness and veridicality are different clauses of $\mathcal{P}^{*}$, and they come apart because $\sigma(C) \neq \Phi$ in general. A response can therefore be correct while failing to use the retrieved evidence, and it can be incorrect despite using evidence from the retrieved context.\\
+\subsubsection*{5. Constraint Adherence}
+Let $K_j$ denote the set of behavioral constraints specified by prompt $S_j$. By design (Chapter 4), $K_j$ stays the same across the Canonical, Lexical, Syntactic, and Format conditions ($S_{\theta_0}$ through $S_{\theta_3}$), since these conditions change only the wording and not the meaning. The Deontic condition ($S_{\theta_4}$) is the deliberate exception, included specifically to test whether it changes the meaning of the constraints. Adherence scores across conditions are therefore only comparable under this shared-constraint assumption.\\
+\newline
+For each constraint $k\in K_j$, define
+\[
+A_k(y)\in\{0,1\},
+\]
+where $A_k(y)=1$ indicates that the output satisfies the constraint.\\
+\newline
+The overall adherence score is
+\[
+A(y,S_j) = \frac{1}{|K_j|} \sum_{k\in K_j}A_k(y).
+\]
+This directly measures whether a prompt intervention produces the intended behavioral change.\\
+\subsubsection*{6. Tone and Style Adherence}
+If a prompt specifies an output style, define a style-adherence measure
+\[
+T(y,S_j)\in[0,1].
+\]
+\newline
+For instance, the prompt may specify that responses should be concise, formal, or structured. \\
+
+\subsubsection*{7. Abstention Behavior}
+
+For questions where the available evidence is insufficient, define
+\[
+A_{\text{abs}}(y)\in\{0,1\},
+\]
+where $A_{\text{abs}}(y)=1$ indicates an appropriate abstention.\\
+\newline
+The abstention accuracy is
+\[
+AA = \frac{\text{appropriate abstentions}}{\text{insufficient-evidence queries}}.
+\]
+\newline
+This metric is particularly useful for evaluating prompts containing explicit uncertainty or abstention instructions. By Proposition~\ref{prop:chow}, abstention is the correct behavior on $\mathcal{Q}_{\text{insufficient}}$ for any criterion in which a confident falsehood costs more than an admission of ignorance, so this metric estimates the term $\ell_{\text{abst}}$ of Equation~\eqref{eq:loss} rather than expressing a separate preference.
+\subsubsection*{8. Conflict Acknowledgment}
+
+The calibration clause of Equation~\eqref{eq:admissible} requires that an answer drawn from contradictory evidence make the contradiction explicit rather than resolving it silently. For queries in $\mathcal{Q}_{\text{conflict}}$, define
+\[
+\mathrm{Conf}(y)\in\{0,1\},
+\]
+where $\mathrm{Conf}(y)=1$ indicates that the output states that the retrieved evidence disagrees, and $\mathrm{Conf}(y)=0$ indicates that it asserts one side without acknowledging the other. The conflict acknowledgment rate under prompt $S_j$ is
+\[
+\overline{\mathrm{Conf}}_j = \frac{1}{|\mathcal{Q}_{\text{conflict}}|} \sum_{q_i \in \mathcal{Q}_{\text{conflict}}} \mathrm{Conf}(y_{ij}).
+\]
+This metric estimates the term $\ell_{\text{conf}}$ of Equation~\eqref{eq:loss}. Without it the conflicting-evidence queries generated in Step 1 would elicit a behavior that no metric records, since an answer that silently picks one side can still score as correct, faithful, and fully compliant.
+\subsubsection*{Output Length}
+The number of tokens generated is recorded for every output. Length is related to hallucination rate, retrieval utilization, and evidence faithfulness, since a longer response has more room to add unsupported claims or leave out relevant retrieved evidence, but it is not a confounder of the effect of the system prompt. A confounder is a common cause of treatment and outcome, and the system prompt is assigned by the experimenter, so nothing causes both. Length is instead an intermediate variable on a directed path from $S$ to the outcome, since the prompt changes how much the model writes and how much the model writes changes the outcome.\\
+\newline
+The distinction matters for the analysis. Conditioning on length estimates a controlled direct effect, which excludes the part of the prompt's influence that operates by changing output length, and is therefore not an estimate of the total effect $\tau_j$ defined in Equation~\eqref{eq:estimand}. Treating length as a covariate would remove part of the effect being measured. Both quantities are reported, and reported as different quantities: the total effect $\tau_j$ without conditioning on length, and separately the controlled direct effect at fixed length, with the difference between them read as the share of the effect that runs through verbosity.
+\subsubsection*{Self-consistency}
+The $n$ repetitions collected in Step 5 are used to estimate $\bar{M}_j$, but how spread out they are is itself worth measuring: a system prompt that reduces output variance across repetitions, for the same query, shows increased behavioral consistency. This is estimated with the pairwise semantic similarity among the $n$ outputs for a given query and condition, which costs almost nothing extra since the outputs are already generated.
+\subsubsection*{LLM as a Judge}
+Answer Correctness, Evidence Faithfulness, Hallucination Rate, and Tone and Style Adherence cannot be measured directly. They must be estimated using a separate large language model acting as a judge, prompted to compare the generated output against the retrieved context or the known answer. Since this thesis's own hypothesis is that language models are sensitive to their instructions, the judge model's reliability cannot simply be assumed: its agreement with human judgment should be checked on a held-out set of outputs before it is used to score the full experiment. The judge's own prompt should also stay fixed across all experimental conditions, so that the judge's behavior does not itself become a confound. The judge is also blind to condition: outputs are presented to it in randomized order with no label or other indication of which prompt condition produced them, since some conditions (for example, the Format condition $S_{\theta_3}$) are otherwise visually identifiable from surface structure alone, which could bias scoring independently of actual output quality.
+\subsubsection*{Behavioral and Outcome Effects}
+
+For a metric $M$, define the effect of prompt $S_j$ relative to the baseline $S_0$ as
+\[
+\Delta M_j = \overline{M}_j-\overline{M}_0.
+\]
+
+\subsubsection*{Statistical Analysis Plan}
+The analysis has one primary endpoint and eight secondary ones, and the distinction is fixed before data collection. The primary endpoint is the estimated risk difference
+\[
+\hat{\tau}_j = \hat{\mathcal{R}}(S_j) - \hat{\mathcal{R}}(S_0),
+\qquad
+\hat{\mathcal{R}}(S_j) = \frac{1}{N_Q n}\sum_{i=1}^{N_Q}\sum_{r=1}^{n} \ell\bigl(y_{ijr}; q_i, C_i, \Phi\bigr),
+\]
+the sample analogue of the causal effect in Equation~\eqref{eq:risk}, with $\ell$ the criterion function of Equation~\eqref{eq:loss} evaluated from the component metrics above. Reporting a single primary endpoint is what allows the study to answer which prompt condition is preferable. Eight metrics moving in eight directions cannot be ranked without a criterion that weighs them against one another, and Equation~\eqref{eq:loss} is that criterion.
+
+Because the same query set is evaluated under every prompt condition, comparisons between $S_j$ and the baseline $S_0$ are paired at the level of the individual query. For the primary endpoint, the paired difference in $\ell$ is compared using a paired $t$-test where its normality assumption holds and a Wilcoxon signed-rank test otherwise. For the secondary metrics, binary outcomes (Answer Correctness, Constraint Adherence, Abstention Behavior, Conflict Acknowledgment) are compared using McNemar's test on the paired proportions, and continuous or bounded-continuous outcomes (Hallucination Rate, Evidence Faithfulness, Retrieval Utilization, Tone and Style Adherence) using the same paired test as the primary endpoint. Choosing between the two tests based on a check of the data's distribution is not post-hoc test selection, since the choice does not depend on the observed effect or how significant it is.
+
+The primary endpoint is tested at $\alpha = 0.05$ across the four intervention conditions, corrected by the Holm-Bonferroni method over that family of four tests only. The secondary metrics are reported with the same correction applied within their own family, and are interpreted as descriptive decompositions of the primary effect rather than as independent confirmatory tests. Separating the families this way keeps the confirmatory analysis adequately powered at the sample sizes available to this thesis, which a single family of thirty-two tests would not be.
+
+Beyond the baseline comparisons above, this thesis also tests the boundary claim from Chapter 4 directly: whether the Deontic condition ($S_{\theta_4}$) produces a significantly larger effect than the Lexical, Syntactic, and Format conditions ($S_{\theta_1}$ through $S_{\theta_3}$). For each metric, this is tested as one planned contrast between $\Delta M_4$ and the mean of $\Delta M_1$, $\Delta M_2$, and $\Delta M_3$, using the same paired framework and correction as above. Only this contrast, and not every pairwise combination of intervention conditions, is pre-specified, since it is the only comparison the boundary claim in Chapter 4 depends on.
+
+Finally, the thesis tests whether the system prompt acts on outcomes through a change in behavior rather than merely alongside one. This cannot be done by relating one output metric to another, because every metric defined above is a functional of the same variable $y$ and two functionals of one variable stand in no causal relation. The mediator used is the prefix commitment $B = \psi(y_{1:t^{*}})$ of Equation~\eqref{eq:mediator}, which is structurally prior to the remainder of the answer.\\
+\newline
+The natural direct and indirect effects of Equations~\eqref{eq:nie} to~\eqref{eq:decomp} are estimated by a prefix-forcing procedure. For each query, a prefix is generated under condition $S_j$, generation is then continued from that prefix under the baseline prompt $S_0$, and the resulting output realizes the cross-world quantity $y^{\,S_0, B^{S_j}}$ directly. Averaging over queries and repetitions gives $\mathrm{NIE}_j$; subtracting it from the total effect gives $\mathrm{NDE}_j$. By Proposition~\ref{prop:mediation} these quantities are identified, and because the counterfactual is produced by running the system rather than inferred under an untestable assumption, the decomposition rests on an experiment.\\
+\newline
+A large indirect effect would indicate that the prompt acts by changing how the generator opens its answer, and a large direct effect that it acts on the body of the answer independently of that opening. Should both be small while the total effect is large, the mediator chosen is not the mechanism, and this thesis reports that rather than searching for a mediator that produces a significant decomposition.
+
+\chapter{Results and Discussion}
+
+The central analysis compares each experimental prompt condition with the baseline.\\
+\newline
+For prompt $S_j$, the observed system can be represented as
+\[
+F_j(q) = G(q,R(q;D);S_j).
+\]
+\newline
+The primary quantity is the estimated causal effect on the criterion,
+\[
+\hat{\tau}_j = \hat{\mathcal{R}}(S_j) - \hat{\mathcal{R}}(S_0),
+\]
+defined in Equation~\eqref{eq:risk} and estimated as specified in Chapter 5. Each component metric is additionally reported as a secondary effect
+\[
+\Delta M_j = \overline{M}_j - \overline{M}_0,
+\]
+whose interpretation depends on the metric.
+\[
+\Delta HR_j<0
+\]
+would indicate a reduction in hallucination rate relative to the baseline.
+\[
+\Delta A_j>0
+\]
+would indicate improved adherence to the constraints in the system prompt.\\
+\newline
+The analysis considers both statistical significance and practical significance. \\
+\newline
+Paired comparisons follow the statistical analysis plan fixed in Chapter 5: the primary endpoint $\hat{\tau}_j$ is tested across the four intervention conditions with Holm-Bonferroni correction over that family alone, while the secondary metrics use McNemar's test for binary outcomes and a paired $t$-test or Wilcoxon signed-rank test for continuous outcomes, depending on whether the normality assumption holds, and are read as a decomposition of the primary effect rather than as independent confirmatory tests.
+
+\section*{Interpreting Prompt Effects}
+
+The results should be interpreted according to three questions.
+
+\subsubsection*{Question 1: Does the prompt change behavior?}
+This is evaluated primarily through variables such as instruction adherence, evidence utilization, tone/style adherence, and abstention behavior.\\
+
+\subsubsection*{Question 2: Does the behavioral change affect system outcomes?}
+This is evaluated through variables such as answer correctness, evidence faithfulness, and hallucination rate.\\
+\newline
+A prompt should not be judged better based on instruction adherence alone. It should also be judged on whether the resulting behavior improves the quality and reliability of the system as a whole.
+
+\subsubsection*{Question 3: Do behavioral changes coincide with the intended behavior?}
+The intermediate retrieval context $C$ provides an important control. Since $R$ is held fixed, differences in the final outputs can be examined as changes in the generator's use of the same evidence.\\
+\newline
+The resulting mechanism is
+\[
+S \rightarrow B \rightarrow y,
+\]
+with $B$ the prefix commitment of Equation~\eqref{eq:mediator}. Whether the mechanism holds is settled by the decomposition $\tau_j = \mathrm{NDE}_j + \mathrm{NIE}_j$ of Equation~\eqref{eq:decomp}, estimated by the prefix-forcing procedure of Chapter 5, rather than by observing that two output metrics move together.\\
+\newline
+Within the controlled RAG architecture, and under Assumptions~\ref{as:noedge} to~\ref{as:sutva}, the experiment estimates the causal effect of the system prompt on the criterion defined in Chapter 4. It does not identify the internal mechanism by which the language model produces that effect, which remains outside the scope of a black-box intervention study.
+\chapter{Conclusion}
+\section{Contribution}
+
+\bibliographystyle{apalike}
+\bibliography{thesis}
+
+\end{document}

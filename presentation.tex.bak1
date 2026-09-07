@@ -1,0 +1,1265 @@
+%=======================================================================
+%  Beamer presentation accompanying the bachelor thesis
+%  "Instruction Robustness in RAG/GraphRAG Agent Pipelines"
+%  Christian Block -- Goethe-Universitaet Frankfurt am Main
+%
+%  Compile:  pdflatex presentation && bibtex presentation
+%            pdflatex presentation && pdflatex presentation
+%=======================================================================
+\documentclass[11pt,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds,calc}
+\usepackage{natbib}
+\bibliographystyle{apalike}
+
+%----------------------------------------------------------------------
+% Theme
+%----------------------------------------------------------------------
+\usetheme{Boadilla}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamerfont{title}{size=\Large,series=\bfseries}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamercolor{block title}{bg=structure!18!white}
+\setbeamercolor{block body}{bg=structure!7!white}
+\setbeamercolor{alerted text}{fg=red!65!black}
+\setbeamertemplate{footline}{%
+  \hfill\usebeamerfont{footline}\color{structure!70!black}%
+  \scriptsize Christian Block\quad\textbar\quad Instruction Robustness in RAG\quad\textbar\quad
+  \insertframenumber/\inserttotalframenumber\hspace{2ex}\vskip2pt}
+
+% Compact "take-away" box used at the bottom of argument slides
+\newcommand{\takeaway}[1]{%
+  \vfill
+  \begin{beamercolorbox}[wd=\textwidth,sep=5pt,rounded=true]{block body}%
+    \small\textbf{$\Rightarrow$} #1
+  \end{beamercolorbox}}
+
+\lstdefinestyle{promptbox}{
+    basicstyle=\tiny\ttfamily,
+    frame=single,
+    framesep=4pt,
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+    xleftmargin=0.5em,
+    xrightmargin=0.5em,
+    aboveskip=0.6em,
+    belowskip=0.3em
+}
+
+%----------------------------------------------------------------------
+% Title
+%----------------------------------------------------------------------
+\title[Instruction Robustness in RAG]{Instruction Robustness in RAG Pipelines}
+\subtitle{Isolating the System Prompt as a Causal Variable}
+\author[C.\ Block]{Christian Block}
+\institute[Goethe-Universit\"at]{%
+  Goethe-Universit\"at Frankfurt am Main \\ Fachbereich Informatik \\[0.6em]
+  \footnotesize First examiner: Prof.\ Dr.\ Visvanathan Ramesh}
+\date{Bachelor Thesis --- Research Pitch}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%======================================================================
+\section{Research Question}
+%======================================================================
+
+\begin{frame}{The problem}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+      \textbf{RAG in one line.} Retrieve evidence from an external knowledge
+      base, then let a language model generate an answer from it
+      \citep{lewis2020rag}.
+      \medskip
+
+      \textbf{Three things shape the answer:}
+      \begin{itemize}
+        \item the query the user sends,
+        \item the evidence the retriever supplies,
+        \item \alert{the system prompt} --- the standing instruction the
+              engineer writes.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Why the system prompt is special}
+        It is the only one of the three that is \emph{deliberately authored}
+        --- and the only one written in natural language rather than as a
+        formal specification.
+        \medskip
+
+        In practice retrieval and generation are reused across applications
+        and \emph{only the system prompt changes}.
+      \end{block}
+    \end{column}
+  \end{columns}
+  \takeaway{If the prompt is the part we author, we should know what
+  authoring it actually does.}
+\end{frame}
+
+\begin{frame}{What is already known --- and what is not}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Known}
+        \begin{itemize}\small
+          \item Small, meaning-preserving wording changes move model
+                behaviour a lot \citep{salinas2024butterfly}.
+          \item Formatting alone moves benchmark performance
+                \citep{sclar2024quantifying}.
+          \item A system prompt's authority is not guaranteed once the user
+                turn works against it \citep{mu2025robustness}.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Gap}
+        \begin{itemize}\small
+          \item That work varies the \emph{user} instruction, not the
+                \emph{standing system} prompt.
+          \item It is done \emph{outside} retrieval; RAG evaluation in turn
+                treats the prompt as a fixed setting, not as a controlled
+                variable.
+          \item Nobody separates \emph{what} a prompt asks for from
+                \emph{how} it is worded.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \takeaway{The system prompt has never been treated as an experimental
+  intervention inside a retrieval-augmented pipeline.}
+\end{frame}
+
+\begin{frame}{Research question}
+  \begin{block}{RQ}
+    \textbf{To what extent do systematic changes in the system prompt alter
+    the behaviour and outcomes of a RAG system when the user input, the
+    knowledge base, the retrieval mechanism, and the underlying language
+    model are held constant?}
+  \end{block}
+  \medskip
+  Answering it needs exactly two things, and the thesis builds both:
+  \begin{enumerate}
+    \item a \textbf{formal model} of the system precise enough to isolate the
+          system prompt as a single parameter (Ch.~4);
+    \item an \textbf{experimental design} in which every other source of
+          variation is held fixed (Ch.~5).
+  \end{enumerate}
+  \medskip
+  \small
+  \textbf{Scope.} Standard single-shot RAG --- deliberately. In
+  graph-structured and agentic pipelines the prompt also shapes
+  \emph{retrieval}, so a measured effect could not be decomposed into a
+  prompt component and a routing component. This is the controlled baseline
+  those richer pipelines need.
+\end{frame}
+
+%======================================================================
+\section{Formal Model of the RAG System}
+%======================================================================
+
+\begin{frame}{The system as a chain}
+  \[
+    (q,D) \;\longrightarrow\; p_\eta(z \mid q,D)
+          \;\longrightarrow\; p_\theta(y_i \mid q,z,y_{1:i-1},\alert{S})
+          \;\longrightarrow\; p_{\mathrm{RAG}}(y \mid q,D,\alert{S})
+  \]
+  \vspace{-0.5em}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \small
+      \begin{description}
+        \item[$q$] user query
+        \item[$D=\{d_1,\dots,d_N\}$] knowledge base
+        \item[$z$] a single retrieved document
+        \item[$C=\{z_1,\dots,z_K\}$] retrieved context
+      \end{description}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \small
+      \begin{description}
+        \item[$S$] system prompt (standing instruction)
+        \item[$y=(y_1,\dots,y_L)$] generated answer
+        \item[$\eta,\theta$] retriever / generator parameters
+      \end{description}
+    \end{column}
+  \end{columns}
+  \takeaway{The system prompt $S$ enters at the \emph{generation} stage only.
+  The research question is then a question about one distribution: what
+  changes in $p_{\mathrm{RAG}}(y\mid q,D,S)$ when $S$ changes?}
+\end{frame}
+
+\begin{frame}{Step 1 --- probabilistic retrieval}
+  Retrieval is a \emph{distribution} over documents, not a single choice:
+  \begin{equation*}
+    p_\eta(z \mid q,D)
+  \end{equation*}
+  The retriever never commits to one document being correct; it spreads
+  probability over candidates.
+  \medskip
+
+  Evaluating all $N$ documents is impractical, so keep the top $K$:
+  \begin{equation*}
+    \mathcal{Z}_K(q,D) = \operatorname*{TopK}_{z \in D} \; p_\eta(z \mid q,D),
+    \qquad
+    C = \{z_1,\ldots,z_K\}, \qquad z_k \in \mathcal{Z}_K(q,D)
+  \end{equation*}
+  \takeaway{$z$ is a candidate the model \emph{sums over}; $C$ is the concrete
+  collection the running system retrieves and logs. The distinction matters
+  for the experiment.}
+\end{frame}
+
+\begin{frame}{Step 2 --- prompt-conditioned generation}
+  \citet{lewis2020rag} write the generator at token level as
+  $p_\theta(y_i \mid q,z,y_{1:i-1})$.
+  \medskip
+
+  \begin{block}{The one extension this thesis makes}
+    \vspace{-0.8em}
+    \begin{equation*}
+      p_\theta(y_i \mid q,z,y_{1:i-1},\alert{S})
+    \end{equation*}
+  \end{block}
+  \medskip
+
+  The departure is deliberately small: \emph{same model, same parameters
+  $\theta$}. What changes is that the system prompt is written into the
+  conditioning information instead of being left implicit.
+  \medskip
+
+  Generation is autoregressive, so a full sequence follows by multiplication:
+  \begin{equation*}
+    p_\theta(y \mid q,z,S) = \prod_{i=1}^{L} p_\theta(y_i \mid q,z,y_{1:i-1},S)
+  \end{equation*}
+  \takeaway{Making $S$ an explicit argument is what turns "prompt
+  engineering" into a variable that can be intervened on.}
+\end{frame}
+
+\begin{frame}{Step 3 --- marginalising over retrieved documents}
+  The system does not know which document supports the answer, so it averages
+  over candidates \citep{lewis2020rag}.
+  \begin{block}{RAG-Sequence --- one document explains the whole answer}
+    \vspace{-1.0em}
+    \begin{equation*}
+      p_{\text{RAG-Sequence}}(y \mid q,D,S) \;\approx\;
+      \sum_{z \in \mathcal{Z}_K(q,D)} p_\eta(z \mid q,D)
+      \prod_{i=1}^{L} p_\theta(y_i \mid q,z,y_{1:i-1},S)
+    \end{equation*}
+  \end{block}
+  \vspace{-0.4em}
+  \begin{block}{RAG-Token --- different parts may come from different documents}
+    \vspace{-1.0em}
+    \begin{equation*}
+      p_{\text{RAG-Token}}(y \mid q,D,S) \;\approx\;
+      \prod_{i=1}^{L} \sum_{z \in \mathcal{Z}_K(q,D)} p_\eta(z \mid q,D)\,
+      p_\theta(y_i \mid q,z,y_{1:i-1},S)
+    \end{equation*}
+  \end{block}
+  \vspace{-0.2em}
+  \vspace{-0.3em}
+  {\small The whole difference is the order of the two operators:
+  $\sum_z\prod_i$ against $\prod_i\sum_z$.}
+  \vspace{-0.2em}
+  \begin{beamercolorbox}[wd=\textwidth,sep=4pt,rounded=true]{block body}\small
+  \textbf{$\Rightarrow$} The choice does not matter here: $S$ appears in
+  \emph{exactly the same place} in both --- inside the generator and nowhere
+  else. Both are written
+  $p_{\mathrm{RAG}}(y \mid q,D,S)$.
+  \end{beamercolorbox}
+\end{frame}
+
+%======================================================================
+\section{Variation of the System Prompt}
+%======================================================================
+
+\begin{frame}{Decomposing the prompt: what it asks vs.\ how it asks}
+  $S$ enters the model as one symbol, but it is a text with internal
+  structure --- and that structure is what the experiment varies.
+  \begin{block}{Requirements and wording}
+    \vspace{-0.8em}
+    \begin{equation*}
+      S = \rho(\Sigma,\varphi), \qquad \Sigma = \{\sigma_1,\ldots,\sigma_m\}
+    \end{equation*}
+  \end{block}
+  \begin{itemize}
+    \item $\Sigma$: the set of \textbf{requirements} the prompt states. Each
+          $\sigma_k$ is a property an answer either has or does not have, so
+          $\sigma_k(y)\in\{0,1\}$ is \emph{checkable on any output}
+          \citep{zhou2023ifeval}.
+    \item $\varphi$: the \textbf{wording} those requirements are expressed in.
+  \end{itemize}
+  \medskip
+  Two prompts built from the same $\Sigma$ ask for the same thing; two built
+  from the same $\varphi$ say things the same way.
+  \takeaway{This separation is the whole experimental lever: hold $\Sigma$
+  fixed, vary $\varphi$, and any behavioural difference is an effect of
+  wording alone.}
+\end{frame}
+
+\begin{frame}{The design: three requirement sets $\times$ five wordings}
+  \textbf{Factor 1 --- requirement set} (three published prompts, see
+  Sec.~\ref{sec:prov}):
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}llc@{}}
+    \toprule
+    Set & Source & Requirements $m$ \\
+    \midrule
+    $\Sigma_A$ & response-generation prompt, \citet{friel2024ragbench} & 1 \\
+    $\Sigma_C$ & comprehensive instruction, \citet{mao2024fitrag} & 3 \\
+    $\Sigma_B$ & \textsc{vanilla} instruction, \citet{gao2023alce} & $\approx$10 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \medskip
+  \textbf{Factor 2 --- wording}, per baseline $b\in\{A,B,C\}$:
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}llp{6.6cm}@{}}
+    \toprule
+    Condition & Type & What changes \\
+    \midrule
+    $S_{b,0}=\rho(\Sigma_b,\varphi_0)$ & canonical & nothing --- the published form; the reference \\
+    $S_{b,1}=\rho(\Sigma_b,\varphi_1)$ & lexical   & synonym substitution, order and voice fixed \\
+    $S_{b,2}=\rho(\Sigma_b,\varphi_2)$ & syntactic & clause reordering, active $\to$ passive \\
+    $S_{b,3}=\rho(\Sigma_b,\varphi_3)$ & format    & same wording as a list rather than prose \\
+    $S_{b,4}=\rho(\Sigma_b',\varphi_0)$ & deontic   & \alert{$\Sigma$ itself changes}: obligation $\to$ request \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \takeaway{$3\times5=\mathbf{15}$ prompt conditions. Every contrast is taken
+  \emph{within} a baseline.}
+\end{frame}
+
+\begin{frame}[fragile]{Concrete: the five conditions of baseline $A$}
+\begin{lstlisting}[style=promptbox]
+A0  Use the following pieces of context to answer the question.        <- canonical
+
+A1  Employ the following excerpts of material to address the query.    <- lexical
+
+A2  The question is to be answered using the context pieces below.     <- syntactic
+
+A3  CONTEXT: the following pieces                                      <- format
+    TASK: use them to answer the question
+
+A4  Please try to answer the question using the context pieces below.  <- deontic
+\end{lstlisting}
+\small
+\textbf{Discipline that keeps the axes clean:}
+\begin{itemize}\small
+  \item The syntactic variant carries obligation uniformly through
+        \emph{is to be}, so a change of voice does not also change modal
+        force.
+  \item The format variant uses bare noun phrases, for the same reason.
+        \emph{Modal force belongs to the deontic condition alone.}
+  \item Within a baseline all five stay within $\approx$10\% of the canonical
+        length, so a difference cannot be read as an effect of prompt length.
+        Word counts are recorded and can enter as a covariate.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why three baselines and not one}
+  \begin{block}{The empirical question, stated sharply}
+    If the system responded only to \emph{what} a prompt requires and not to
+    \emph{how} it is written, then $S_{b,0}$ through $S_{b,3}$ would produce
+    the same output distribution within every baseline --- they differ in
+    $\varphi$ alone. \textbf{Whether they do is the experiment.}
+  \end{block}
+  \medskip
+  A single baseline could not answer two obvious objections:
+  \begin{itemize}
+    \item A prompt stating \textbf{one} requirement leaves the deontic
+          condition almost nothing to weaken.
+    \item A prompt stating \textbf{ten} risks confounding the wording
+          manipulation with the sheer length of the text.
+  \end{itemize}
+  \takeaway{Observing the same wording effect across requirement sets that
+  differ by an \emph{order of magnitude} in $m$ separates the effect of
+  wording from the effect of density. Observing it in only one leaves the two
+  joined.}
+\end{frame}
+
+%======================================================================
+\section{The Causal Model}
+%======================================================================
+
+\begin{frame}{The causal structure (Figure 4.1)}
+  \begin{figure}
+  \centering
+  \resizebox{0.92\textwidth}{!}{%
+  \begin{tikzpicture}[
+      box/.style   = {draw, rounded corners=2pt, minimum height=9mm, minimum width=21mm,
+                      align=center, font=\small},
+      tx/.style    = {draw, very thick, rounded corners=2pt, minimum height=9mm,
+                      minimum width=21mm, align=center, font=\small},
+      ar/.style    = {-{Latex[length=2mm]}},
+      lb/.style    = {font=\scriptsize, inner sep=2pt, fill=white, align=center}
+  ]
+  \node[box] (q)    at (0,1.4)    {$q$};
+  \node[box] (d)    at (0,-1.4)   {$D$};
+  \node[box] (retr) at (3.9,-1.4) {Retriever $\eta$};
+  \node[box] (z)    at (7.6,-1.4) {$z$};
+  \node[tx]  (s)    at (7.6,2.4)  {$S$};
+  \node[box] (gen)  at (11.3,0)   {Generator $\theta$};
+  \node[tx]  (y)    at (14.9,0)   {$y$};
+  \node[box] (m)    at (18.4,0)   {$M(Y)$};
+
+  \draw[ar] (q) -- (retr);
+  \draw[ar] (d) -- (retr);
+  \draw[ar] (retr) -- (z);
+  \draw[ar] (z) -- (gen);
+  \draw[ar] (q) -- (gen);
+  \draw[ar, very thick] (s) -- (gen);
+  \draw[ar] (gen) -- (y);
+  \draw[ar] (y) -- (m);
+  \end{tikzpicture}}
+  \caption{\footnotesize The system prompt $S$ and the output $y$ are drawn in
+  bold. $S$ enters the generator and has \textbf{no arrow into the
+  retriever}, which is what allows a change in $y$ to be attributed to a
+  change in $S$.}
+  \end{figure}
+  \vspace{-0.6em}
+  \small Read off the graph: $S \to y$ exists; $S \to z$ does not. In the
+  notation of \citet{pearl2009causality}, $S$ has an effect on $y$ and no
+  effect on $z$.
+\end{frame}
+
+\begin{frame}{What the graph licenses --- and what it would take to break it}
+  \begin{block}{Three claims, read directly off Figure~4.1}
+    \begin{enumerate}\small
+      \item \textbf{No confounding.} $S$ has no parent in the graph --- it is
+            \emph{assigned by the experimenter}, not observed. So
+            $p(y \mid \mathrm{do}(S=S_j)) = p(y \mid S=S_j)$: no adjustment
+            set, no backdoor path, no unmeasured common cause to argue about.
+      \item \textbf{No mediation through the evidence.} The only path from $S$
+            to $y$ is $S \to \text{Generator} \to y$. There is no path
+            $S \to \text{Retriever} \to z \to y$, because the edge does not
+            exist. The prompt cannot change the answer by changing what was
+            retrieved.
+      \item \textbf{The measurement is downstream of everything.}
+            $y \to M(Y)$: the measured property is a function of the output
+            alone, so no metric can react to $S$ except through $y$.
+    \end{enumerate}
+  \end{block}
+  \medskip
+  \small\textbf{So what could still go wrong?} Only one thing: the assumed
+  graph failing to describe the running code. Not a statistical problem --- an
+  \emph{engineering} problem. Which is why the next section is about how the
+  code enforces the graph.
+\end{frame}
+
+\begin{frame}{The graph this thesis deliberately does \emph{not} assume}
+  \begin{columns}[c]
+    \begin{column}{0.54\textwidth}
+      \centering
+      \resizebox{0.96\textwidth}{!}{%
+      \begin{tikzpicture}[
+          box/.style = {draw, rounded corners=2pt, minimum height=8mm,
+                        minimum width=19mm, align=center, font=\small},
+          tx/.style  = {draw, very thick, rounded corners=2pt, minimum height=8mm,
+                        minimum width=19mm, align=center, font=\small},
+          ar/.style  = {-{Latex[length=2mm]}}
+      ]
+      \node[box] (q)    at (0,1.3)    {$q$};
+      \node[box] (d)    at (0,-1.3)   {$D$};
+      \node[box] (retr) at (3.6,-1.3) {Retriever $\eta$};
+      \node[box] (z)    at (7.0,-1.3) {$z$};
+      \node[tx]  (s)    at (7.0,2.3)  {$S$};
+      \node[box] (gen)  at (10.4,0)   {Generator $\theta$};
+      \node[tx]  (y)    at (13.8,0)   {$y$};
+
+      \draw[ar] (q) -- (retr);
+      \draw[ar] (d) -- (retr);
+      \draw[ar] (retr) -- (z);
+      \draw[ar] (z) -- (gen);
+      \draw[ar] (q) -- (gen);
+      \draw[ar, very thick] (s) -- (gen);
+      \draw[ar] (gen) -- (y);
+      \draw[ar, very thick, red, dashed] (s) to[out=180,in=90] (retr);
+      \node[font=\small, red] at (2.6,1.6) {routing path};
+      \end{tikzpicture}}
+      \\[0.4em]
+      {\scriptsize Agentic / GraphRAG: the prompt also drives \emph{retrieval}.}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \small
+      Once the red edge exists, a measured effect of $S$ on $y$ is the
+      \emph{sum} of two paths:
+      \[
+        \underbrace{S \to \text{Gen} \to y}_{\text{prompt effect}}
+        \;+\;
+        \underbrace{S \to \text{Retr} \to z \to y}_{\text{routing effect}}
+      \]
+      and nothing in the data separates them. The total is estimable; the
+      component the RQ asks about is not.
+      \medskip
+
+      \textbf{This is why the scope restriction is a design decision, not a
+      shortcut.} You cannot attribute an effect to the prompt in a pipeline
+      where the prompt also picks the evidence --- unless you first know what
+      it does when it cannot.
+    \end{column}
+  \end{columns}
+  \vspace{-0.3em}
+  \begin{beamercolorbox}[wd=\textwidth,sep=4pt,rounded=true]{block body}%
+    \scriptsize\textbf{$\Rightarrow$} The single-shot architecture is the
+    configuration in which the effect is \emph{identifiable}. This thesis
+    supplies the controlled baseline that agentic and graph-structured
+    pipelines need before their numbers can be interpreted.
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{The missing edge, and what enforces it}
+  \begin{block}{Prompt-independence of retrieval}
+    \vspace{-0.8em}
+    \begin{equation*}
+      p_\eta(z \mid q,D,S) \;=\; p_\eta(z \mid q,D)
+    \end{equation*}
+  \end{block}
+  \begin{itemize}
+    \item It holds \textbf{by construction} for the single-shot architecture
+          --- the prompt is simply not an argument of the retriever.
+    \item It is \textbf{enforced in the implementation}: retrieval runs to
+          completion \emph{once}, before any prompt condition is applied, and
+          the context is written to disk and reused. No execution path remains
+          along which a prompt could reach the retriever.
+  \end{itemize}
+  \medskip
+  \textbf{Held constant across conditions:} each query fixed (paired design),
+  $D=D_0$, $\eta=\eta_0$, $\theta=\theta_0$.
+  \medskip
+
+  Decoding remains stochastic, and the model says so explicitly:
+  \begin{equation*}
+    Y = G(q,z,S;\theta,\varepsilon)
+  \end{equation*}
+  \takeaway{$\varepsilon$ is why every condition is \emph{repeated}
+  ($n=3$) rather than run once.}
+\end{frame}
+
+\begin{frame}{From intervention to estimand}
+  Setting the prompt is an \textbf{intervention}, $\mathrm{do}(S=S_j)$
+  \citep{pearl2009causality}. The notation separates \emph{setting} a variable
+  from merely \emph{observing} it:
+  \begin{itemize}\small
+    \item \emph{Observing} two systems with different prompts give different
+          answers leaves open that something else differed too.
+    \item \emph{Setting} the prompt while holding the rest fixed does not.
+  \end{itemize}
+  \medskip
+  For one query: $\;Y \sim p_{\mathrm{RAG}}(y \mid q,D,S_j)$. But a single
+  query is not the quantity of interest --- a prompt that helps one question
+  and hurts the next has established no effect at all.
+  \begin{block}{Average causal effect of condition $S_j$ vs.\ baseline $S_0$}
+    \vspace{-1.0em}
+    \begin{equation*}
+      \tau_j = \mathbb{E}_{q \sim P_{\mathcal{Q}}}\Bigl[\,
+        \mathbb{E}_{Y \sim p_{\mathrm{RAG}}(\cdot \mid q,D,S_j)}[M(Y)]
+        - \mathbb{E}_{Y \sim p_{\mathrm{RAG}}(\cdot \mid q,D,S_0)}[M(Y)]
+      \,\Bigr]
+    \end{equation*}
+  \end{block}
+  \takeaway{This is an average treatment effect in the standard sense: the
+  \emph{query} is the unit, the \emph{prompt condition} the treatment.}
+\end{frame}
+
+\begin{frame}{Two details in how $\tau_j$ is written}
+  \begin{block}{1. The difference is taken \emph{inside} the outer expectation}
+    Not between two separately averaged quantities. By linearity the two forms
+    agree numerically --- but only this form \textbf{records the pairing}.
+    Each query is its own control.
+  \end{block}
+  \begin{block}{2. The expectations are \emph{nested}, not pooled}
+    The inner expectation averages over retrieval and decoding randomness
+    \emph{at a fixed query}; the outer averages over queries. So a large
+    effect confined to a handful of inputs is not mistaken for a general one.
+  \end{block}
+  \medskip
+  \textbf{Two points on interpretation:}
+  \begin{itemize}\small
+    \item The intervention is on the \emph{conditioning variable} $S$, not on
+          the parameters: $\theta$ stays $\theta_0$ throughout. The prompt
+          changes what the generator is conditioned on, not what it learned.
+    \item Because $S$ is \emph{assigned by the experimenter} rather than
+          observed, no assumption about hidden common causes is needed. What
+          remains to establish is only that the constancy conditions actually
+          hold in the implementation --- and they are enforced, not assumed.
+  \end{itemize}
+\end{frame}
+
+%======================================================================
+\section{Why This Experiment Answers the Research Question}
+%======================================================================
+
+\begin{frame}[shrink=5]{Why this experiment answers the RQ}
+  \small The RQ asks for a \emph{causal, general} claim. Four things are needed;
+  each maps onto a specific piece of the design.
+  \vspace{-0.2em}
+  \begin{enumerate}\itemsep2pt
+    \item[\textbf{1.}] \textbf{The cause must be localised.}\\
+      \small $S$ appears in the model at one place only, the generator. The
+      retrieval term does not take $S$ as an argument. So the prompt cannot
+      act through the evidence.
+    \item[\textbf{2.}] \textbf{Rival explanations must be removed \emph{in advance}.}\\
+      \small Generator, temperature, embedding model, index, chunking $\chi$
+      and depth $K$ are all frozen before data collection.
+      $\mathcal{Z}_K(q,D)$ then depends on the query alone, so \emph{every
+      condition receives literally the same evidence}. Any change in the
+      answer originates at the generator.
+    \item[\textbf{3.}] \textbf{The comparison must be paired.}\\
+      \small Every query is run in every cell, so no difference between
+      conditions can be produced by a difference in the queries they were
+      asked.
+    \item[\textbf{4.}] \textbf{The claim must generalise beyond one input.}\\
+      \small $\tau_j$ is an expectation over the query distribution
+      $P_{\mathcal{Q}}$, estimated on 100 externally sourced queries --- not
+      on hand-picked examples.
+  \end{enumerate}
+  \vspace{-0.4em}
+  \begin{beamercolorbox}[wd=\textwidth,sep=3pt,rounded=true]{block body}\scriptsize
+  \textbf{$\Rightarrow$} The estimand $\tau_j$ \emph{is} the research question,
+  written formally. The design is built so that $\hat{\tau}_{jk}$ estimates it
+  and nothing else.
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{What would falsify the hypothesis}
+  A design that can only confirm is not an experiment. This one has a clear
+  null:
+  \begin{block}{Null}
+    Within each baseline $b$, conditions $S_{b,0},\dots,S_{b,3}$ share
+    $\Sigma_b$ and differ in $\varphi$ alone. If the system responds only to
+    \emph{what} is asked, then $\tau_1=\tau_2=\tau_3=0$ for every $b$ and
+    every evidence level.
+  \end{block}
+  \medskip
+  \textbf{And the result is informative either way:}
+  \begin{itemize}
+    \item $\tau_j \neq 0$ $\Rightarrow$ meaning-preserving rewording of a
+          \emph{system} prompt changes RAG behaviour --- a robustness problem
+          for every deployment that reuses a pipeline and edits only the
+          prompt.
+    \item $\tau_j \approx 0$ across all three baselines $\Rightarrow$ a
+          non-trivial \emph{negative} result: prompt-sensitivity findings from
+          the non-retrieval setting \citep{salinas2024butterfly,sclar2024quantifying}
+          do \emph{not} transfer to the standing system prompt in RAG.
+  \end{itemize}
+  \takeaway{Both branches answer the RQ. Neither requires the effect to exist.}
+\end{frame}
+
+%======================================================================
+\section{Experimental Setup}
+%======================================================================
+
+\begin{frame}{Design: one independent variable, one robustness factor}
+  \textbf{Independent variable:} the system prompt --- 15 conditions.
+  \medskip
+
+  \textbf{Held at a fixed value for the whole of data collection:}
+  \begin{center}\small
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    Component & Setting \\
+    \midrule
+    Generator & one instruction-tuned LLM; identity, $\theta$, temperature, max length fixed \\
+    Embedding & one model, both sides, dense dual encoder \citep{karpukhin2020dpr} \\
+    Index & FAISS \citep{johnson2021faiss}, built once, never rebuilt; exhaustive \\
+    Chunking $\chi$ & one passage per chunk \\
+    Depth & $K=5$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \medskip
+  \textbf{Controlled robustness factor (not a second treatment):} evidence
+  quality at four levels. A prompt effect that appeared only on clean evidence
+  would be of little practical interest.
+  \begin{equation*}
+    y_{ijkr} \sim p_{\mathrm{RAG}}\bigl(y \,\big|\, q_i,\ \mathrm{do}(C=c_{ik}),\ \mathrm{do}(S=S_j)\bigr),
+    \qquad r=1,\ldots,n
+  \end{equation*}
+\end{frame}
+
+\begin{frame}{Scale of the run}
+  \begin{center}
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    Prompt conditions & $15$ \\
+    Evidence levels & $4$ \\
+    Cells (fully crossed) & $\mathbf{60}$ \\
+    Queries, each run in every cell & $100$ \\
+    Repetitions per cell & $n=3$ \\
+    \midrule
+    \textbf{Generations} & $\mathbf{18{,}000}$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \medskip
+  \textbf{Why repeat at all?} \citet{salinas2024butterfly} remove decoding
+  randomness instead, decoding at temperature $0$ so one generation suffices.
+  That is not the setting studied here: \emph{a deployed system samples}, and
+  a prompt effect worth reporting is one that survives sampling. So
+  $\varepsilon$ is retained and averaged over rather than switched off.
+  \takeaway{Full crossing means every query is its own control in all 60
+  cells.}
+\end{frame}
+
+\begin{frame}{Knowledge base}
+  \textbf{The corpus is collected, not generated.} MS MARCO passage
+  collection \citep{nguyen2016msmarco}.
+  \begin{center}\small
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    Contents & every passage attached to a validation row with a non-empty \texttt{wellFormedAnswers} \\
+    Size & $N = 122{,}678$ passages \\
+    Distractors & \emph{none sampled} --- gold passages compete against the whole corpus \\
+    Index & exhaustive, not approximate (0.38\,GB of float32 vectors fits in memory) \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \medskip
+  \textbf{Why an established dataset rather than an invented one?}
+  \begin{itemize}\small
+    \item On an invented corpus the data model and the hypothesis are written
+          by the same hand: query difficulty, distractor density and
+          contradiction frequency all become free parameters chosen in full
+          knowledge of the effect they are meant to reveal.
+    \item Here the annotations --- not the experimenter --- fix which passage
+          answers which query. A third party can rebuild the index from the
+          published data.
+    \item MS MARCO queries were typed into Bing by people looking for
+          something. The topical spread is wide, so an instruction cannot pass
+          by governing one narrow domain.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Query set: $N_Q = 100$}
+  Two categories, fifty each, differing in \emph{one} property: how far the
+  evidence is spread across passages.
+  \begin{block}{$\mathcal{Q}_{\text{direct}}$ --- 50 queries}
+    \small Answer carried by a \emph{single} passage marked relevant. One
+    passage suffices, so a failure is a failure to use evidence that was
+    present. The noise-robustness testbed of \citet{chen2024rgb}.
+  \end{block}
+  \vspace{-0.3em}
+  \begin{block}{$\mathcal{Q}_{\text{multi-hop}}$ --- 50 queries}
+    \small Human-written answer draws on \emph{two or more} relevant
+    passages; the annotation identifies which. The requirement to combine
+    evidence is externally recorded, not asserted. The
+    information-integration testbed.
+  \end{block}
+  \medskip
+  \small
+  \textbf{Retrieval gate, reported ahead of results} (a property of the fixed
+  pipeline, not an outcome the prompt is credited for): at $K=5$ against the
+  full corpus, all needed gold passages land in the top five for
+  \textbf{66/100} queries --- 41/50 direct, 25/50 multi-hop. Gold recall
+  $113/153 = 73.9\%$. The 34 failures are excluded \emph{at $c^{\text{ret}}$
+  only}, uniformly across all prompt conditions, so the pairing survives.
+\end{frame}
+
+\begin{frame}{Four evidence levels --- all set by $\mathrm{do}(C=c_{ik})$}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}llp{7.6cm}@{}}
+    \toprule
+    Level & Name & What it supplies / what it isolates \\
+    \midrule
+    $c^{\text{gold}}$ & gold & only the annotated supporting passages --- behaviour when evidence is as good as it gets \\
+    $c^{\text{ret}}$  & retrieved & the genuine top-$K$ of the fixed retriever --- the \emph{deployment} condition \\
+    $c^{\text{corr}}$ & corrupted & gold passages with the supporting facts negated by entity substitution \citep{longpre2021conflicts,chen2024rgb} --- evidence set \emph{against} parametric memory \\
+    $c^{\varnothing}$ & empty & no context at all --- isolates parametric knowledge \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \smallskip
+  \scriptsize
+  \textbf{Levels are set directly, never by re-retrieving.} The embedding
+  model, index, chunking and depth are never touched, so the levels stay
+  compatible with the control. Changing $D$ instead would measure the
+  corruption \emph{and} the retriever's reaction to it together.
+  \smallskip
+
+  \textbf{$c^{\varnothing}$ is a primary control, not a formality.} $\pi_i$ =
+  share of runs answering $q_i$ correctly with \emph{no} context. A query with
+  high $\pi_i$ never tested retrieval. Results are reported over the full set
+  \emph{and} restricted to $\pi_i=0$ --- essential because the generator may
+  have seen public benchmark data in pretraining
+  \citep{chen2024rgb,longpre2021conflicts}.
+\end{frame}
+
+%======================================================================
+\section{Evaluation Metrics}
+%======================================================================
+
+\begin{frame}{What counts as a good answer}
+  \small Since many texts express the same answer, the standard defines a
+  \emph{set} of acceptable answers $\mathcal{Y}^{*}(q,C)$ rather than one
+  ideal string. An answer belongs to it when it satisfies four requirements at
+  once --- and the four fail \emph{independently}:
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}llp{6.4cm}@{}}
+    \toprule
+    Requirement & Measured by & Source \\
+    \midrule
+    \textbf{Grounded} & faithfulness & \citet{es2023ragas}, reference-free \\
+    \textbf{Relevant} & answer relevance & \citet{es2023ragas}, reference-free \\
+    \textbf{Correct} & accuracy vs.\ annotation & \citet{chen2024rgb} \\
+    \textbf{Obedient} & instruction adherence & prompt-level strict accuracy, \citet{zhou2023ifeval} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \smallskip
+  \scriptsize
+  The first three are the measures \citet{yu2024ragevalsurvey} name as the
+  evaluation targets of the \emph{generation} component --- each a pairwise
+  relation: relevance (response$\leftrightarrow$query), faithfulness
+  (response$\leftrightarrow$documents), correctness
+  (response$\leftrightarrow$reference).
+  \vspace{-0.2em}
+  \begin{beamercolorbox}[wd=\textwidth,sep=4pt,rounded=true]{block body}\scriptsize
+  \textbf{$\Rightarrow$} \ignorespaces Answers are rarely flawless or
+  worthless, so the four enter a \emph{graded cost}
+  $\ell(y) = \sum_k \lambda_k\, n_k(y)$ --- $n_k(y)$ the number of times an
+  answer breaks requirement $k$, $\lambda_k$ the weight attached to that
+  breach --- rather than a pass/fail. The weights are a property of the
+  deployment setting: an ungrounded claim is grave in a clinical assistant and minor in
+  a search tool. Grading also settles abstention without a separate rule ---
+  the classic reject option of \citet{chow1970reject}.
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Why these four, and why no retrieval metric}
+  \begin{block}{Groundedness and correctness are kept apart deliberately}
+    An answer can be \emph{correct while ignoring the evidence entirely},
+    drawing on what the generator already knows; and it can use the evidence
+    faithfully and still be \emph{wrong because the evidence was wrong}. A
+    system scoring well on correctness alone reveals nothing about whether
+    retrieval was used --- which is exactly what a system prompt is supposed
+    to govern. The two come apart most visibly at $c^{\text{corr}}$.
+  \end{block}
+  \begin{block}{Retrieval-stage metrics are excluded by design, not omitted}
+    The prompt enters the model at the generator only, so retrieval lies
+    \emph{upstream} of the intervention. And since $\eta,\chi,K$, the
+    embedding model and the index are fixed, the passages for a given query
+    are literally identical in all 15 conditions. MRR or context precision
+    would be \textbf{constant across conditions by construction} --- a
+    difference in them would be an arithmetic impossibility, i.e.\ a bug.
+  \end{block}
+  \small Faithfulness is the measure the experiment turns on: all 15
+  conditions state a grounding constraint, and faithfulness reveals whether it
+  is obeyed in practice or merely present in the wording.
+\end{frame}
+
+\begin{frame}{Adherence is checked per baseline --- and the judge is audited}
+  \begin{block}{No common checklist}
+    \scriptsize A condition is held only to what \emph{its own} prompt states.
+    \begin{itemize}\small
+      \item[] \hspace{-1em}$\Sigma_B$ fixes citation syntax and density $\Rightarrow$ parse
+            document identifiers, count per sentence.
+      \item $\Sigma_C$ requires a justification $\Rightarrow$ look for a
+            justification marker.
+      \item $\Sigma_A$ states nothing beyond grounding $\Rightarrow$ its
+            adherence measure is \emph{undefined by construction}, not
+            omitted; faithfulness carries the whole of what it asks.
+    \end{itemize}
+    \small A single shared checklist would score conditions against
+    requirements their prompts never stated.
+  \end{block}
+  \begin{block}{The judge}
+    \scriptsize Correctness and adherence are computed \textbf{by program}. Faithfulness
+    and answer relevance are scored by a separate LLM
+    \citep{es2023ragas,saadfalcon2024ares}. Since the thesis \emph{assumes}
+    models are sensitive to instructions, the judge cannot be assumed
+    reliable. Following \citet{zheng2023judge}: agreement with human labelling
+    on $\approx$100 held-out outputs, reported as Cohen's $\kappa$
+    \emph{per condition} (the format condition is recognisable from its
+    surface alone); the judge's own prompt is fixed; outputs are shown in
+    random order without condition labels.
+  \end{block}
+\end{frame}
+
+%======================================================================
+\section{Provenance of the Prompts}
+\label{sec:prov}
+%======================================================================
+
+\begin{frame}[fragile]{The prompts are not composed from scratch (1/2)}
+  Their wording is taken from prompts \textbf{published with retrieval-augmented
+  systems}, so the baseline is a form already in use rather than one written
+  to be improved upon.
+  \medskip
+
+  \textbf{$\Sigma_A$ --- the fewest requirements.} Response-generation prompt
+  of \citet{friel2024ragbench}: grounds the answer in the documents, asks the
+  question, does nothing else.
+\begin{lstlisting}[style=promptbox]
+Use the following pieces of context to answer the question.
+{documents}
+Question: {question}
+\end{lstlisting}
+  \medskip
+  \textbf{$\Sigma_B$ --- the most.} \textsc{vanilla} instruction of
+  \citet{gao2023alce} (their Table 23). Beyond grounding it constrains
+  accuracy, engagement, concision, register, and citation syntax and density.
+\begin{lstlisting}[style=promptbox]
+Write an accurate, engaging, and concise answer for the given question using
+only the provided search results (some of which might be irrelevant) and cite
+them properly. Use an unbiased and journalistic tone. Always cite for any
+factual claim. When citing several search results, use [1][2][3]. Cite at
+least one document and at most three documents in each sentence. If multiple
+documents support the sentence, only cite a minimum sufficient subset.
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{The prompts are not composed from scratch (2/2)}
+  \textbf{$\Sigma_C$ --- in between, and the direct precedent for
+  $\rho(\Sigma,\varphi)$.} \citet{mao2024fitrag} describe their instruction as
+  consisting of \emph{three parts}, with a stated rationale per part: direct
+  the model to the passages; ask it to read the question carefully; ask for an
+  answer \emph{plus} a justification.
+\begin{lstlisting}[style=promptbox]
+Refer to the passage below and answer the following question.
+Make sure you fully understand the meaning of the question and passages.
+Then give the answer and explain why you choose this answer.
+Passages: {passages}
+Question: {question}
+\end{lstlisting}
+  \medskip
+  \begin{itemize}
+    \item Writing a prompt as an \emph{enumerated set of requirements with a
+          purpose per requirement} is exactly what $\rho(\Sigma,\varphi)$
+          formalises. \citet{mao2024fitrag} report this form outperforms both
+          a bare instruction and a chain-of-thought variant on the same
+          passages.
+    \item \textbf{No requirement checked here is an invention of this thesis:}
+          the citation constraint is the central requirement of
+          \citet{gao2023alce}; the justification constraint is the third part
+          of \citet{mao2024fitrag}. That is why adherence can be checked by
+          \emph{parsing the output} rather than by judgement.
+  \end{itemize}
+\end{frame}
+
+%======================================================================
+\section{Realization: How the Experiment Is Actually Run}
+%======================================================================
+
+\begin{frame}{The pipeline --- the causal graph, enforced in code}
+  \begin{center}
+  \resizebox{0.99\textwidth}{!}{%
+  \begin{tikzpicture}[
+      st/.style   = {draw, rounded corners=3pt, minimum height=12mm, minimum width=27mm,
+                     align=center, font=\small, fill=structure!12},
+      ar/.style   = {-{Latex[length=2.2mm]}, thick},
+      disk/.style = {draw, dashed, rounded corners=1pt, minimum height=7mm,
+                     align=center, font=\scriptsize\ttfamily, fill=black!4}
+  ]
+  \node[st] (pre)  at (0,0)    {preprocessing\\ \scriptsize MS MARCO $\to$ query set};
+  \node[st] (ing)  at (4.4,0)  {ingest\\ \scriptsize embed + build index};
+  \node[st] (ret)  at (9.2,0)  {\textbf{pass 1}\\ \scriptsize run\_retrieval};
+  \node[st] (gen)  at (14.0,0) {\textbf{pass 2}\\ \scriptsize run\_generation};
+  \node[st] (sco)  at (18.4,0) {evaluation\\ \scriptsize run\_scoring};
+  \node[st] (ana)  at (22.8,0) {analysis\\ \scriptsize run\_analysis};
+
+  \node[disk] (a1) at (0,-2.4)    {queries.json\\corpus.json};
+  \node[disk] (a2) at (4.4,-2.4)  {index.faiss\\pids.npy};
+  \node[disk] (a3) at (9.2,-2.4)  {retrieval.json};
+  \node[disk] (a4) at (14.0,-2.4) {generations.jsonl};
+  \node[disk] (a5) at (18.4,-2.4) {scores.jsonl};
+  \node[disk] (a6) at (22.8,-2.4) {results.json};
+
+  \draw[ar] (pre) -- (ing);
+  \draw[ar] (ing) -- (ret);
+  \draw[ar, very thick, red!70!black] (ret) --
+        node[below=1pt, font=\scriptsize, red!70!black, align=center]{disk\\barrier} (gen);
+  \draw[ar] (gen) -- (sco);
+  \draw[ar] (sco) -- (ana);
+  \foreach \a/\b in {pre/a1, ing/a2, ret/a3, gen/a4, sco/a5, ana/a6}
+    \draw[-{Latex[length=1.6mm]}, gray] (\a) -- (\b);
+
+  \node[draw, rounded corners=4pt, very thick, red!70!black, inner sep=7pt,
+        fit=(pre)(ing)(ret)(a1)(a2)(a3)] (fitbox) {};
+  \node[font=\scriptsize, red!70!black, above=1pt of fitbox.north]
+        {no prompt condition has been constructed yet};
+  \node[font=\scriptsize, structure!60!black, above=1pt of gen.north]
+        {all 15 conditions read the same stored passages};
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.4em}
+  \small
+  \textbf{Retrieval finishes and is written to disk \emph{before} the first
+  prompt condition is ever constructed.} There is no execution path along which
+  a prompt could reach the retriever --- so the missing edge in Figure~4.1 is a
+  \emph{structural property of the code}, not an assertion in the text.
+  \medskip
+
+  Two further barriers on the same principle: the \textbf{index is built once}
+  and never rebuilt, so no condition is run against a different corpus; and
+  every generation is an \textbf{independent request with caching disabled}, so
+  no condition can inherit an answer from the one before it.
+\end{frame}
+
+\begin{frame}{Separation of concerns --- so the control cannot leak}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}lp{8.6cm}@{}}
+    \toprule
+    Package & What it knows \\
+    \midrule
+    \texttt{preprocessing/} & MS MARCO. Nothing downstream. \\
+    \texttt{ingest/}        & the knowledge base: embed the corpus, build the index. \\
+    \texttt{rag/}           & a \emph{working RAG system}. Knows nothing about the experiment; you could point it at any corpus. \\
+    \texttt{experiment/}    & prompt conditions and evidence levels. Implements \emph{no} retrieval or generation of its own. \\
+    \texttt{evaluation/}    & scoring, the cost function, the effect. \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \medskip
+  \begin{block}{One place for every controlled parameter: \texttt{config.py}}
+    \small The rule is stated and enforced: \textbf{if a value is in that file
+    it must not differ between conditions; if it is not in that file it is not
+    a controlled parameter.} Changing a value there invalidates comparison with
+    earlier runs.
+  \end{block}
+  \takeaway{The experiment cannot accidentally tune the system it is
+  measuring, because the code that knows about conditions is not the code that
+  can change the pipeline.}
+\end{frame}
+
+\begin{frame}{The concrete stack}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    & Setting & Why fixed \\
+    \midrule
+    Encoder      & \texttt{all-mpnet-base-v2} & one model, both sides (dual encoder, \citealp{karpukhin2020dpr}) \\
+    Generator    & \texttt{Qwen2.5-7B-Instruct} & instruction-tuned; $\theta$ never retrained or replaced \\
+    Temperature  & $0.7$ & fixed and recorded; would otherwise confound with the prompt \\
+    Max new tokens & $256$ & length is not allowed to vary with condition \\
+    Encoder truncation & $384$ & chunking held constant \\
+    Depth        & $K=5$ & smallest depth holding multi-hop gold + realistic distractors \\
+    Index        & flat / exhaustive (FAISS, \citealp{johnson2021faiss}) & exact search: retrieval depends on the query alone \\
+    Repeats      & $n=3$ & averages over decoding noise $\varepsilon$ \\
+    Seed         & recorded & fixes the query sample and the cell order \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \smallskip
+  \scriptsize
+  \textbf{Logged per generation:} query id, condition index $j$, evidence level
+  $k$, repeat $r$, the exact context string, the output, and the output token
+  count. Every generation is an independent request with \textbf{caching
+  disabled} --- so no answer can be contaminated by the condition run before
+  it.
+  \vspace{-0.2em}
+  \begin{beamercolorbox}[wd=\textwidth,sep=4pt,rounded=true]{block body}\scriptsize
+  \textbf{$\Rightarrow$} A third party can rebuild the index from the published
+  dataset and re-run this. Reproducibility is a property of the benchmark and
+  the config, not of the prose.
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{From 18{,}000 generations to one number}
+  \begin{block}{The estimator}
+    \vspace{-0.9em}
+    \begin{equation*}
+      \hat{\tau}_{jk} \;=\; \hat{\mathcal{R}}(S_j,c^{k}) \;-\; \hat{\mathcal{R}}(S_0,c^{k})
+    \end{equation*}
+    \vspace{-0.9em}
+    \small where $\hat{\mathcal{R}}(S_j,c^{k})$ is the \emph{empirical risk},
+    the average cost $\ell(y)$ of the answers produced in one cell of the
+    design. Computed \textbf{within} each evidence level, against \emph{that
+    baseline's own} canonical condition. Comparing $B_1$ to $A_0$ would
+    confound a change of wording with a change of what was asked for.
+  \end{block}
+  \small
+  \textbf{Pairing.} All comparisons are paired at query level. Repeats are
+  averaged \emph{before} pairing --- deliberately: they measure decoding noise,
+  not between-query variation, and treating them as independent observations
+  would overstate the sample size.
+  \medskip
+
+  \textbf{Three pre-specified families, each corrected separately by Holm's
+  method \citep{holm1979}:}
+  \begin{enumerate}\small
+    \item the prompt effect at $c^{\text{ret}}$ --- \emph{the result of interest};
+    \item a manipulation check, that evidence levels differ at the baseline
+          prompt (a validity check on the design, not a claim about which
+          evidence is better);
+    \item one interaction contrast $\delta_j$: does the prompt matter
+          \emph{more} when the evidence is corrupted?
+  \end{enumerate}
+  \small Correcting the families separately keeps the manipulation check from
+  inflating the correction on the result of interest.
+\end{frame}
+
+\begin{frame}{Honesty about the cost function}
+  \begin{block}{The weights $\lambda_k$ are not free parameters chosen after seeing results}
+    \vspace{-0.3em}
+    \begin{itemize}\small
+      \item \textbf{Primary analysis: equal weights.} $\lambda_k = 1$ for all
+            four, so the cost is a straight \emph{count of requirement
+            breaches}. It has \textbf{no free parameters} --- which is what
+            makes it the honest headline number.
+      \item \textbf{Sensitivity analysis: grounding-weighted.} Faithfulness
+            doubled. If the ordering of prompt conditions survives
+            reweighting, that is worth stating; \emph{if it flips, that is
+            worth stating more.}
+    \end{itemize}
+  \end{block}
+  \medskip
+  \begin{block}{Inapplicable measures are excluded, not scored as failures}
+    \small Faithfulness under $c^{\varnothing}$ is the case that matters: with
+    no passages every claim is trivially unsupported, so scoring it would
+    report the \emph{absence of context} as a failure of grounding. Costs are
+    therefore comparable \emph{within} an evidence level but not across them,
+    and \texttt{n\_applicable} is recorded on every cost so the boundary is
+    visible rather than implicit. The main result compares prompt conditions
+    inside a level, so this does not touch it.
+  \end{block}
+\end{frame}
+
+%======================================================================
+\section{Soundness of the Setup}
+%======================================================================
+
+\begin{frame}{Why the setup is sound (1/2): the causal claim}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}p{4.6cm}p{8.4cm}@{}}
+    \toprule
+    \textbf{Threat to the claim} & \textbf{What removes it} \\
+    \midrule
+    The prompt changed the \emph{evidence}, not the generation
+      & Retrieval executed once and written to disk before any condition is
+        built; $S$ is not an argument of $p_\eta$. The same passages reach all
+        15 conditions. \\[0.3em]
+    Some other component moved
+      & Generator, $\theta$, temperature, embedding model, index, $\chi$,
+        $K=5$ frozen in \texttt{config.py} before collection; never re-tuned,
+        never re-indexed. \\[0.3em]
+    Queries differed between conditions
+      & Fully crossed: every query in every cell. Each query is its own
+        control; the retrieval gate is applied uniformly across all conditions
+        at once. \\[0.3em]
+    The effect is decoding noise
+      & $n=3$ repetitions per cell; $\varepsilon$ averaged over rather than
+        switched off, because a deployed system samples. \\[0.3em]
+    An earlier generation influenced a later one
+      & Every generation is an independent request with caching disabled. \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why the setup is sound (2/2): the manipulation and the measurement}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}p{4.6cm}p{8.4cm}@{}}
+    \toprule
+    \textbf{Threat to the claim} & \textbf{What removes it} \\
+    \midrule
+    Wording change smuggled in a \emph{meaning} change
+      & Axes designed orthogonal: modal force isolated to the deontic
+        condition; length held to $\approx$10\% of canonical and recorded as a
+        covariate. \\[0.3em]
+    The effect is really prompt \emph{length} or density
+      & Three requirement sets differing by an order of magnitude in $m$;
+        contrasts always taken \emph{within} a baseline. \\[0.3em]
+    The dataset was tuned to the hypothesis
+      & Queries, relevance judgements and reference answers all come from
+        MS MARCO --- external to the experiment and re-buildable by a third
+        party. \\[0.3em]
+    The model answered from memory
+      & $c^{\varnothing}$ measures $\pi_i$ per query; results reported over the
+        full set \emph{and} on the $\pi_i = 0$ subset. \\[0.3em]
+    The LLM judge is itself prompt-sensitive
+      & Fixed judge prompt; outputs blinded and shuffled; per-condition
+        Cohen's $\kappa$ against human labels. \\[0.3em]
+    The metric was chosen to fit the result
+      & Four measures taken from published work, fixed in Ch.~4 before any
+        output was inspected; equal weights as the primary, no-free-parameter
+        analysis; three pre-specified test families. \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Limitations, stated up front}
+  \begin{itemize}
+    \item \textbf{A single collection.} Every result is conditional on MS
+          MARCO --- its queries, passages, relevance judgements and written
+          answers. Topical spread \emph{within} one corpus is not replication
+          \emph{across} several. A prompt effect established here bounds what
+          may be expected elsewhere rather than establishing it.
+    \item \textbf{Composition of that collection.} MS MARCO records what
+          people type into a web search engine: short, largely factoid,
+          web-domain queries. Clinical decision support and legal QA --- two
+          of the deployments that motivate RAG in the first place --- are
+          absent, and their documents differ in length, structure and
+          register.
+    \item \textbf{No closed world.} $\Phi$ holds the annotated answers and the
+          facts in $D$, a subset of everything true. Correctness is therefore
+          evaluated only over claims bearing on $a_q$; a true fact outside
+          $\Phi$ is not counted against the answer.
+    \item \textbf{Single-shot architecture only.} By design --- see the scope
+          argument. Graph-structured and agentic pipelines are the natural
+          extension, and this is the controlled baseline they need.
+  \end{itemize}
+\end{frame}
+
+%======================================================================
+\section{Summary}
+%======================================================================
+
+\begin{frame}[shrink=5]{Summary}
+  \begin{enumerate}
+    \item \textbf{Formal model.} The RAG formulation of \citet{lewis2020rag},
+          extended by one variable: the system prompt becomes an explicit
+          argument of the generator,
+          $p_\theta(y_i \mid q,z,y_{1:i-1},S)$, and therefore of
+          $p_{\mathrm{RAG}}(y \mid q,D,S)$.
+    \item \textbf{Prompt decomposition.} $S = \rho(\Sigma,\varphi)$ separates
+          \emph{what} a prompt requires from \emph{how} it is worded ---
+          15 conditions: 3 published requirement sets $\times$ 4 wordings +
+          1 deontic variant.
+    \item \textbf{Causal model.} $S$ has an arrow into the generator and none
+          into the retriever (Fig.~4.1); the missing edge is enforced by the
+          two-stage procedure, not merely assumed. The estimand is
+          $\tau_j$, an average treatment effect over $P_{\mathcal{Q}}$.
+    \item \textbf{Experiment.} $15\times4$ cells, 100 MS MARCO queries,
+          $n=3$, 18{,}000 generations; four published generation-stage
+          metrics; an audited LLM judge; a falsifiable null.
+    \item \textbf{Realization.} The assumption is enforced by the code, not
+          asserted: retrieval and generation are separate passes across a disk
+          barrier, every controlled parameter lives in one file, and the
+          primary cost function has no free parameters.
+  \end{enumerate}
+  \takeaway{Every other explanation for a difference between conditions is
+  removed \emph{before} data collection --- which is what licenses reading
+  $\hat\tau_j$ as the effect of the system prompt.}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+  \scriptsize
+  \bibliography{thesis}
+\end{frame}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\Large Thank you --- questions welcome.}
+  \vfill
+\end{frame}
+
+\end{document}

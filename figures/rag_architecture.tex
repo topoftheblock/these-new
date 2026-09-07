@@ -1,0 +1,58 @@
+% RAG system architecture -- style matched to Figure 4.1.
+% Requires: \usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds,calc}
+\begin{tikzpicture}[
+    box/.style   = {draw, rounded corners=2pt, minimum height=11mm, minimum width=30mm,
+                    align=center, font=\small},
+    store/.style = {draw, cylinder, shape border rotate=90, aspect=0.30,
+                    minimum height=18mm, minimum width=28mm, align=center, font=\small},
+    mod/.style   = {draw, dashed, rounded corners=2pt, inner sep=10pt},
+    modlab/.style= {font=\small},
+    stage/.style = {font=\small\scshape},
+    ar/.style    = {-{Latex[length=2mm]}},
+    arbi/.style  = {{Latex[length=2mm]}-{Latex[length=2mm]}},
+    lb/.style    = {font=\scriptsize, inner sep=3pt, fill=white, align=center}
+]
+
+% ---- nodes -------------------------------------------------------------
+\node[box]   (query)  at (0,0)      {User Query};
+
+\node[box]   (search) at (4.6,0)    {Semantic Search /\\ Similarity Ranking};
+\node[store] (vdb)    at (4.6,-3.2) {Vector Database\\ (Knowledge Base)};
+
+\node[box]   (prompt) at (12.2,0)   {Prompt\\ Construction};
+\node[box]   (llm)    at (16.2,0)   {Language Model};
+
+\node[box]   (out)    at (20.6,0)   {Final Output\\ (Generated Answer)};
+
+\node[box]   (sysp)   at (12.2,-3.2) {System Prompt};
+
+% ---- module containers -------------------------------------------------
+\begin{scope}[on background layer]
+  \node[mod, fit=(search)(vdb)] (retbox) {};
+  \node[mod, fit=(prompt)(llm)] (genbox) {};
+\end{scope}
+
+\node[modlab, anchor=south west] at ([yshift=3pt]retbox.north west) {Retrieval Module};
+\node[modlab, anchor=south west] at ([yshift=3pt]genbox.north west) {Generation Module (LLM)};
+
+\node[stage] at (4.6,3.5)  {I.\ The Retrieval Stage};
+\node[stage] at (14.2,3.5) {II.\ The Generation Stage};
+
+% ---- data flow ---------------------------------------------------------
+\draw[ar]   (query)  -- (search);
+\draw[arbi] (search) -- node[lb, midway, xshift=10mm] {embed /\\ rank} (vdb);
+
+\draw[ar] ([yshift=-3mm]search.east)
+          -- node[lb, pos=0.44] {Retrieved Context\\ (Top-$K$ Chunks)}
+          ([yshift=-3mm]prompt.west);
+
+\draw[ar] (query.north) -- (0,2.8)
+          -- node[lb, pos=0.45] {User Query} (9.7,2.8)
+          -- (9.7,0.3) -- ([yshift=3mm]prompt.west);
+
+\draw[ar] (sysp) -- node[lb, midway, xshift=13mm] {instructions,\\ constraints, format} (prompt);
+
+\draw[ar] (prompt) -- (llm);
+\draw[ar] (llm)    -- (out);
+
+\end{tikzpicture}
