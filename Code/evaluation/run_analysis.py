@@ -1,20 +1,34 @@
 """
-Compute the reported effect from the scores.
+Estimate the average treatment effect and decide the hypothesis of Section 5.1.
 
 Reads ``runs/scores.jsonl`` and writes ``runs/results.json``, printing the same
-numbers as a table.
+numbers as tables.
+
+For each cell of the design and each of the four measures, tau_hat is the mean
+within-query difference between a rewording and the canonical form of its own
+baseline. Positive means the rewording scored higher, since every measure is
+oriented so that higher is better.
+
+The four measures are the confirmatory family and they alone decide the
+hypothesis. The secondary measures of ``analysis.SECONDARY`` are estimated the
+same way and printed in their own section, with their own Holm correction, and
+are excluded from the verdict. They are reported because a measure that floors
+can return a null that belongs to the instrument rather than to the system; see
+Section 5.8.
 
 Usage::
 
     python3 -m evaluation.run_analysis
+    python3 -m evaluation.run_analysis --alpha 0.01
 """
 
 import argparse
 import json
 
 import config
-from evaluation.analysis import (BASELINE, empirical_risk, evidence_check,
-                                 interaction, prompt_effects)
+from evaluation.analysis import (ANY_DEPTH, MEASURES, SECONDARY, cell_means,
+                                 effects, verdict)
+from experiment.design import evidence_depths
 
 
 def main(argv=None):
@@ -28,57 +42,116 @@ def main(argv=None):
         rows = [json.loads(line) for line in fh if line.strip()]
 
     conditions = config.PROMPT_CONDITIONS
-    levels = config.EVIDENCE_LEVELS
+    # one column per cell of the design: the retrieved level once per depth,
+    # gold once, which is the 36-cell shape of Section 5.4
+    columns = [(lv, d) for lv in config.EVIDENCE_LEVELS
+               for d in evidence_depths(lv)]
 
-    risks = {}
-    print("empirical risk, mean cost per cell\n")
-    header = f"{'':6s}" + "".join(f"{lv:>12s}" for lv in levels)
-    print(header)
-    for condition in conditions:
-        line = f"{condition:6s}"
-        for level in levels:
-            mean, n = empirical_risk(rows, condition, level)
-            risks[f"{condition}/{level}"] = {"mean_cost": mean, "n": n}
-            line += f"{mean:12.3f}" if n else f"{'-':>12s}"
-        print(line)
+    def label(level, depth):
+        return level if depth is None else f"{level}/k{depth}"
 
-    print(f"\ntau_hat: cost relative to {BASELINE}, within each evidence level\n")
-    effects = {}
-    for level in levels:
-        effects[level] = prompt_effects(rows, level, conditions, args.alpha)
-        print(f"  {level}")
-        for condition, res in effects[level].items():
-            if res["test"] is None:
-                print(f"    {condition}: too few paired observations")
+    # ------------------------------------------------ descriptive cell means
+    print("mean of each measure per condition\n")
+    means = {}
+    for level, depth in columns:
+        print(f"  {label(level, depth)}")
+        header = "".join(f"{m:>15s}" for m in MEASURES)
+        print(f"    {'':6s}{header}")
+        for condition in conditions:
+            line = f"    {condition:6s}"
+            for measure in MEASURES:
+                cells = cell_means(rows, [condition], level, measure,
+                                   ANY_DEPTH if depth is None else depth)
+                if condition in cells:
+                    means[f"{condition}/{label(level, depth)}/{measure}"] = \
+                        cells[condition]
+                    line += f"{cells[condition]['mean']:15.3f}"
+                else:
+                    line += f"{'n/a':>15s}"
+            print(line)
+        print()
+
+    # -------------------------------------------------------------- tau_hat
+    print("tau_hat: each rewording against the canonical form of its own "
+          "baseline\n"
+          "         Equation 4.12, one estimate per measure, 95% CI, "
+          "Holm within each measure\n")
+    all_effects = {}
+    for level, depth in columns:
+        for measure in MEASURES:
+            family = effects(rows, level, measure, conditions,
+                             ANY_DEPTH if depth is None else depth, args.alpha)
+            if not family:
                 continue
-            mark = "*" if res.get("significant") else " "
-            print(f"    {condition}: tau={res['mean_difference']:+.3f} "
-                  f"p={res['p']:.4f} p_holm={res['p_holm']:.4f} {mark}")
+            all_effects[(level, depth, measure)] = family
+            print(f"  {label(level, depth)}  /  {measure}")
+            for condition, res in family.items():
+                mark = "*" if res.get("significant") else " "
+                lo, hi = res["ci"]
+                print(f"    {condition} vs {res['compared_with']}: "
+                      f"tau={res['tau']:+.3f}  95% CI [{lo:+.3f}, {hi:+.3f}]  "
+                      f"n={res['n']:3d}  p_holm={res.get('p_holm', float('nan')):.4f} {mark}")
+            print()
 
-    print("\nmanipulation check: evidence levels at the baseline prompt\n")
-    check = evidence_check(rows, levels, args.alpha)
-    for level, res in check.items():
-        if res["test"] is None:
-            print(f"  {level}: too few paired observations")
-            continue
-        mark = "*" if res.get("significant") else " "
-        print(f"  {level} vs {res['compared_with']}: "
-              f"diff={res['mean_difference']:+.3f} p_holm={res['p_holm']:.4f} {mark}")
+    # ----------------------------------------------------------- secondary
+    # Estimated identically, corrected within their own family, and kept out
+    # of the verdict below: the decision stays on the preregistered measures.
+    print("secondary measures: reported, not part of the decision on H0\n")
+    secondary = {}
+    for level, depth in columns:
+        for measure in SECONDARY:
+            family = effects(rows, level, measure, conditions,
+                             ANY_DEPTH if depth is None else depth, args.alpha)
+            if not family:
+                continue
+            secondary[(level, depth, measure)] = family
+            cells = cell_means(rows, conditions, level, measure,
+                               ANY_DEPTH if depth is None else depth)
+            for condition, cell in cells.items():
+                means[f"{condition}/{label(level, depth)}/{measure}"] = cell
+            print(f"  {label(level, depth)}  /  {measure}")
+            for condition, res in family.items():
+                mark = "*" if res.get("significant") else " "
+                lo, hi = res["ci"]
+                print(f"    {condition} vs {res['compared_with']}: "
+                      f"tau={res['tau']:+.3f}  95% CI [{lo:+.3f}, {hi:+.3f}]  "
+                      f"n={res['n']:3d}  p_holm={res.get('p_holm', float('nan')):.4f} {mark}")
+            print()
 
-    print("\ninteraction: does the prompt matter more under corrupted evidence?\n")
-    inter = interaction(rows, conditions)
-    for condition, res in inter.items():
-        print(f"  {condition}: delta={res['delta']:+.3f} "
-              f"(corrupted {res['corrupted_effect']:+.3f}, "
-              f"clean {res['clean_effect']:+.3f})")
+    # ------------------------------------------------------------- verdict
+    decision = verdict(all_effects)
+    print("=" * 70)
+    print(f"H0 (Section 5.1): every rewording leaves every measure unchanged")
+    print(f"  decided on          : {', '.join(MEASURES)}")
+    print(f"  estimates made      : {decision['n_tested']}")
+    print(f"  significant (Holm)  : {decision['n_significant']}")
+    if decision["h0_rejected"]:
+        print(f"  -> H0 REJECTED. The rewordings below changed the measure named.")
+        for hit in decision["significant"]:
+            print(f"     {hit['condition']:4s} {hit['cell']:>9s} "
+                  f"{hit['measure']:<14s} tau={hit['tau']:+.3f} "
+                  f"p_holm={hit['p_holm']:.4f}")
+    else:
+        print("  -> H0 NOT rejected. No rewording moved any measure by more "
+              "than this design can\n     distinguish from decoding noise. "
+              "That is not the same as showing the effect is\n     zero; see "
+              "the power discussion in Section 5.8.")
+    print("=" * 70)
 
     path = config.RUNS / args.out
-    path.write_text(json.dumps(
-        {"alpha": args.alpha, "baseline": BASELINE, "empirical_risk": risks,
-         "prompt_effects": effects, "manipulation_check": check,
-         "interaction": inter}, indent=2), encoding="utf-8")
+    path.write_text(json.dumps({
+        "alpha": args.alpha,
+        "measures": list(MEASURES),
+        "secondary_measures": list(SECONDARY),
+        "cell_means": means,
+        "tau_hat": {f"{label(lv, d)}/{m}": fam
+                    for (lv, d, m), fam in all_effects.items()},
+        "tau_hat_secondary": {f"{label(lv, d)}/{m}": fam
+                              for (lv, d, m), fam in secondary.items()},
+        "hypothesis": decision,
+    }, indent=2, default=str), encoding="utf-8")
     print(f"\nwrote {path}")
-    print("* marks significance after Holm correction within a family")
+    print("* marks an interval that excludes zero after Holm correction")
 
 
 if __name__ == "__main__":

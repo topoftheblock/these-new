@@ -1,5 +1,12 @@
 """
-The four evidence levels.
+The evidence levels.
+
+This design uses two, ``gold`` and ``ret`` (:data:`config.EVIDENCE_LEVELS`).
+``corr`` and ``empty`` remain implemented, because the function is level-driven
+and they cost nothing to keep, but no cell of the design requests them: they
+asked about evidence against parametric memory rather than about prompt
+structure. Adding them back to ``config.EVIDENCE_LEVELS`` is all that is needed
+to run them again.
 
 Each is an intervention on the context. All four set the context *directly*
 rather than by changing the corpus and retrieving again, so the index is

@@ -1,0 +1,2566 @@
+{
+  "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+  "index": "/Users/andreasblock/Desktop/Thesis_RAG/data/vector_store, 122,678 passages, exact=True",
+  "k": 5,
+  "n_queries": 100,
+  "n_success": 74,
+  "gold_recall": {
+    "found": 123,
+    "needed": 152,
+    "rate": 0.8092
+  },
+  "records": [
+    {
+      "query_id": 19602,
+      "query": "anytime bail",
+      "retrieved_ids": [
+        "19602-p4",
+        "19602-p7",
+        "632825-p9",
+        "397856-p6",
+        "605785-p1"
+      ],
+      "scores": [
+        0.39164,
+        0.39059,
+        0.34355,
+        0.34265,
+        0.34105
+      ],
+      "gold_ids": [
+        "19602-p2"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 447717,
+      "query": "meaning of elijah",
+      "retrieved_ids": [
+        "447717-p9",
+        "447717-p0",
+        "447717-p6",
+        "447717-p7",
+        "179740-p6"
+      ],
+      "scores": [
+        0.86269,
+        0.75185,
+        0.74837,
+        0.74678,
+        0.60717
+      ],
+      "gold_ids": [
+        "447717-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 693557,
+      "query": "what is a pambazo",
+      "retrieved_ids": [
+        "693557-p2",
+        "693557-p1",
+        "693557-p7",
+        "693557-p0",
+        "693557-p6"
+      ],
+      "scores": [
+        0.77864,
+        0.70398,
+        0.70257,
+        0.70226,
+        0.6003
+      ],
+      "gold_ids": [
+        "693557-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 567728,
+      "query": "what are the body system",
+      "retrieved_ids": [
+        "567728-p0",
+        "342042-p8",
+        "567728-p7",
+        "1078713-p2",
+        "124823-p2"
+      ],
+      "scores": [
+        0.78177,
+        0.75752,
+        0.74577,
+        0.72389,
+        0.70114
+      ],
+      "gold_ids": [
+        "567728-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 783277,
+      "query": "what is ph of bleach",
+      "retrieved_ids": [
+        "783277-p6",
+        "783277-p4",
+        "732733-p5",
+        "732733-p2",
+        "732733-p7"
+      ],
+      "scores": [
+        0.89731,
+        0.79658,
+        0.62606,
+        0.61708,
+        0.60558
+      ],
+      "gold_ids": [
+        "783277-p6"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 524141,
+      "query": "transom definition",
+      "retrieved_ids": [
+        "524141-p3",
+        "524141-p6",
+        "524141-p5",
+        "524141-p9",
+        "524141-p0"
+      ],
+      "scores": [
+        0.87151,
+        0.84268,
+        0.77777,
+        0.70649,
+        0.5612
+      ],
+      "gold_ids": [
+        "524141-p6"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 521338,
+      "query": "time to do a prk procedure",
+      "retrieved_ids": [
+        "521338-p7",
+        "521338-p1",
+        "952434-p9",
+        "952434-p8",
+        "521338-p0"
+      ],
+      "scores": [
+        0.5532,
+        0.51755,
+        0.50385,
+        0.50106,
+        0.47812
+      ],
+      "gold_ids": [
+        "521338-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 770485,
+      "query": "what is medical oncology",
+      "retrieved_ids": [
+        "770485-p4",
+        "832252-p7",
+        "770485-p8",
+        "770485-p2",
+        "770485-p7"
+      ],
+      "scores": [
+        0.83219,
+        0.80944,
+        0.76442,
+        0.74472,
+        0.72936
+      ],
+      "gold_ids": [
+        "770485-p4"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 216536,
+      "query": "how do birds hatch",
+      "retrieved_ids": [
+        "216536-p0",
+        "216536-p6",
+        "216536-p2",
+        "216536-p5",
+        "249338-p4"
+      ],
+      "scores": [
+        0.7121,
+        0.69002,
+        0.68902,
+        0.68726,
+        0.65539
+      ],
+      "gold_ids": [
+        "216536-p7"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1012986,
+      "query": "which level of taxonomy has the fewest organisms",
+      "retrieved_ids": [
+        "1012986-p5",
+        "847194-p4",
+        "1012986-p4",
+        "1012986-p0",
+        "1012986-p3"
+      ],
+      "scores": [
+        0.76512,
+        0.66832,
+        0.65656,
+        0.63666,
+        0.62913
+      ],
+      "gold_ids": [
+        "1012986-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 663264,
+      "query": "what gemstone is good for anxiety",
+      "retrieved_ids": [
+        "663264-p5",
+        "663264-p3",
+        "663264-p8",
+        "663264-p9",
+        "663264-p1"
+      ],
+      "scores": [
+        0.81557,
+        0.78121,
+        0.7604,
+        0.73769,
+        0.72317
+      ],
+      "gold_ids": [
+        "663264-p9"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 847292,
+      "query": "what is the smartest thing in the world?",
+      "retrieved_ids": [
+        "847288-p2",
+        "811199-p0",
+        "847288-p9",
+        "847288-p7",
+        "1028794-p3"
+      ],
+      "scores": [
+        0.52474,
+        0.52334,
+        0.44862,
+        0.43518,
+        0.42803
+      ],
+      "gold_ids": [
+        "847292-p3"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 915540,
+      "query": "what types of doctors treat eyes sickness",
+      "retrieved_ids": [
+        "779987-p5",
+        "681730-p4",
+        "88841-p3",
+        "915540-p5",
+        "681730-p8"
+      ],
+      "scores": [
+        0.68904,
+        0.67866,
+        0.65602,
+        0.64472,
+        0.63813
+      ],
+      "gold_ids": [
+        "915540-p7"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 661598,
+      "query": "what foods have lactose in them",
+      "retrieved_ids": [
+        "661598-p1",
+        "661598-p5",
+        "661598-p2",
+        "986078-p3",
+        "924524-p2"
+      ],
+      "scores": [
+        0.81585,
+        0.67574,
+        0.67165,
+        0.66234,
+        0.63578
+      ],
+      "gold_ids": [
+        "661598-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 597862,
+      "query": "what color is deep juniper",
+      "retrieved_ids": [
+        "597862-p0",
+        "597862-p3",
+        "447340-p7",
+        "944252-p8",
+        "142983-p5"
+      ],
+      "scores": [
+        0.54627,
+        0.45525,
+        0.43345,
+        0.4247,
+        0.41582
+      ],
+      "gold_ids": [
+        "597862-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 664450,
+      "query": "what green veggies are good for vertigo",
+      "retrieved_ids": [
+        "664450-p7",
+        "664450-p5",
+        "664450-p1",
+        "659813-p8",
+        "664450-p2"
+      ],
+      "scores": [
+        0.61168,
+        0.60971,
+        0.59786,
+        0.54182,
+        0.52694
+      ],
+      "gold_ids": [
+        "664450-p3"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 164711,
+      "query": "does cleyera flower",
+      "retrieved_ids": [
+        "164711-p6",
+        "164711-p5",
+        "164711-p4",
+        "164711-p8",
+        "164711-p1"
+      ],
+      "scores": [
+        0.67161,
+        0.62648,
+        0.60277,
+        0.55111,
+        0.53605
+      ],
+      "gold_ids": [
+        "164711-p8"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 495750,
+      "query": "shingle symptoms women",
+      "retrieved_ids": [
+        "495750-p4",
+        "495748-p0",
+        "495750-p3",
+        "495750-p7",
+        "495750-p8"
+      ],
+      "scores": [
+        0.70998,
+        0.7023,
+        0.68534,
+        0.66731,
+        0.66567
+      ],
+      "gold_ids": [
+        "495750-p0"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 388880,
+      "query": "howes fuel treatment",
+      "retrieved_ids": [
+        "388880-p4",
+        "388880-p5",
+        "388880-p7",
+        "388880-p3",
+        "388880-p2"
+      ],
+      "scores": [
+        0.70383,
+        0.70207,
+        0.64788,
+        0.64099,
+        0.61673
+      ],
+      "gold_ids": [
+        "388880-p5"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 837702,
+      "query": "what is the opposite of helium",
+      "retrieved_ids": [
+        "837702-p4",
+        "837702-p5",
+        "837702-p8",
+        "1006844-p4",
+        "837702-p0"
+      ],
+      "scores": [
+        0.71738,
+        0.59518,
+        0.58582,
+        0.5251,
+        0.52387
+      ],
+      "gold_ids": [
+        "837702-p4"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 614879,
+      "query": "what county is wylie tx in",
+      "retrieved_ids": [
+        "614879-p2",
+        "614879-p6",
+        "614879-p9",
+        "614879-p5",
+        "614879-p4"
+      ],
+      "scores": [
+        0.88882,
+        0.83705,
+        0.7775,
+        0.76177,
+        0.70348
+      ],
+      "gold_ids": [
+        "614879-p4"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 982131,
+      "query": "where is elko nevada",
+      "retrieved_ids": [
+        "477568-p4",
+        "477568-p0",
+        "982131-p1",
+        "477568-p7",
+        "477568-p8"
+      ],
+      "scores": [
+        0.91436,
+        0.88267,
+        0.85288,
+        0.84491,
+        0.75146
+      ],
+      "gold_ids": [
+        "982131-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1090920,
+      "query": "bizapedia address",
+      "retrieved_ids": [
+        "1090920-p2",
+        "1090920-p3",
+        "1090920-p6",
+        "1090920-p8",
+        "1090920-p0"
+      ],
+      "scores": [
+        0.71722,
+        0.67855,
+        0.66222,
+        0.63016,
+        0.62504
+      ],
+      "gold_ids": [
+        "1090920-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 606242,
+      "query": "what county is frostproof florida",
+      "retrieved_ids": [
+        "606242-p2",
+        "606242-p0",
+        "606242-p3",
+        "606242-p6",
+        "606242-p1"
+      ],
+      "scores": [
+        0.89507,
+        0.77211,
+        0.75246,
+        0.63174,
+        0.59834
+      ],
+      "gold_ids": [
+        "606242-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 970484,
+      "query": "where do calories from beer come from",
+      "retrieved_ids": [
+        "970484-p1",
+        "277221-p4",
+        "970484-p0",
+        "277221-p2",
+        "404051-p9"
+      ],
+      "scores": [
+        0.8642,
+        0.75289,
+        0.74989,
+        0.73992,
+        0.71927
+      ],
+      "gold_ids": [
+        "970484-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 611859,
+      "query": "what county is renton washington in",
+      "retrieved_ids": [
+        "611859-p1",
+        "611859-p3",
+        "611859-p6",
+        "611859-p9",
+        "611859-p4"
+      ],
+      "scores": [
+        0.89478,
+        0.87065,
+        0.73472,
+        0.59048,
+        0.57639
+      ],
+      "gold_ids": [
+        "611859-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1003832,
+      "query": "where was the initial entry point of the emerald ash borer in the united states",
+      "retrieved_ids": [
+        "1003832-p3",
+        "1003832-p0",
+        "971653-p4",
+        "1003832-p7",
+        "1003832-p6"
+      ],
+      "scores": [
+        0.88727,
+        0.78173,
+        0.77646,
+        0.77341,
+        0.76343
+      ],
+      "gold_ids": [
+        "1003832-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 605172,
+      "query": "what county is dobson nc",
+      "retrieved_ids": [
+        "605172-p3",
+        "605172-p0",
+        "605172-p5",
+        "605172-p7",
+        "983233-p1"
+      ],
+      "scores": [
+        0.87691,
+        0.62268,
+        0.60242,
+        0.59691,
+        0.55272
+      ],
+      "gold_ids": [
+        "605172-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 992019,
+      "query": "where is sacaton az",
+      "retrieved_ids": [
+        "992019-p7",
+        "992019-p9",
+        "992019-p5",
+        "804996-p6",
+        "611256-p5"
+      ],
+      "scores": [
+        0.8605,
+        0.58206,
+        0.50517,
+        0.41452,
+        0.40692
+      ],
+      "gold_ids": [
+        "992019-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 610918,
+      "query": "what county is oxford michigan in",
+      "retrieved_ids": [
+        "610918-p5",
+        "610918-p3",
+        "610918-p2",
+        "606624-p0",
+        "999121-p0"
+      ],
+      "scores": [
+        0.80612,
+        0.77147,
+        0.6216,
+        0.56994,
+        0.54874
+      ],
+      "gold_ids": [
+        "610918-p5"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 501458,
+      "query": "spirit airline number phone",
+      "retrieved_ids": [
+        "501458-p0",
+        "501458-p6",
+        "318254-p5",
+        "318254-p0",
+        "501458-p2"
+      ],
+      "scores": [
+        0.87129,
+        0.76829,
+        0.5931,
+        0.57293,
+        0.56912
+      ],
+      "gold_ids": [
+        "501458-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 389258,
+      "query": "hughes federal routing number",
+      "retrieved_ids": [
+        "389258-p0",
+        "389258-p9",
+        "389258-p8",
+        "389258-p5",
+        "389258-p6"
+      ],
+      "scores": [
+        0.85253,
+        0.77547,
+        0.75245,
+        0.73313,
+        0.71895
+      ],
+      "gold_ids": [
+        "389258-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 280035,
+      "query": "how many counties in new hampshire",
+      "retrieved_ids": [
+        "280035-p3",
+        "280035-p4",
+        "280035-p8",
+        "478023-p4",
+        "280035-p0"
+      ],
+      "scores": [
+        0.89009,
+        0.66259,
+        0.65666,
+        0.60968,
+        0.60914
+      ],
+      "gold_ids": [
+        "280035-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 202096,
+      "query": "highest elevation in ecuador",
+      "retrieved_ids": [
+        "202797-p2",
+        "202096-p1",
+        "202096-p3",
+        "829050-p5",
+        "202096-p0"
+      ],
+      "scores": [
+        0.80446,
+        0.77411,
+        0.65949,
+        0.6475,
+        0.61942
+      ],
+      "gold_ids": [
+        "202096-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 233904,
+      "query": "how fast does irs process refunds",
+      "retrieved_ids": [
+        "233904-p8",
+        "20277-p6",
+        "20277-p9",
+        "270823-p6",
+        "254981-p0"
+      ],
+      "scores": [
+        0.80558,
+        0.7639,
+        0.75554,
+        0.75337,
+        0.72803
+      ],
+      "gold_ids": [
+        "233904-p8"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 927840,
+      "query": "what year was honduras founded",
+      "retrieved_ids": [
+        "927840-p8",
+        "872536-p8",
+        "872536-p1",
+        "662282-p3",
+        "662282-p9"
+      ],
+      "scores": [
+        0.62699,
+        0.55239,
+        0.5484,
+        0.54625,
+        0.54536
+      ],
+      "gold_ids": [
+        "927840-p8"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 315753,
+      "query": "how much does it cost to have a face lift",
+      "retrieved_ids": [
+        "315753-p7",
+        "105007-p9",
+        "105007-p0",
+        "105007-p8",
+        "315753-p1"
+      ],
+      "scores": [
+        0.85501,
+        0.55856,
+        0.55405,
+        0.55082,
+        0.53988
+      ],
+      "gold_ids": [
+        "315753-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 480756,
+      "query": "price of installed fence",
+      "retrieved_ids": [
+        "480756-p9",
+        "480756-p2",
+        "480756-p4",
+        "480756-p3",
+        "480756-p0"
+      ],
+      "scores": [
+        0.85236,
+        0.80792,
+        0.80442,
+        0.79065,
+        0.7611
+      ],
+      "gold_ids": [
+        "480756-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 945807,
+      "query": "when does a tax lien expire",
+      "retrieved_ids": [
+        "945807-p3",
+        "241300-p2",
+        "945807-p2",
+        "848588-p3",
+        "848588-p7"
+      ],
+      "scores": [
+        0.76846,
+        0.72777,
+        0.72008,
+        0.70812,
+        0.70573
+      ],
+      "gold_ids": [
+        "945807-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 334138,
+      "query": "how old george carlin",
+      "retrieved_ids": [
+        "334138-p9",
+        "334138-p8",
+        "334138-p7",
+        "334138-p1",
+        "334138-p0"
+      ],
+      "scores": [
+        0.76562,
+        0.70695,
+        0.60895,
+        0.57092,
+        0.56345
+      ],
+      "gold_ids": [
+        "334138-p9"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1010282,
+      "query": "which greek mathematician wrote the most definitive text on geometry, one that is still referred to today?thalespythagoraseuclidarchimedeshippocrates",
+      "retrieved_ids": [
+        "1010282-p1",
+        "1010282-p5",
+        "1010282-p8",
+        "1010282-p2",
+        "938622-p2"
+      ],
+      "scores": [
+        0.76193,
+        0.71217,
+        0.7021,
+        0.61072,
+        0.61021
+      ],
+      "gold_ids": [
+        "1010282-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 484954,
+      "query": "radical republicans did what to president johnson",
+      "retrieved_ids": [
+        "484954-p4",
+        "484954-p2",
+        "484954-p0",
+        "484954-p7",
+        "484954-p9"
+      ],
+      "scores": [
+        0.69337,
+        0.69081,
+        0.68755,
+        0.67522,
+        0.67375
+      ],
+      "gold_ids": [
+        "484954-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 924429,
+      "query": "what were the two main groups in ancient rome",
+      "retrieved_ids": [
+        "924429-p6",
+        "924429-p1",
+        "924429-p7",
+        "890890-p0",
+        "214891-p2"
+      ],
+      "scores": [
+        0.80195,
+        0.78747,
+        0.59712,
+        0.53225,
+        0.51755
+      ],
+      "gold_ids": [
+        "924429-p6"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1046372,
+      "query": "who played aunt bea",
+      "retrieved_ids": [
+        "1046372-p1",
+        "1046372-p6",
+        "1046372-p4",
+        "1046372-p7",
+        "1046372-p5"
+      ],
+      "scores": [
+        0.66074,
+        0.65448,
+        0.64294,
+        0.64269,
+        0.63969
+      ],
+      "gold_ids": [
+        "1046372-p0"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1024430,
+      "query": "who are the slavic peoples",
+      "retrieved_ids": [
+        "1024430-p9",
+        "1024430-p3",
+        "1024430-p2",
+        "1024430-p1",
+        "1024430-p5"
+      ],
+      "scores": [
+        0.73386,
+        0.64097,
+        0.63043,
+        0.55861,
+        0.51404
+      ],
+      "gold_ids": [
+        "1024430-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1052843,
+      "query": "who the richest",
+      "retrieved_ids": [
+        "1052843-p3",
+        "1052843-p0",
+        "723969-p1",
+        "1052843-p7",
+        "723969-p9"
+      ],
+      "scores": [
+        0.69661,
+        0.67327,
+        0.67146,
+        0.62953,
+        0.62573
+      ],
+      "gold_ids": [
+        "1052843-p1"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 11005,
+      "query": "actress who played wonder woman's mom in wonder woman",
+      "retrieved_ids": [
+        "11005-p2",
+        "11005-p9",
+        "11005-p1",
+        "11005-p3",
+        "11005-p6"
+      ],
+      "scores": [
+        0.80532,
+        0.76842,
+        0.65192,
+        0.62105,
+        0.59829
+      ],
+      "gold_ids": [
+        "11005-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1057434,
+      "query": "who were the first president",
+      "retrieved_ids": [
+        "917609-p4",
+        "187510-p7",
+        "393862-p9",
+        "1041409-p3",
+        "1041409-p5"
+      ],
+      "scores": [
+        0.77049,
+        0.75113,
+        0.74673,
+        0.73313,
+        0.70562
+      ],
+      "gold_ids": [
+        "1057434-p2"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1058854,
+      "query": "who wrote the book the good fight mn senator",
+      "retrieved_ids": [
+        "1058854-p0",
+        "1031980-p4",
+        "1058854-p6",
+        "1031980-p9",
+        "1032011-p6"
+      ],
+      "scores": [
+        0.65469,
+        0.45893,
+        0.44971,
+        0.43361,
+        0.4122
+      ],
+      "gold_ids": [
+        "1058854-p0"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 1033224,
+      "query": "who is gloria borger",
+      "retrieved_ids": [
+        "1033224-p7",
+        "1033224-p3",
+        "1033224-p9",
+        "1033224-p2",
+        "1033224-p8"
+      ],
+      "scores": [
+        0.81217,
+        0.76804,
+        0.72605,
+        0.72165,
+        0.6551
+      ],
+      "gold_ids": [
+        "1033224-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": true,
+      "category": "direct",
+      "depth": 5
+    },
+    {
+      "query_id": 841324,
+      "query": "what is the process of succession?",
+      "retrieved_ids": [
+        "841324-p6",
+        "841324-p8",
+        "841324-p9",
+        "841324-p4",
+        "841324-p2"
+      ],
+      "scores": [
+        0.65178,
+        0.61818,
+        0.59364,
+        0.57077,
+        0.5349
+      ],
+      "gold_ids": [
+        "841324-p6",
+        "841324-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 171527,
+      "query": "does solar radiation cause global warming",
+      "retrieved_ids": [
+        "171527-p4",
+        "171527-p0",
+        "171527-p5",
+        "171527-p3",
+        "171527-p7"
+      ],
+      "scores": [
+        0.7458,
+        0.69404,
+        0.69316,
+        0.64258,
+        0.60201
+      ],
+      "gold_ids": [
+        "171527-p0",
+        "171527-p7"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 66255,
+      "query": "can deed restrictions be enforced",
+      "retrieved_ids": [
+        "66255-p8",
+        "66255-p4",
+        "66255-p2",
+        "116431-p9",
+        "66255-p9"
+      ],
+      "scores": [
+        0.85549,
+        0.82886,
+        0.78124,
+        0.77671,
+        0.7637
+      ],
+      "gold_ids": [
+        "66255-p1",
+        "66255-p4"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 632825,
+      "query": "what does bail type cash or bond mean",
+      "retrieved_ids": [
+        "632825-p2",
+        "632825-p5",
+        "632825-p8",
+        "632825-p7",
+        "632825-p1"
+      ],
+      "scores": [
+        0.80179,
+        0.80163,
+        0.61456,
+        0.59444,
+        0.58879
+      ],
+      "gold_ids": [
+        "632825-p2",
+        "632825-p7"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 488585,
+      "query": "resume what is a cv",
+      "retrieved_ids": [
+        "488585-p3",
+        "488585-p9",
+        "488585-p8",
+        "488585-p0",
+        "488585-p7"
+      ],
+      "scores": [
+        0.8183,
+        0.81405,
+        0.80401,
+        0.77036,
+        0.7326
+      ],
+      "gold_ids": [
+        "488585-p0",
+        "488585-p3"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 111386,
+      "query": "cost value definition",
+      "retrieved_ids": [
+        "111386-p1",
+        "111386-p0",
+        "111386-p8",
+        "111386-p6",
+        "557776-p4"
+      ],
+      "scores": [
+        0.69172,
+        0.6092,
+        0.58406,
+        0.58313,
+        0.57782
+      ],
+      "gold_ids": [
+        "111386-p0",
+        "111386-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 514767,
+      "query": "the clavicle is what to the sternum",
+      "retrieved_ids": [
+        "731135-p5",
+        "514767-p0",
+        "731135-p1",
+        "731135-p9",
+        "514767-p3"
+      ],
+      "scores": [
+        0.80248,
+        0.77902,
+        0.76671,
+        0.75617,
+        0.72565
+      ],
+      "gold_ids": [
+        "514767-p3",
+        "514767-p7"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 143849,
+      "query": "did eric holder ever recuse himself",
+      "retrieved_ids": [
+        "143849-p3",
+        "143849-p6",
+        "143849-p9",
+        "143849-p4",
+        "449048-p6"
+      ],
+      "scores": [
+        0.70195,
+        0.6983,
+        0.66024,
+        0.53814,
+        0.52849
+      ],
+      "gold_ids": [
+        "143849-p3",
+        "143849-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 684865,
+      "query": "what is a glib",
+      "retrieved_ids": [
+        "684865-p3",
+        "684865-p0",
+        "684865-p5",
+        "684865-p2",
+        "684865-p1"
+      ],
+      "scores": [
+        0.79354,
+        0.71042,
+        0.67495,
+        0.67279,
+        0.63854
+      ],
+      "gold_ids": [
+        "684865-p0",
+        "684865-p3"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 742055,
+      "query": "what is dysphoria",
+      "retrieved_ids": [
+        "742055-p6",
+        "742055-p7",
+        "742055-p8",
+        "742055-p0",
+        "742055-p3"
+      ],
+      "scores": [
+        0.8808,
+        0.82135,
+        0.79962,
+        0.585,
+        0.55934
+      ],
+      "gold_ids": [
+        "742055-p0",
+        "742055-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 619084,
+      "query": "what did harry harlow discover",
+      "retrieved_ids": [
+        "619084-p5",
+        "619084-p3",
+        "619084-p8",
+        "619084-p6",
+        "619084-p4"
+      ],
+      "scores": [
+        0.68012,
+        0.65052,
+        0.64281,
+        0.56899,
+        0.53207
+      ],
+      "gold_ids": [
+        "619084-p5",
+        "619084-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 598526,
+      "query": "what color mat for framing",
+      "retrieved_ids": [
+        "598526-p6",
+        "598526-p3",
+        "864432-p1",
+        "598526-p1",
+        "598526-p2"
+      ],
+      "scores": [
+        0.71565,
+        0.6948,
+        0.63429,
+        0.63026,
+        0.61965
+      ],
+      "gold_ids": [
+        "598526-p2",
+        "598526-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 689700,
+      "query": "what is a macchiato coffee drink",
+      "retrieved_ids": [
+        "689700-p5",
+        "689700-p9",
+        "689700-p0",
+        "689700-p4",
+        "689700-p3"
+      ],
+      "scores": [
+        0.79326,
+        0.71823,
+        0.66161,
+        0.61327,
+        0.61274
+      ],
+      "gold_ids": [
+        "689700-p3",
+        "689700-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 896272,
+      "query": "what soda was originally named bib label...?",
+      "retrieved_ids": [
+        "896272-p4",
+        "896272-p7",
+        "896272-p3",
+        "475364-p1",
+        "896272-p1"
+      ],
+      "scores": [
+        0.68512,
+        0.61476,
+        0.55935,
+        0.55441,
+        0.51761
+      ],
+      "gold_ids": [
+        "896272-p3",
+        "896272-p4"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 867074,
+      "query": "what kind of collie was lassie",
+      "retrieved_ids": [
+        "867074-p4",
+        "867074-p7",
+        "867074-p9",
+        "867074-p2",
+        "867074-p6"
+      ],
+      "scores": [
+        0.84201,
+        0.80313,
+        0.80201,
+        0.75911,
+        0.69962
+      ],
+      "gold_ids": [
+        "867074-p6",
+        "867074-p7"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1011860,
+      "query": "which is stronger hydrocodone or oxycodone",
+      "retrieved_ids": [
+        "148175-p1",
+        "1011860-p3",
+        "1011860-p8",
+        "1011860-p7",
+        "1011860-p5"
+      ],
+      "scores": [
+        0.84675,
+        0.84609,
+        0.78244,
+        0.75372,
+        0.73904
+      ],
+      "gold_ids": [
+        "1011860-p3",
+        "1011860-p5"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 934229,
+      "query": "what's your favorite web browser?",
+      "retrieved_ids": [
+        "934229-p9",
+        "934229-p6",
+        "934229-p2",
+        "934229-p8",
+        "129341-p0"
+      ],
+      "scores": [
+        0.77558,
+        0.7213,
+        0.71094,
+        0.65849,
+        0.60254
+      ],
+      "gold_ids": [
+        "934229-p5",
+        "934229-p8"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 175313,
+      "query": "down syndrome is a chromosomal disorder that is caused by",
+      "retrieved_ids": [
+        "175313-p1",
+        "175313-p6",
+        "175313-p4",
+        "1022034-p4",
+        "175313-p0"
+      ],
+      "scores": [
+        0.88309,
+        0.87911,
+        0.8665,
+        0.86508,
+        0.82516
+      ],
+      "gold_ids": [
+        "175313-p0",
+        "175313-p1"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 178741,
+      "query": "effects of hyperthyroidism",
+      "retrieved_ids": [
+        "178741-p4",
+        "178741-p9",
+        "507901-p8",
+        "178741-p2",
+        "669316-p4"
+      ],
+      "scores": [
+        0.88596,
+        0.81954,
+        0.81239,
+        0.79231,
+        0.77295
+      ],
+      "gold_ids": [
+        "178741-p4",
+        "178741-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 499358,
+      "query": "slight concussion symptoms",
+      "retrieved_ids": [
+        "499358-p9",
+        "499358-p0",
+        "499358-p5",
+        "499358-p7",
+        "499358-p4"
+      ],
+      "scores": [
+        0.82686,
+        0.81063,
+        0.7912,
+        0.72163,
+        0.68215
+      ],
+      "gold_ids": [
+        "499358-p4",
+        "499358-p5"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 994086,
+      "query": "where is taurus made?",
+      "retrieved_ids": [
+        "994086-p4",
+        "994086-p5",
+        "994086-p6",
+        "994086-p3",
+        "994086-p2"
+      ],
+      "scores": [
+        0.78546,
+        0.73906,
+        0.71766,
+        0.66351,
+        0.57281
+      ],
+      "gold_ids": [
+        "994086-p4",
+        "994086-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 976770,
+      "query": "where is american sniper buried",
+      "retrieved_ids": [
+        "976770-p7",
+        "976770-p6",
+        "976770-p1",
+        "976770-p5",
+        "917634-p0"
+      ],
+      "scores": [
+        0.75821,
+        0.71382,
+        0.69385,
+        0.69065,
+        0.6552
+      ],
+      "gold_ids": [
+        "976770-p5",
+        "976770-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 908654,
+      "query": "what town is anne frank house in",
+      "retrieved_ids": [
+        "908654-p9",
+        "908654-p6",
+        "908654-p1",
+        "908654-p7",
+        "908654-p4"
+      ],
+      "scores": [
+        0.77337,
+        0.75584,
+        0.6349,
+        0.6192,
+        0.5949
+      ],
+      "gold_ids": [
+        "908654-p5",
+        "908654-p9"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 613978,
+      "query": "what county is upper marlboro md in",
+      "retrieved_ids": [
+        "613978-p5",
+        "613978-p1",
+        "613978-p4",
+        "613978-p2",
+        "613978-p7"
+      ],
+      "scores": [
+        0.90437,
+        0.89802,
+        0.88989,
+        0.70564,
+        0.6891
+      ],
+      "gold_ids": [
+        "613978-p1",
+        "613978-p4"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 967189,
+      "query": "where are your arteries located",
+      "retrieved_ids": [
+        "967189-p1",
+        "967189-p9",
+        "805047-p8",
+        "967189-p4",
+        "899869-p9"
+      ],
+      "scores": [
+        0.69333,
+        0.64855,
+        0.6197,
+        0.61801,
+        0.61703
+      ],
+      "gold_ids": [
+        "967189-p1",
+        "967189-p5"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 980050,
+      "query": "where is city of sheridan",
+      "retrieved_ids": [
+        "980050-p2",
+        "980050-p5",
+        "980050-p1",
+        "980050-p7",
+        "980050-p8"
+      ],
+      "scores": [
+        0.79878,
+        0.74964,
+        0.71697,
+        0.70412,
+        0.68964
+      ],
+      "gold_ids": [
+        "980050-p7",
+        "980050-p8"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 612471,
+      "query": "what county is scituate ri in",
+      "retrieved_ids": [
+        "612471-p1",
+        "612471-p9",
+        "612471-p6",
+        "612471-p3",
+        "612471-p5"
+      ],
+      "scores": [
+        0.86454,
+        0.81401,
+        0.79622,
+        0.77866,
+        0.64203
+      ],
+      "gold_ids": [
+        "612471-p1",
+        "612471-p3"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 996723,
+      "query": "where is the most shark infested waters",
+      "retrieved_ids": [
+        "459320-p7",
+        "996723-p4",
+        "996723-p0",
+        "459320-p8",
+        "996723-p6"
+      ],
+      "scores": [
+        0.78138,
+        0.77567,
+        0.69286,
+        0.67574,
+        0.67295
+      ],
+      "gold_ids": [
+        "996723-p4",
+        "996723-p9"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 602436,
+      "query": "what county is andrews air force base in",
+      "retrieved_ids": [
+        "602436-p3",
+        "602433-p5",
+        "602436-p1",
+        "602436-p8",
+        "602433-p1"
+      ],
+      "scores": [
+        0.84308,
+        0.79832,
+        0.7947,
+        0.79048,
+        0.7786
+      ],
+      "gold_ids": [
+        "602436-p0",
+        "602436-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 967956,
+      "query": "where can nitrates be found",
+      "retrieved_ids": [
+        "821977-p5",
+        "821977-p2",
+        "967956-p9",
+        "967956-p8",
+        "821977-p3"
+      ],
+      "scores": [
+        0.76009,
+        0.72204,
+        0.67205,
+        0.66037,
+        0.61554
+      ],
+      "gold_ids": [
+        "967956-p3",
+        "967956-p6",
+        "967956-p8",
+        "967956-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 241300,
+      "query": "how long can a lien stay on a property?",
+      "retrieved_ids": [
+        "241300-p0",
+        "241300-p7",
+        "945807-p3",
+        "945807-p2",
+        "241300-p9"
+      ],
+      "scores": [
+        0.716,
+        0.67825,
+        0.65675,
+        0.62921,
+        0.62146
+      ],
+      "gold_ids": [
+        "241300-p0",
+        "241300-p7"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 248616,
+      "query": "how long do you roast a beet",
+      "retrieved_ids": [
+        "248616-p4",
+        "248616-p2",
+        "248616-p5",
+        "248616-p9",
+        "248616-p1"
+      ],
+      "scores": [
+        0.82466,
+        0.81135,
+        0.77041,
+        0.729,
+        0.69994
+      ],
+      "gold_ids": [
+        "248616-p2",
+        "248616-p4"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 303537,
+      "query": "how much can your bladder possibly hold",
+      "retrieved_ids": [
+        "303537-p2",
+        "303537-p0",
+        "303537-p7",
+        "319652-p8",
+        "332800-p8"
+      ],
+      "scores": [
+        0.81715,
+        0.77215,
+        0.72112,
+        0.70933,
+        0.6198
+      ],
+      "gold_ids": [
+        "303537-p2",
+        "303537-p3"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 32149,
+      "query": "average cost for a tree to be cut removed",
+      "retrieved_ids": [
+        "32149-p9",
+        "32149-p7",
+        "32149-p1",
+        "32149-p2",
+        "32149-p6"
+      ],
+      "scores": [
+        0.8634,
+        0.73038,
+        0.71395,
+        0.62467,
+        0.59978
+      ],
+      "gold_ids": [
+        "32149-p2",
+        "32149-p9"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 445094,
+      "query": "manicure nails clear gel cost",
+      "retrieved_ids": [
+        "445094-p1",
+        "445094-p8",
+        "445094-p5",
+        "102285-p9",
+        "102285-p5"
+      ],
+      "scores": [
+        0.78017,
+        0.73176,
+        0.64542,
+        0.64151,
+        0.63951
+      ],
+      "gold_ids": [
+        "102285-p9",
+        "445094-p8"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 12437,
+      "query": "africa's population",
+      "retrieved_ids": [
+        "12437-p0",
+        "12437-p4",
+        "12437-p9",
+        "12437-p7",
+        "12437-p1"
+      ],
+      "scores": [
+        0.86433,
+        0.83526,
+        0.824,
+        0.7869,
+        0.74394
+      ],
+      "gold_ids": [
+        "12437-p0",
+        "12437-p4"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 269249,
+      "query": "how long to cook a picnic ham at what temp",
+      "retrieved_ids": [
+        "269249-p8",
+        "269249-p0",
+        "269249-p1",
+        "269249-p3",
+        "269249-p4"
+      ],
+      "scores": [
+        0.86085,
+        0.83344,
+        0.80747,
+        0.71446,
+        0.67862
+      ],
+      "gold_ids": [
+        "269249-p0",
+        "269249-p2"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 846496,
+      "query": "what is the shelf life of tessalon perles",
+      "retrieved_ids": [
+        "238942-p0",
+        "238942-p1",
+        "262643-p9",
+        "262643-p2",
+        "271242-p3"
+      ],
+      "scores": [
+        0.65283,
+        0.57544,
+        0.5349,
+        0.53064,
+        0.51919
+      ],
+      "gold_ids": [
+        "846496-p1",
+        "846496-p5"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 878817,
+      "query": "what month is the balloon festival in new mexico",
+      "retrieved_ids": [
+        "878817-p3",
+        "878817-p7",
+        "878817-p0",
+        "878817-p9",
+        "878817-p5"
+      ],
+      "scores": [
+        0.8149,
+        0.80606,
+        0.79753,
+        0.76169,
+        0.71271
+      ],
+      "gold_ids": [
+        "878817-p8",
+        "878817-p9"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 4947,
+      "query": "Ludacris Net Worth",
+      "retrieved_ids": [
+        "4947-p6",
+        "4947-p2",
+        "4947-p3",
+        "4947-p1",
+        "4947-p0"
+      ],
+      "scores": [
+        0.88938,
+        0.88565,
+        0.88502,
+        0.88406,
+        0.8834
+      ],
+      "gold_ids": [
+        "4947-p0",
+        "4947-p8"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1055214,
+      "query": "who was president in 1974",
+      "retrieved_ids": [
+        "1055214-p3",
+        "1049305-p5",
+        "1055214-p9",
+        "1055214-p1",
+        "1055214-p5"
+      ],
+      "scores": [
+        0.82976,
+        0.73861,
+        0.69763,
+        0.6518,
+        0.64081
+      ],
+      "gold_ids": [
+        "1055214-p1",
+        "1055214-p3"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1081819,
+      "query": "zac hanson wife name",
+      "retrieved_ids": [
+        "1081819-p7",
+        "1081819-p8",
+        "1081819-p3",
+        "1081819-p4",
+        "1081819-p0"
+      ],
+      "scores": [
+        0.7092,
+        0.67202,
+        0.67031,
+        0.66558,
+        0.66339
+      ],
+      "gold_ids": [
+        "1081819-p0",
+        "1081819-p1"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1054708,
+      "query": "who was king louis xvi?",
+      "retrieved_ids": [
+        "1054708-p3",
+        "1054708-p1",
+        "1054708-p8",
+        "1054708-p5",
+        "1054708-p7"
+      ],
+      "scores": [
+        0.7972,
+        0.75575,
+        0.74037,
+        0.70854,
+        0.67112
+      ],
+      "gold_ids": [
+        "1054708-p1",
+        "1054708-p3"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 686462,
+      "query": "what is a health maintenance organizations",
+      "retrieved_ids": [
+        "638975-p5",
+        "638975-p2",
+        "686462-p6",
+        "686462-p0",
+        "686462-p9"
+      ],
+      "scores": [
+        0.87417,
+        0.80239,
+        0.78764,
+        0.74932,
+        0.74594
+      ],
+      "gold_ids": [
+        "686462-p0",
+        "686462-p6"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1027982,
+      "query": "who founded the principles for the boy scouts?",
+      "retrieved_ids": [
+        "1027982-p3",
+        "1027982-p6",
+        "1027982-p0",
+        "1027982-p2",
+        "1027982-p1"
+      ],
+      "scores": [
+        0.63799,
+        0.59914,
+        0.58634,
+        0.58359,
+        0.57563
+      ],
+      "gold_ids": [
+        "1027982-p1",
+        "1027982-p2"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 594048,
+      "query": "what celebrities named their daughter james",
+      "retrieved_ids": [
+        "594048-p6",
+        "594048-p2",
+        "594048-p5",
+        "594048-p1",
+        "594048-p9"
+      ],
+      "scores": [
+        0.66335,
+        0.65727,
+        0.65327,
+        0.63136,
+        0.60069
+      ],
+      "gold_ids": [
+        "594048-p1",
+        "594048-p5"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1032262,
+      "query": "who is donald friese",
+      "retrieved_ids": [
+        "1032262-p7",
+        "1032262-p6",
+        "1032262-p0",
+        "1032262-p1",
+        "1034645-p0"
+      ],
+      "scores": [
+        0.7153,
+        0.63732,
+        0.60998,
+        0.59171,
+        0.45427
+      ],
+      "gold_ids": [
+        "1032262-p4",
+        "1032262-p6"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 549729,
+      "query": "what actors played in the titanic",
+      "retrieved_ids": [
+        "549729-p9",
+        "549729-p1",
+        "913502-p4",
+        "913502-p1",
+        "549729-p7"
+      ],
+      "scores": [
+        0.75147,
+        0.70186,
+        0.67045,
+        0.60948,
+        0.58889
+      ],
+      "gold_ids": [
+        "549729-p1",
+        "549729-p4"
+      ],
+      "n_gold_retrieved": 1,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1052377,
+      "query": "who starred in  superman",
+      "retrieved_ids": [
+        "1052377-p6",
+        "1028229-p1",
+        "1052377-p3",
+        "1052377-p7",
+        "1028229-p2"
+      ],
+      "scores": [
+        0.70776,
+        0.70157,
+        0.67644,
+        0.65332,
+        0.64912
+      ],
+      "gold_ids": [
+        "1052377-p1",
+        "1052377-p9"
+      ],
+      "n_gold_retrieved": 0,
+      "retrieval_success": false,
+      "category": "multi-hop",
+      "depth": 5
+    },
+    {
+      "query_id": 1047515,
+      "query": "who played zack morris in saved by the bell",
+      "retrieved_ids": [
+        "1047515-p0",
+        "1047515-p5",
+        "1047515-p8",
+        "1047515-p2",
+        "1047515-p9"
+      ],
+      "scores": [
+        0.77406,
+        0.76226,
+        0.7456,
+        0.67233,
+        0.56798
+      ],
+      "gold_ids": [
+        "1047515-p2",
+        "1047515-p5"
+      ],
+      "n_gold_retrieved": 2,
+      "retrieval_success": true,
+      "category": "multi-hop",
+      "depth": 5
+    }
+  ]
+}

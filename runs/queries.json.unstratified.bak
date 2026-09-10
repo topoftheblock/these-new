@@ -1,0 +1,960 @@
+{
+  "seed": 20260904,
+  "source": "../data/ms_marco_v2.1_validation_wellformed.parquet",
+  "n_queries": 100,
+  "queries": [
+    {
+      "query_id": 176312,
+      "query": "dso circuit definition",
+      "category": "direct",
+      "answer": "The definition of a digital storage oscilloscopes are multiplexed together on higher capacity circuits.",
+      "gold_ids": [
+        "176312-p7"
+      ]
+    },
+    {
+      "query_id": 281482,
+      "query": "how many days is standard visitation",
+      "category": "direct",
+      "answer": "In standard visitation, the days are first and third week-ends of each month, and first, third and fifth weekends of each calendar year, from 6:00 p.m. on Friday until 8:00 a.m.",
+      "gold_ids": [
+        "281482-p4"
+      ]
+    },
+    {
+      "query_id": 595990,
+      "query": "what city is knott's berry farm in california",
+      "category": "direct",
+      "answer": "Knott's Berry Farm is in Buena Park, California.",
+      "gold_ids": [
+        "595990-p2"
+      ]
+    },
+    {
+      "query_id": 436249,
+      "query": "largest container ship in the world",
+      "category": "direct",
+      "answer": "China Shipping Container Lines is the largest container ship in the world.",
+      "gold_ids": [
+        "436249-p2"
+      ]
+    },
+    {
+      "query_id": 724746,
+      "query": "what is blood made out of",
+      "category": "direct",
+      "answer": "Blood is made up of cells in a watery base, called plasma.",
+      "gold_ids": [
+        "724746-p0"
+      ]
+    },
+    {
+      "query_id": 348936,
+      "query": "how to change tail light bulb dodge grand caravan 2005",
+      "category": "direct",
+      "answer": "To change a taillight bulb, first, open the rear hatch. Look inside at the edge where the taillight is. You'll see 2 black round tabs snap-in button near the taillight. Take a screwdriver and pry each one out far enough so you can pull them out with your fingers or pliers.You may have to turn or wiggle them but they'll come out.",
+      "gold_ids": [
+        "348936-p0"
+      ]
+    },
+    {
+      "query_id": 342450,
+      "query": "how to account for incorporation costs",
+      "category": "direct",
+      "answer": "There are typically four types of fees to incorporating: a fee to file the articles of incorporation with the Secretary of State; a first year franchise tax prepayment; fees for various governmental filings; and attorney fees.",
+      "gold_ids": [
+        "342450-p0"
+      ]
+    },
+    {
+      "query_id": 703383,
+      "query": "what is a thoracentesis",
+      "category": "direct",
+      "answer": "Thoracentesis is a procedure to remove fluid or air from around the lungs.",
+      "gold_ids": [
+        "703383-p4"
+      ]
+    },
+    {
+      "query_id": 193604,
+      "query": "gb computer definition",
+      "category": "direct",
+      "answer": "A gigabyte is a measure of computer data storage capacity that is roughly equivalent to 1 billion bytes.  ",
+      "gold_ids": [
+        "193604-p6"
+      ]
+    },
+    {
+      "query_id": 1007928,
+      "query": "which county is noblesville indiana",
+      "category": "direct",
+      "answer": "Noblesville, Indiana is located in Hamilton county.",
+      "gold_ids": [
+        "1007928-p3"
+      ]
+    },
+    {
+      "query_id": 40088,
+      "query": "average pay of interior decorator in seattle",
+      "category": "direct",
+      "answer": "The average pay of an Interior Decorator in Seattle is $46,787.",
+      "gold_ids": [
+        "40088-p6"
+      ]
+    },
+    {
+      "query_id": 940805,
+      "query": "when did skateboards first appear",
+      "category": "direct",
+      "answer": "Skateboards first appeared in 1950.",
+      "gold_ids": [
+        "940805-p6"
+      ]
+    },
+    {
+      "query_id": 552485,
+      "query": "what airport do you fly into to get to bora bora",
+      "category": "direct",
+      "answer": "To get to bora bora you will need to take a flight from Tahiti or other nearby islands.",
+      "gold_ids": [
+        "552485-p0"
+      ]
+    },
+    {
+      "query_id": 684765,
+      "query": "what is a gi cocktail",
+      "category": "direct",
+      "answer": "A GI cocktail is a reliable remedy to combat post-GERD and acid reflux.",
+      "gold_ids": [
+        "684765-p2"
+      ]
+    },
+    {
+      "query_id": 744109,
+      "query": "what is enterprise edition",
+      "category": "direct",
+      "answer": "The Java Platform, Enterprise Edition is a collection of Java application programming interfaces owned by Oracle that software developers can use to write server-side applications.",
+      "gold_ids": [
+        "744109-p6"
+      ]
+    },
+    {
+      "query_id": 393277,
+      "query": "in biology what example provides evidence of natural selection",
+      "category": "direct",
+      "answer": "The evidence for evolution often stems from direct observation of natural selection in the field and the laboratory.",
+      "gold_ids": [
+        "393277-p8"
+      ]
+    },
+    {
+      "query_id": 31061,
+      "query": "average annual salary in nh",
+      "category": "direct",
+      "answer": "The average annual salary in New Hampshire is $68,250.",
+      "gold_ids": [
+        "31061-p1"
+      ]
+    },
+    {
+      "query_id": 767590,
+      "query": "what is machine definition",
+      "category": "direct",
+      "answer": "A machine is a piece of equipment which uses electricity or some other form of power to perform a particular task.",
+      "gold_ids": [
+        "767590-p0"
+      ]
+    },
+    {
+      "query_id": 42052,
+      "query": "average salary for a sports medicine doctor",
+      "category": "direct",
+      "answer": "The average salary for a sports medicine doctor is $163,045 per year",
+      "gold_ids": [
+        "42052-p0"
+      ]
+    },
+    {
+      "query_id": 1056542,
+      "query": "who was the legislation that passed the build for the dam",
+      "category": "direct",
+      "answer": "Victorian legislation passed the build for the dam.",
+      "gold_ids": [
+        "1056542-p3"
+      ]
+    },
+    {
+      "query_id": 945045,
+      "query": "when do women feel morning sickness",
+      "category": "direct",
+      "answer": "Women feel morning sickness during pregnancy.",
+      "gold_ids": [
+        "945045-p1"
+      ]
+    },
+    {
+      "query_id": 194890,
+      "query": "giDa delauran net worth",
+      "category": "direct",
+      "answer": "giDa Delauran's net worth is $15 million.",
+      "gold_ids": [
+        "194890-p0"
+      ]
+    },
+    {
+      "query_id": 121114,
+      "query": "define escrow",
+      "category": "direct",
+      "answer": "Escrow is an arrangement under which something is held in trust by a third party until the occurrence of a condition allowing its release to a party to an underlying transaction.",
+      "gold_ids": [
+        "121114-p4"
+      ]
+    },
+    {
+      "query_id": 545624,
+      "query": "weather in prescott, az. annually",
+      "category": "direct",
+      "answer": "The weather in Prescott is average high/low temperatures of 86/49 in June, 89/57 in July, 82/49 in August and 82/49 in September in Arizona.",
+      "gold_ids": [
+        "545624-p3"
+      ]
+    },
+    {
+      "query_id": 468606,
+      "query": "on average how much money does a physicist make",
+      "category": "direct",
+      "answer": "On average, a physicist makes around $88,000 annually.",
+      "gold_ids": [
+        "468606-p7"
+      ]
+    },
+    {
+      "query_id": 706903,
+      "query": "what is ab photo",
+      "category": "direct",
+      "answer": "AB photo is a windows software application that has been discovered and submitted by users of Software.com.",
+      "gold_ids": [
+        "706903-p8"
+      ]
+    },
+    {
+      "query_id": 949649,
+      "query": "when is best time to prune trees",
+      "category": "direct",
+      "answer": "The best time to prune trees is early spring.",
+      "gold_ids": [
+        "949649-p5"
+      ]
+    },
+    {
+      "query_id": 1053229,
+      "query": "who was albert ellis",
+      "category": "direct",
+      "answer": "Albert Ellis was  an American psychologist.",
+      "gold_ids": [
+        "1053229-p1"
+      ]
+    },
+    {
+      "query_id": 278198,
+      "query": "how many calories walnuts",
+      "category": "direct",
+      "answer": "Each whole walnut has about 27 calories.",
+      "gold_ids": [
+        "278198-p2"
+      ]
+    },
+    {
+      "query_id": 956894,
+      "query": "when was bigfoot first sighted",
+      "category": "direct",
+      "answer": "Bigfoot was first sighted in between 2000 and 2009.",
+      "gold_ids": [
+        "956894-p8"
+      ]
+    },
+    {
+      "query_id": 606138,
+      "query": "what county is franklin wi",
+      "category": "direct",
+      "answer": "Franklin is in Milwaukee County, Wisconsin.",
+      "gold_ids": [
+        "606138-p8"
+      ]
+    },
+    {
+      "query_id": 393787,
+      "query": "in this there is strength definition",
+      "category": "direct",
+      "answer": "Strength is defined as the ability to exert a force against a resistance.",
+      "gold_ids": [
+        "393787-p6"
+      ]
+    },
+    {
+      "query_id": 1027652,
+      "query": "who files probate",
+      "category": "direct",
+      "answer": "When probate is involved, an heir or family member must file the appropriate probate pleadings with the proper court.",
+      "gold_ids": [
+        "1027652-p0"
+      ]
+    },
+    {
+      "query_id": 260978,
+      "query": "how long for erb to reflect",
+      "category": "direct",
+      "answer": "It takes 24 to 48 hours for an ERB to reflect.",
+      "gold_ids": [
+        "260978-p7"
+      ]
+    },
+    {
+      "query_id": 821245,
+      "query": "what is the fennel tea good for",
+      "category": "direct",
+      "answer": "Fennel seed tea is quite refreshing and very effective for bloating and gas as it travels quickly through the gastrointestinal tract to where it’s needed.",
+      "gold_ids": [
+        "821245-p2"
+      ]
+    },
+    {
+      "query_id": 905630,
+      "query": "what time zone is fl",
+      "category": "direct",
+      "answer": "Central Time Zone is in Florida.",
+      "gold_ids": [
+        "905630-p0"
+      ]
+    },
+    {
+      "query_id": 37055,
+      "query": "average height of professional soccer player",
+      "category": "direct",
+      "answer": "The average height of professional soccer player is 5 feet, 11 1/2 inches.",
+      "gold_ids": [
+        "37055-p1"
+      ]
+    },
+    {
+      "query_id": 831243,
+      "query": "what is the meaning of mischievous",
+      "category": "direct",
+      "answer": "Mischievous means causing mischief, playing pranks, or otherwise causing problems.",
+      "gold_ids": [
+        "831243-p9"
+      ]
+    },
+    {
+      "query_id": 683545,
+      "query": "what is a flood gravemind",
+      "category": "direct",
+      "answer": "The Flood Gravemind or a compound intelligence is the shared consciousness of the entire Flood species which first emerges when the Flood reaches the Coordinated Stage.",
+      "gold_ids": [
+        "683545-p4"
+      ]
+    },
+    {
+      "query_id": 393929,
+      "query": "in what county is east grand forks mn located",
+      "category": "direct",
+      "answer": "East Grand Forks is located in Polk County, Minnesota.",
+      "gold_ids": [
+        "393929-p0"
+      ]
+    },
+    {
+      "query_id": 12262,
+      "query": "aesthetic function",
+      "category": "direct",
+      "answer": "The aesthetic function is to provide the viewer, or in the case of visualization research the experimental participant, with implicit associations to the notions of quality and attention to detail.",
+      "gold_ids": [
+        "12262-p5"
+      ]
+    },
+    {
+      "query_id": 180413,
+      "query": "endosteal bone definition",
+      "category": "direct",
+      "answer": "Endosteal bone is defined as relating to the endosteum.",
+      "gold_ids": [
+        "180413-p3"
+      ]
+    },
+    {
+      "query_id": 579087,
+      "query": "what blood cells are called erythrocytes",
+      "category": "direct",
+      "answer": "The red blood cells are called as erythrocytes.",
+      "gold_ids": [
+        "579087-p9"
+      ]
+    },
+    {
+      "query_id": 810053,
+      "query": "what is the carpometacarpal joint?",
+      "category": "direct",
+      "answer": "Carpometacarpal joint is at the base of the thumb, where the thumb attaches to the hand.",
+      "gold_ids": [
+        "810053-p6"
+      ]
+    },
+    {
+      "query_id": 633994,
+      "query": "what does carte blanche mean",
+      "category": "direct",
+      "answer": "Carte blanche is another way to say that a person has permission to do things in whatever manner he or she chooses.",
+      "gold_ids": [
+        "633994-p9"
+      ]
+    },
+    {
+      "query_id": 1012370,
+      "query": "what was the first broadcast station",
+      "category": "direct",
+      "answer": "The first broadcast station was on October 27, 1920.",
+      "gold_ids": [
+        "1012370-p8"
+      ]
+    },
+    {
+      "query_id": 887599,
+      "query": "what pokemon can you catch in pokemon emerald",
+      "category": "direct",
+      "answer": "You can catch Lugia Pokemon in Pokémon Emerald.",
+      "gold_ids": [
+        "887599-p0"
+      ]
+    },
+    {
+      "query_id": 562628,
+      "query": "what are oncology pathways",
+      "category": "direct",
+      "answer": "Oncology pathways are the future of incentive-driven pathway adherence by asking key questions that will inform the future of this practice and outline for pharmaceutical manufacturers steps that they can take to become an active part of the conversation.",
+      "gold_ids": [
+        "562628-p8"
+      ]
+    },
+    {
+      "query_id": 1047451,
+      "query": "who played tom riddle in harry potter",
+      "category": "direct",
+      "answer": "Christian Coulson played Tom Riddle in Harry Potter.",
+      "gold_ids": [
+        "1047451-p2"
+      ]
+    },
+    {
+      "query_id": 623139,
+      "query": "what do full grown great white sharks eat",
+      "category": "direct",
+      "answer": "Full grown great white sharks eat seals and sea lions.",
+      "gold_ids": [
+        "623139-p6"
+      ]
+    },
+    {
+      "query_id": 728602,
+      "query": "what is cbc lab test called",
+      "category": "multi-hop",
+      "answer": "The complete blood count is a test that evaluates the cells that circulate in blood.",
+      "gold_ids": [
+        "728602-p2",
+        "728602-p4"
+      ]
+    },
+    {
+      "query_id": 684865,
+      "query": "what is a glib",
+      "category": "multi-hop",
+      "answer": "The definition of glib is smooth talking or writing that suggests someone isn’t telling the truth.",
+      "gold_ids": [
+        "684865-p0",
+        "684865-p3"
+      ]
+    },
+    {
+      "query_id": 69342,
+      "query": "can i pay for college with my roth ira",
+      "category": "multi-hop",
+      "answer": "No, you can not pay for college with my roth IRA.",
+      "gold_ids": [
+        "69342-p1",
+        "69342-p6"
+      ]
+    },
+    {
+      "query_id": 248616,
+      "query": "how long do you roast a beet",
+      "category": "multi-hop",
+      "answer": "A beet has to be roasted for 45 minutes to 2 hour.",
+      "gold_ids": [
+        "248616-p2",
+        "248616-p4"
+      ]
+    },
+    {
+      "query_id": 874392,
+      "query": "what longevity mean",
+      "category": "multi-hop",
+      "answer": "Longevity means typical length of life.",
+      "gold_ids": [
+        "874392-p6",
+        "874392-p7"
+      ]
+    },
+    {
+      "query_id": 177287,
+      "query": "earnings per share definition stock",
+      "category": "multi-hop",
+      "answer": "In stock, the definition of Earnings per share is calculated by dividing a company's total earnings by the number of outstanding shares.",
+      "gold_ids": [
+        "177287-p7",
+        "177287-p9"
+      ]
+    },
+    {
+      "query_id": 608215,
+      "query": "what county is lake mills, wisconsin",
+      "category": "multi-hop",
+      "answer": "Lake Mills, Wisconsin is in Jefferson county.",
+      "gold_ids": [
+        "608215-p0",
+        "608215-p9"
+      ]
+    },
+    {
+      "query_id": 588829,
+      "query": "what causes hypoxemia in pulmonary edema",
+      "category": "multi-hop",
+      "answer": "Depression causes hypoxemia in pulmonary edema.",
+      "gold_ids": [
+        "588829-p7",
+        "588829-p8"
+      ]
+    },
+    {
+      "query_id": 338271,
+      "query": "how quickly does grass seed germinate",
+      "category": "multi-hop",
+      "answer": "The germination time for grass seed ranges from 14 to 28 days.",
+      "gold_ids": [
+        "338271-p0",
+        "338271-p3"
+      ]
+    },
+    {
+      "query_id": 1032262,
+      "query": "who is donald friese",
+      "category": "multi-hop",
+      "answer": "Donald Friese is the Chairman and Chief Executive Officer of C.R. Laurence Co., Inc.",
+      "gold_ids": [
+        "1032262-p4",
+        "1032262-p6"
+      ]
+    },
+    {
+      "query_id": 405653,
+      "query": "is catapres the same as clonidine",
+      "category": "multi-hop",
+      "answer": "No, catapres is not the same as clonidine.",
+      "gold_ids": [
+        "405653-p3",
+        "405653-p8"
+      ]
+    },
+    {
+      "query_id": 175313,
+      "query": "down syndrome is a chromosomal disorder that is caused by",
+      "category": "multi-hop",
+      "answer": "Down syndrome is a chromosomal disorder that is caused when abnormal cell division results in extra genetic material from chromosome 21.",
+      "gold_ids": [
+        "175313-p0",
+        "175313-p1"
+      ]
+    },
+    {
+      "query_id": 136840,
+      "query": "definition of ostensibly",
+      "category": "multi-hop",
+      "answer": "Ostensibly means apparently or seemingly.",
+      "gold_ids": [
+        "136840-p0",
+        "136840-p6"
+      ]
+    },
+    {
+      "query_id": 628106,
+      "query": "what does a alt test check for",
+      "category": "multi-hop",
+      "answer": "An ALT test check to detect liver injury.",
+      "gold_ids": [
+        "628106-p2",
+        "628106-p8"
+      ]
+    },
+    {
+      "query_id": 733581,
+      "query": "what is considered an academic discipline",
+      "category": "multi-hop",
+      "answer": "Consensus is considered an academic discipline.",
+      "gold_ids": [
+        "733581-p0",
+        "733581-p9"
+      ]
+    },
+    {
+      "query_id": 506478,
+      "query": "symptoms bipolar disorder",
+      "category": "multi-hop",
+      "answer": "Bipolar disorder is a periods of elevated or irritable mood accompanied by dramatic increases in energy, activity, and fast thinking.  ",
+      "gold_ids": [
+        "506478-p3",
+        "506478-p4"
+      ]
+    },
+    {
+      "query_id": 488585,
+      "query": "resume what is a cv",
+      "category": "multi-hop",
+      "answer": "A CV is  two different expressions for the same thing.",
+      "gold_ids": [
+        "488585-p0",
+        "488585-p3"
+      ]
+    },
+    {
+      "query_id": 632825,
+      "query": "what does bail type cash or bond mean",
+      "category": "multi-hop",
+      "answer": "A bail type cash or bond is a written promise signed by a defendant and surety to ensure that a criminal defendant will appear in court at the scheduled time and date, as ordered by the court.",
+      "gold_ids": [
+        "632825-p2",
+        "632825-p7"
+      ]
+    },
+    {
+      "query_id": 729223,
+      "query": "what is ceremonial grade matcha?",
+      "category": "multi-hop",
+      "answer": "Ceremonial grade matcha is made from the youngest tea leaves, with the stems and veins entirely removed. ",
+      "gold_ids": [
+        "729223-p0",
+        "729223-p2"
+      ]
+    },
+    {
+      "query_id": 676737,
+      "query": "what is a ce business",
+      "category": "multi-hop",
+      "answer": "The Conformité Européene marking is the manufacturer's declaration that the product meets the requirements of the applicable European Conformity directives.",
+      "gold_ids": [
+        "676737-p3",
+        "676737-p6"
+      ]
+    },
+    {
+      "query_id": 1073933,
+      "query": "what is a entrepreneur",
+      "category": "multi-hop",
+      "answer": "An entrepreneur is a person who starts and runs a new business or organization.",
+      "gold_ids": [
+        "1073933-p1",
+        "1073933-p2"
+      ]
+    },
+    {
+      "query_id": 506556,
+      "query": "symptoms extreme fatigue and mucus",
+      "category": "multi-hop",
+      "answer": "A symptom of extreme fatigue and mucus is Active TB.",
+      "gold_ids": [
+        "506556-p7",
+        "506556-p8"
+      ]
+    },
+    {
+      "query_id": 289030,
+      "query": "how many miles is the moon from earth?",
+      "category": "multi-hop",
+      "answer": "The moon is 238900 miles away from the earth.",
+      "gold_ids": [
+        "289030-p0",
+        "289030-p2"
+      ]
+    },
+    {
+      "query_id": 608040,
+      "query": "what county is kingston tennessee i",
+      "category": "multi-hop",
+      "answer": "Kingston is in Roane County, Tennessee.",
+      "gold_ids": [
+        "608040-p0",
+        "608040-p8"
+      ]
+    },
+    {
+      "query_id": 973294,
+      "query": "where does kate gosselin live",
+      "category": "multi-hop",
+      "answer": "Kate Gosselin's address is 298 Heffner Road, Wernersville, Pennsylvania 19565.",
+      "gold_ids": [
+        "973294-p5",
+        "973294-p8"
+      ]
+    },
+    {
+      "query_id": 950482,
+      "query": "when is groundhog day this year",
+      "category": "multi-hop",
+      "answer": "Groundhog day in this year is on February 2.",
+      "gold_ids": [
+        "950482-p2",
+        "950482-p9"
+      ]
+    },
+    {
+      "query_id": 612471,
+      "query": "what county is scituate ri in",
+      "category": "multi-hop",
+      "answer": "Scituate, Rhode Island is in Providence County.",
+      "gold_ids": [
+        "612471-p1",
+        "612471-p3"
+      ]
+    },
+    {
+      "query_id": 524569,
+      "query": "trend what does it means",
+      "category": "multi-hop",
+      "answer": "A trend is a general direction in which something tends to move.",
+      "gold_ids": [
+        "524569-p3",
+        "524569-p9"
+      ]
+    },
+    {
+      "query_id": 829858,
+      "query": "what is the margin of safety",
+      "category": "multi-hop",
+      "answer": "The margin of safety is a financial ratio that measures the amount of sales that exceed the break-even point.",
+      "gold_ids": [
+        "829858-p1",
+        "829858-p4"
+      ]
+    },
+    {
+      "query_id": 267511,
+      "query": "how long should you keep tax records",
+      "category": "multi-hop",
+      "answer": "You should keep tax records for seven years.",
+      "gold_ids": [
+        "267511-p1",
+        "267511-p2"
+      ]
+    },
+    {
+      "query_id": 442759,
+      "query": "longest shots in nba history",
+      "category": "multi-hop",
+      "answer": "The longest shot in the history of NBA is 89 feet.",
+      "gold_ids": [
+        "442759-p0",
+        "442759-p8"
+      ]
+    },
+    {
+      "query_id": 741390,
+      "query": "what is drop forged",
+      "category": "multi-hop",
+      "answer": "Metal shaping process in which a hot piece of metal is hammered between the stationary part and the moving  part of a two-piece hollow metal die which is also called forging die in  several operations is known to be drop forged.",
+      "gold_ids": [
+        "741390-p0",
+        "741390-p2"
+      ]
+    },
+    {
+      "query_id": 996422,
+      "query": "where is the little league world series",
+      "category": "multi-hop",
+      "answer": "The Little League World Series is in Williamsport, Pennsylvania. ",
+      "gold_ids": [
+        "996422-p2",
+        "996422-p5"
+      ]
+    },
+    {
+      "query_id": 32149,
+      "query": "average cost for a tree to be cut removed",
+      "category": "multi-hop",
+      "answer": "The average cost to remove a tree is $150 to $1,500.",
+      "gold_ids": [
+        "32149-p2",
+        "32149-p9"
+      ]
+    },
+    {
+      "query_id": 168022,
+      "query": "does kirkland minoxidil work",
+      "category": "multi-hop",
+      "answer": "Yes, Kirkland Minoxidil works.",
+      "gold_ids": [
+        "168022-p3",
+        "168022-p7"
+      ]
+    },
+    {
+      "query_id": 785835,
+      "query": "what is potion",
+      "category": "multi-hop",
+      "answer": "Potion is an item that a character can drink that will apply an effect to the imbiber.",
+      "gold_ids": [
+        "785835-p2",
+        "785835-p8"
+      ]
+    },
+    {
+      "query_id": 116989,
+      "query": "define a capricorn",
+      "category": "multi-hop",
+      "answer": "A capricorn is a person who is born while the sun is in Capricorn.",
+      "gold_ids": [
+        "116989-p6",
+        "116989-p8"
+      ]
+    },
+    {
+      "query_id": 443698,
+      "query": "lustful definition urban dictionary",
+      "category": "multi-hop",
+      "answer": "In Urban Dictionary, lustful is a large physical attraction for an individual, that is sometimes uncontrollable and completely unreasonable.",
+      "gold_ids": [
+        "443698-p3",
+        "443698-p4",
+        "443698-p8"
+      ]
+    },
+    {
+      "query_id": 563393,
+      "query": "what are poison pokemon weak against",
+      "category": "multi-hop",
+      "answer": "The poison Pokemon weak against are ground, rock, and ghost types.",
+      "gold_ids": [
+        "563393-p3",
+        "563393-p9"
+      ]
+    },
+    {
+      "query_id": 626519,
+      "query": "what do you do with a slightly burnt finger to bring down the pain",
+      "category": "multi-hop",
+      "answer": "You should separate burned toes and fingers with dry, sterile dressings to bring down the pain.",
+      "gold_ids": [
+        "626519-p1",
+        "626519-p6"
+      ]
+    },
+    {
+      "query_id": 281856,
+      "query": "how many days until my next period is to come",
+      "category": "multi-hop",
+      "answer": "It is about 28 days until the next period is to come.",
+      "gold_ids": [
+        "281856-p1",
+        "281856-p7"
+      ]
+    },
+    {
+      "query_id": 898571,
+      "query": "what states tax retirement income",
+      "category": "multi-hop",
+      "answer": "Kansas has a tax on retirement income.",
+      "gold_ids": [
+        "898571-p0",
+        "898571-p4"
+      ]
+    },
+    {
+      "query_id": 924496,
+      "query": "what were wild boys",
+      "category": "multi-hop",
+      "answer": "The wild boys was twelfth single from the band Duran Duran.",
+      "gold_ids": [
+        "924496-p1",
+        "924496-p3"
+      ]
+    },
+    {
+      "query_id": 685221,
+      "query": "what is a good heart pulse",
+      "category": "multi-hop",
+      "answer": "For most adults, normal heart rate is 60 to 80 BPM. Well-trained athletes can have a normal heart rate of 40 to 60 BPM.",
+      "gold_ids": [
+        "685221-p0",
+        "685221-p2"
+      ]
+    },
+    {
+      "query_id": 752968,
+      "query": "what is gsi software",
+      "category": "multi-hop",
+      "answer": "GIS software refers to a geographic information system application, which is software used to create, manage, analyze and display geospatial data on digital maps.",
+      "gold_ids": [
+        "752968-p0",
+        "752968-p2"
+      ]
+    },
+    {
+      "query_id": 684219,
+      "query": "what is a fursona",
+      "category": "multi-hop",
+      "answer": "A fursona is an anthropomorphic animal representation or avatar.",
+      "gold_ids": [
+        "684219-p6",
+        "684219-p9"
+      ]
+    },
+    {
+      "query_id": 859013,
+      "query": "what is undoing",
+      "category": "multi-hop",
+      "answer": "Undoing is a defense mechanism in which a person tries to 'undo' an unhealthy, destructive or otherwise threatening thought or action by engaging in contrary behavior.",
+      "gold_ids": [
+        "859013-p2",
+        "859013-p5",
+        "859013-p7",
+        "859013-p9"
+      ]
+    },
+    {
+      "query_id": 179440,
+      "query": "electrical definition of fuse link",
+      "category": "multi-hop",
+      "answer": "A fuse is an electrical safety device that operates to provide overcurrent protection of an electrical circuit.",
+      "gold_ids": [
+        "179440-p1",
+        "179440-p2"
+      ]
+    },
+    {
+      "query_id": 999659,
+      "query": "where is vunatu",
+      "category": "multi-hop",
+      "answer": "Vunatu is in South Pacific Ocean.",
+      "gold_ids": [
+        "999659-p0",
+        "999659-p1"
+      ]
+    },
+    {
+      "query_id": 17991,
+      "query": "andre segura",
+      "category": "multi-hop",
+      "answer": "Andre Segura is a staff attorney with the ACLU Immigrants’ Rights Project.",
+      "gold_ids": [
+        "17991-p0",
+        "17991-p3"
+      ]
+    }
+  ]
+}

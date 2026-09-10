@@ -14,7 +14,6 @@ one method the experiment must avoid.
 
 from . import prompts
 from .embedder import Embedder
-from .generator import Generator
 from .index import VectorIndex
 from .retriever import Retriever
 
@@ -40,9 +39,14 @@ class SimpleRAG:
 
     @property
     def generator(self):
-        """Loaded lazily, so retrieval-only runs never pay for the LLM."""
+        """Loaded lazily, so retrieval-only runs never pay for the LLM.
+
+        Built by :func:`rag.make_generator`, so the backend named in
+        :mod:`config` is used here too.
+        """
         if self._generator is None:
-            self._generator = Generator()
+            from . import make_generator
+            self._generator = make_generator()
         return self._generator
 
     def retrieve(self, question, gold_ids=None):

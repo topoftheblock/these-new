@@ -9,49 +9,83 @@
 \contentsline {section}{\numberline {1.2}Motivation and Research Objective}{10}{section.1.2}%
 \contentsline {section}{\numberline {1.3}Thesis Structure}{11}{section.1.3}%
 \contentsline {section}{Notation}{11}{section*.7}%
-\contentsline {chapter}{\numberline {2}Preliminaries}{14}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Path towards RAG}{14}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Components of RAG}{15}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Knowledge Base / Vector Database}{15}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Retriever}{16}{subsection.2.2.2}%
-\contentsline {subsubsection}{\nonumberline Dense Retrieval}{16}{subsubsection*.15}%
-\contentsline {subsubsection}{\nonumberline Sparse Retrieval}{16}{subsubsection*.17}%
-\contentsline {subsubsection}{\nonumberline Hybrid Search}{17}{subsubsection*.19}%
-\contentsline {subsubsection}{\nonumberline Retrieval Depth}{17}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.3}Generator}{17}{subsection.2.2.3}%
-\contentsline {subsubsection}{\nonumberline Decoding and the Temperature Parameter}{18}{subsubsection*.23}%
-\contentsline {subsection}{\numberline {2.2.4}System Prompt}{18}{subsection.2.2.4}%
-\contentsline {section}{\numberline {2.3}Retrieval-Augmented Generation and Fine-Tuning}{20}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Use-Case of RAG}{21}{section.2.4}%
-\contentsline {section}{\numberline {2.5}Advanced RAG Architectures}{21}{section.2.5}%
-\contentsline {chapter}{\numberline {3}Literature Review}{24}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Prompt Sensitivity and Instruction-Following in Language Models}{24}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Retrieval-Augmented Generation: Architecture, Evaluation, and Failure Modes}{25}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Adversarial and Competing Instructions in Retrieved Content}{26}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Synthesis and Research Gap}{27}{section.3.4}%
-\contentsline {chapter}{\numberline {4}Formal Model of a RAG System}{29}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Modelling Objective}{29}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Probabilistic Retrieval}{29}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Prompt-Conditioned Generation}{30}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Marginalizing over Retrieved Documents}{30}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}RAG-Sequence}{30}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}RAG-Token}{30}{subsection.4.4.2}%
-\contentsline {section}{\numberline {4.5}The System Prompt: Requirements and Wording}{31}{section.4.5}%
-\contentsline {section}{\numberline {4.6}The System Prompt as an Intervention}{33}{section.4.6}%
-\contentsline {section}{\numberline {4.7}The Causal Effect}{33}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Grounding the Knowledge Base in Established Datasets}{34}{section.4.8}%
-\contentsline {section}{\numberline {4.9}What Counts as a Good Answer}{35}{section.4.9}%
-\contentsline {chapter}{\numberline {5}Experimental Setup}{38}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Goal and Design}{38}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Knowledge Base and Query Set}{40}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Experimental Conditions}{42}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Metrics}{43}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}The Judge}{45}{subsection.5.4.1}%
-\contentsline {section}{\numberline {5.5}Procedure and Analysis}{45}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Provenance of the Prompt Wordings}{46}{subsection.5.5.1}%
-\contentsline {section}{\numberline {5.6}Limitations}{47}{section.5.6}%
-\contentsline {chapter}{\numberline {6}Results and Discussion}{48}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusion}{49}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Contribution}{49}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Future Work}{49}{section.7.2}%
+\contentsline {chapter}{\numberline {2}Preliminaries}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Path towards RAG}{13}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Components of RAG}{14}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Knowledge Base / Vector Database}{14}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Retriever}{15}{subsection.2.2.2}%
+\contentsline {subsubsection}{\nonumberline Dense Retrieval}{15}{subsubsection*.15}%
+\contentsline {subsubsection}{\nonumberline Sparse Retrieval}{15}{subsubsection*.17}%
+\contentsline {subsubsection}{\nonumberline Retrieval Depth}{15}{subsubsection*.19}%
+\contentsline {subsection}{\numberline {2.2.3}Generator}{15}{subsection.2.2.3}%
+\contentsline {subsubsection}{\nonumberline Decoding and the Temperature Parameter}{16}{subsubsection*.21}%
+\contentsline {subsection}{\numberline {2.2.4}System Prompt}{16}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Retrieval-Augmented Generation versus Fine-Tuning}{17}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Use-Case of RAG}{17}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Advanced RAG Architectures}{18}{section.2.5}%
+\contentsline {chapter}{\numberline {3}Literature Review}{20}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Prompt Sensitivity and Instruction-Following in Language Models}{20}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Retrieval-Augmented Generation: Architecture, Evaluation, and Failure Modes}{21}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Adversarial and Competing Instructions in Retrieved Content}{22}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Synthesis and Research Gap}{23}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Formal Model of a RAG System}{24}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Modelling Objective}{24}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Probabilistic Retrieval}{24}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Prompt-Conditioned Generation}{25}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Marginalizing over Retrieved Documents}{25}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}RAG-Sequence}{25}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}RAG-Token}{25}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}The System Prompt: Requirements and Wording}{26}{section.4.5}%
+\contentsline {section}{\numberline {4.6}The System Prompt as an Intervention}{27}{section.4.6}%
+\contentsline {section}{\numberline {4.7}The Causal Effect}{28}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Grounding the Knowledge Base in Established Datasets}{29}{section.4.8}%
+\contentsline {section}{\numberline {4.9}What Counts as a Good Answer}{29}{section.4.9}%
+\contentsline {chapter}{\numberline {5}Experimental Setup}{31}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Research Question and Hypothesis}{31}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Overview of the Experiment}{31}{section.5.2}%
+\contentsline {section}{\numberline {5.3}System-Prompt Conditions}{32}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Three Published Baselines}{32}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Four Wordings of Each Baseline}{33}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}Variables and Controlled Factors}{35}{section.5.4}%
+\contentsline {paragraph}{\nonumberline Independent variable.}{35}{paragraph*.23}%
+\contentsline {paragraph}{\nonumberline Dependent variable.}{36}{paragraph*.25}%
+\contentsline {paragraph}{\nonumberline Controlled factor.}{36}{paragraph*.27}%
+\contentsline {paragraph}{\nonumberline Held constant.}{36}{paragraph*.29}%
+\contentsline {paragraph}{\nonumberline Covariates.}{36}{paragraph*.31}%
+\contentsline {paragraph}{\nonumberline The design.}{36}{paragraph*.33}%
+\contentsline {section}{\numberline {5.5}Knowledge Base and Query Set}{37}{section.5.5}%
+\contentsline {paragraph}{\nonumberline The knowledge base.}{37}{paragraph*.35}%
+\contentsline {paragraph}{\nonumberline The query set.}{37}{paragraph*.37}%
+\contentsline {section}{\numberline {5.6}Experimental Procedure}{38}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Stage 1: Retrieval and the Retrieval Gate}{38}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Stage 2: Generation}{39}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}The Pipeline}{39}{subsection.5.6.3}%
+\contentsline {section}{\numberline {5.7}Evaluation}{40}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}The Four Measures}{40}{subsection.5.7.1}%
+\contentsline {paragraph}{\nonumberline Faithfulness.}{40}{paragraph*.39}%
+\contentsline {paragraph}{\nonumberline Answer relevance.}{40}{paragraph*.41}%
+\contentsline {paragraph}{\nonumberline Correctness.}{41}{paragraph*.43}%
+\contentsline {paragraph}{\nonumberline Instruction adherence.}{41}{paragraph*.45}%
+\contentsline {subsection}{\numberline {5.7.2}The Judge}{41}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Estimating the Effect of a Rewording}{42}{subsection.5.7.3}%
+\contentsline {subsection}{\numberline {5.7.4}Deciding the Hypothesis}{42}{subsection.5.7.4}%
+\contentsline {section}{\numberline {5.8}Limitations}{43}{section.5.8}%
+\contentsline {chapter}{\numberline {6}Results and Discussion}{45}{chapter.6}%
+\contentsline {section}{\numberline {6.1}What Was Collected}{45}{section.6.1}%
+\contentsline {section}{\numberline {6.2}How the System Behaved Before Any Comparison}{45}{section.6.2}%
+\contentsline {section}{\numberline {6.3}The Effect of Rewording}{47}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Instruction Adherence}{47}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Faithfulness}{47}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Answer Relevance}{47}{subsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.3.4}Correctness}{48}{subsection.6.3.4}%
+\contentsline {section}{\numberline {6.4}The Verdict on the Hypothesis}{48}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Reading the Adherence Result}{49}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Baseline B: The Model Cites, But Not in Every Sentence}{49}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Baseline C: Compliance Falls When the Instruction Stops Being an Instruction}{49}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}The Direction Is Not Fixed}{49}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}What These Results Do Not Show}{50}{section.6.6}%
+\contentsline {chapter}{\numberline {7}Conclusion}{51}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Summary of Findings}{51}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Contribution}{52}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Future Work}{52}{section.7.3}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

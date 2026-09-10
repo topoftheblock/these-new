@@ -8,21 +8,21 @@ source states it, and each states a different number of requirements. Taking
 three rather than one tests whether a wording effect survives a change in how
 much the prompt asks for, which a single baseline cannot show.
 
-    A  ragbench   Friel et al. 2024, 2 requirements
+    A  ragbench   Friel et al. 2024,  1 requirement
     B  alce       Gao et al. 2023,  ~10 requirements
     C  fitrag     Mao et al. 2024,   3 requirements
 
-**Wording** (five levels), the axes of Section 4.5 of the thesis. Within a
-baseline, conditions 0 to 3 hold the requirement set fixed and change only how
-it is expressed. Condition 4 changes the requirement set itself.
+**Wording** (four levels), the axes of Section 4.5 of the thesis. Within a
+baseline, all four conditions state the *same* requirement set. Only how it is
+written changes. That is the independent variable of the experiment: the
+structure of the prompt, with its meaning held fixed.
 
     0  canonical   the published form, unchanged
-    1  lexical     synonym substitution, register held fixed
-    2  syntactic   clause reordering, active to passive
-    3  format      prose rewritten as a list
-    4  deontic     every obligation weakened to a request
+    1  lexical     synonym substitution, clause order and voice held fixed
+    2  syntactic   clause reordering, active to passive, vocabulary held fixed
+    3  format      the same wording laid out as a list rather than as prose
 
-Condition ids are ``<baseline><n>``: ``A0``, ``B3``, ``C4`` and so on.
+Condition ids are ``<baseline><n>``: ``A0``, ``B3``, ``C2`` and so on.
 
 Writing the variants
 --------------------
@@ -36,9 +36,16 @@ makes the comparison interpretable, and it is easy to break by accident:
   structure. Obligation is carried uniformly by "is to be", so that a change of
   voice does not smuggle in a change of modal force.
 - **format** keeps the wording and changes only layout. List items are bare
-  noun phrases, again to avoid introducing modals that condition 4 owns.
-- **deontic** keeps condition 0's wording and weakens only the modals. It is the
-  one condition whose requirement set differs, and it is reported separately.
+  noun phrases, again so that no modal is added or removed.
+
+No condition changes what the prompt requires. A variant that weakened or
+strengthened an obligation would change the requirement set, and a difference
+it produced could not be read as an effect of structure. Such a variant is
+therefore not part of the design.
+
+Length is held near-constant within a baseline (``LENGTH_TOLERANCE``), so a
+difference between two conditions cannot be read as an effect of how much
+text the prompt contains.
 """
 
 #: Patterns that mark a refusal to answer.
@@ -81,7 +88,7 @@ BASELINE_SOURCE = {
 }
 
 AXES = {
-    0: "canonical", 1: "lexical", 2: "syntactic", 3: "format", 4: "deontic",
+    0: "canonical", 1: "lexical", 2: "syntactic", 3: "format",
 }
 
 # --------------------------------------------------------------- baseline A
@@ -93,8 +100,6 @@ A2 = "The question is to be answered using the context pieces below."
 
 A3 = """CONTEXT: the following pieces
 TASK: use them to answer the question"""
-
-A4 = "Please try to answer the question using the context pieces below."
 
 # --------------------------------------------------------------- baseline B
 B0 = """Write an accurate, engaging, and concise answer for the given question \
@@ -136,14 +141,6 @@ CITATIONS
 TONE
 - unbiased and journalistic"""
 
-B4 = """Please try to write an accurate, engaging, and concise answer for the \
-given question using only the provided search results (some might be \
-irrelevant), and it would be good to cite them. An unbiased and journalistic \
-tone would be preferable. You should probably cite any factual claim. When \
-citing several results, [1][2][3] is suggested. Try to cite around one to \
-three documents per sentence. If several documents support the sentence, \
-consider a minimum sufficient subset."""
-
 # --------------------------------------------------------------- baseline C
 C0 = """Refer to the passage below and answer the following question.
 Make sure you fully understand the meaning of the question and passages.
@@ -162,15 +159,11 @@ READ: fully understand the meaning of the question and passages
 ANSWER: give the answer to the following question
 EXPLAIN: say why you choose this answer"""
 
-C4 = """Please try to refer to the passage below and answer the question.
-It would help to fully understand the meaning of the question and passages.
-Then you could give the answer and say why you chose it."""
-
 #: condition id -> system prompt
 CONDITIONS = {
-    "A0": A0, "A1": A1, "A2": A2, "A3": A3, "A4": A4,
-    "B0": B0, "B1": B1, "B2": B2, "B3": B3, "B4": B4,
-    "C0": C0, "C1": C1, "C2": C2, "C3": C3, "C4": C4,
+    "A0": A0, "A1": A1, "A2": A2, "A3": A3,
+    "B0": B0, "B1": B1, "B2": B2, "B3": B3,
+    "C0": C0, "C1": C1, "C2": C2, "C3": C3,
 }
 
 #: the baseline each condition belongs to
@@ -198,8 +191,8 @@ def by_baseline(baseline):
 #: how far a variant's length may stray from its canonical, as a fraction of
 #: the canonical word count. Length is held near-constant so that a difference
 #: between two conditions cannot be read as an effect of prompt length rather
-#: than of the axis being varied.
-LENGTH_TOLERANCE = 0.15
+#: than of the axis being varied. Section 5.3 states the bound as one tenth.
+LENGTH_TOLERANCE = 0.10
 
 
 def word_counts(baseline):
@@ -223,7 +216,7 @@ def check_length_balance(tolerance=LENGTH_TOLERANCE):
     offenders = []
     for baseline in CANONICAL:
         for name, deviation in length_deviations(baseline).items():
-            if abs(deviation) > tolerance:
+            if abs(deviation) > tolerance + 1e-9:
                 offenders.append(f"{name} {deviation:+.0%}")
     if offenders:
         raise ValueError(

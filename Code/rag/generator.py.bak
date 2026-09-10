@@ -1,0 +1,97 @@
+"""
+The generation stage.
+
+Wraps a causal language model behind one call. The model, its decoding
+temperature and its output length are fixed in :mod:`config` and must not vary
+between conditions: the experiment changes the prompt and nothing else.
+
+Only the generator sees the system prompt. The retriever never does.
+"""
+
+import config
+
+
+def pick_device(torch):
+    """The best device available, preferring an accelerator over the CPU.
+
+    Which device is used does not change what the experiment measures -- the
+    model and its parameters are the same -- but it changes how long 37,500
+    generations take by a large factor, so it is chosen rather than left to
+    whatever the default happens to be.
+    """
+    if torch.cuda.is_available():
+        return "cuda"
+    if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
+class Generator:
+    """Local instruct model.
+
+    Parameters
+    ----------
+    model_id : str, optional
+        Defaults to :data:`config.GENERATOR_MODEL`.
+    temperature, max_new_tokens : float, int, optional
+        Default to the fixed values in :mod:`config`. Override only for a smoke
+        test, never between experimental conditions.
+    """
+
+    def __init__(self, model_id=None, temperature=None, max_new_tokens=None,
+                 device=None):
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        import torch
+
+        self.torch = torch
+        self.model_id = model_id or config.GENERATOR_MODEL
+        self.temperature = config.TEMPERATURE if temperature is None else temperature
+        self.max_new_tokens = max_new_tokens or config.MAX_NEW_TOKENS
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
+
+        # device_map="auto" needs accelerate, which is not a dependency of the
+        # experiment: nothing here shards a model across devices. When it is
+        # absent the model is loaded plainly and moved once, which is the same
+        # thing for a single-device run. Falling back rather than requiring the
+        # package keeps a 37,500-generation run from dying at import time over
+        # an optional dependency.
+        self.device = device or pick_device(torch)
+        try:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype="auto", device_map="auto").eval()
+        except (ImportError, ValueError):
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype="auto").to(self.device).eval()
+
+    def __call__(self, prompt):
+        """Generate one answer. Returns ``(text, n_new_tokens)``.
+
+        Each call is independent. No state carries between calls, so the order
+        in which cells are run cannot influence the results.
+
+        Parameters
+        ----------
+        prompt : rag.prompts.Prompt or str
+            A :class:`~rag.prompts.Prompt` is rendered with its system turn in
+            the *system* role, which is what makes S a standing instruction
+            rather than part of the user's message. A bare string is treated as
+            a user turn with no system prompt, which is only for smoke tests:
+            the experiment always passes a Prompt.
+        """
+        if hasattr(prompt, "as_messages"):
+            messages = prompt.as_messages()
+        else:
+            messages = [{"role": "user", "content": prompt}]
+        text = self.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True)
+        enc = self.tokenizer(text, return_tensors="pt").to(self.model.device)
+        with self.torch.no_grad():
+            out = self.model.generate(
+                **enc,
+                do_sample=self.temperature > 0,
+                temperature=self.temperature,
+                max_new_tokens=self.max_new_tokens,
+                pad_token_id=self.tokenizer.eos_token_id,
+            )
+        new = out[0][enc["input_ids"].shape[1]:]
+        return self.tokenizer.decode(new, skip_special_tokens=True).strip(), len(new)

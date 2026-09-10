@@ -74,42 +74,48 @@ release rather than a judgement made here.
 
 ## The knowledge base
 
-`corpus.py` builds it from two sources, both from the release:
+The knowledge base is **not** built here. It is defined by a rule over the
+whole release -- every passage attached to a validation row with a non-empty
+`wellFormedAnswers` field, 122,678 after deduplication -- and `ingest/` builds
+both the index and the id-to-text store from that rule. `build.py` writes only
+the query set and, for reference, `runs/gold_passages.json`.
 
-- **Gold passages**, from the sampled queries. These are what retrieval has to
-  find and what the gate checks for.
-- **Distractors**, drawn from rows that were not sampled, taking only passages
-  never marked `is_selected` for their own query.
+The gold passages of a sampled query are therefore ordinary members of the
+corpus, and they compete against every other passage at retrieval time. No
+distractor pool is sampled and there is no distractor budget to defend.
 
-Distractors come from the same collection on purpose. Retrieval difficulty
-should come from genuine near-misses, not from off-domain filler that any
-encoder separates trivially.
-
-The minimum-length rule in `config.PASSAGE_MIN_WORDS` applies to **distractors
-only**. Gold passages are kept at any length: dropping a short one would change
-a query's category without changing its label, so a multi-hop query could end up
-needing one passage while still being counted and gated as multi-hop.
-
-Passage ids are stable and readable: `"<query_id>-g<n>"` for gold, `"d<n>"` for
-distractors. With the same seed a gold passage keeps its id across runs, which
-is what lets two retrieval results be compared.
+Passage ids are `"<query_id>-p<position>"`: the row a passage came from and its
+position in that row's passage list. `ingest/` mints ids the same way, so a
+gold id here names the same text as the corpus entry. Because the corpus is
+deduplicated by text and the first id wins, a gold passage whose text also
+appears under an earlier row is indexed under that earlier id;
+`canonicalise_gold()` rewrites such ids so the gate looks for an id that
+exists. The number rewritten is printed and is small but not zero.
 
 ## Output contract
 
 `runs/queries.json`
 
     {"seed": 20260904,
-     "source": "../data/dev_v2.1.json",
-     "n_queries": 40,
-     "queries": [{"query_id": 1102432,
+     "source": "../data/ms_marco_v2.1_validation_wellformed.parquet",
+     "n_queries": 100,
+     "queries": [{"query_id": 447717,
                   "query": "...",
                   "category": "direct",
+                  "query_type": "DESCRIPTION",
                   "answer": "the well-formed answer, used as the reference",
-                  "gold_ids": ["1102432-g0"]}, ...]}
+                  "gold_ids": ["447717-p0"]}, ...]}
 
-`runs/corpus.json`
+`runs/corpus.json` is written by `ingest.export_corpus`:
 
-    {"1102432-g0": "passage text", "d0": "passage text", ...}
+    {"447717-p0": "passage text", ...}
+
+## Sampling
+
+Within each category the draw is stratified by MS MARCO's `query_type`
+(DESCRIPTION, ENTITY, LOCATION, NUMERIC, PERSON), ten per type, so the query
+set is balanced on the type and it can be entered as a covariate. Rows are
+sorted by id before sampling, so the draw depends only on the seed.
 
 ## Reading the report
 
@@ -117,7 +123,3 @@ is what lets two retrieval results be compared.
 how many each rule dropped. Those counts belong in the thesis: they document
 what fraction of the release the query set was drawn from, and a reader can
 reproduce them from the same split and seed.
-
-A warning appears when the corpus comes out below the target size in
-`config.N_PASSAGES`. Use a larger split rather than lowering the target, since
-the distractor density inside the top K is what the target controls.

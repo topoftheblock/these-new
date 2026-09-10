@@ -10,9 +10,10 @@ scores low.
 This is where abstention is read. Under the empty evidence level nothing in the
 context supports an answer, so declining is the responsive behaviour and is
 scored as relevant. None of the published baselines mandates a fixed abstention
-string, so a refusal is detected by pattern rather than by exact match. Producing unrelated material instead is not. Without this
-case a correct abstention would be punished for failing to answer a question it
-was right not to answer.
+string, so a refusal is detected by pattern rather than by exact match.
+Producing unrelated material instead is not responsive. Without this case a
+correct abstention would be punished for failing to answer a question it was
+right not to answer.
 
 The measure needs both a judge and an encoder. The encoder is the same one
 retrieval uses, so no second embedding space is introduced.

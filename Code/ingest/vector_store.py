@@ -42,7 +42,17 @@ that. Training happens once; adding is incremental after it.
 """
 
 import json
+import os
 from pathlib import Path
+
+# faiss and torch each ship their own libomp. On macOS the second one to
+# initialise aborts the process with "OMP: Error #15" before any of this
+# module's code runs, so the variable is set here, before either import, rather
+# than left to the caller's shell: a run that dies at import time produces no
+# output at all and the cause is easy to misread. The documented risk of this
+# flag is unsafe *parallel* execution, which the omp_set_num_threads(1) below
+# then rules out for faiss.
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 
 # torch must be imported before faiss. Both link their own copy of libomp, and
 # on macOS loading faiss first makes the process die inside the first

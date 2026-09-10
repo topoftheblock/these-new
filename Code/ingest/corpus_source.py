@@ -98,6 +98,30 @@ def gold_ids(path):
     return out
 
 
+def canonical_ids(path, min_words=0):
+    """Map passage text to the id it is indexed under.
+
+    Deduplication keeps one copy of a repeated text and the first id wins, so a
+    passage can be *in* the corpus under an id that is not the one its own row
+    would mint. That matters for gold passages specifically. The retrieval gate
+    asks whether the passage carrying the answer arrived; if the same text is
+    indexed under another id, retrieving that id *is* retrieving the passage,
+    but an uncanonicalised gold id would never match it and the query would be
+    recorded as a retrieval failure for a reason that has nothing to do with
+    the retriever.
+
+    Returns
+    -------
+    dict
+        ``{passage_text: passage_id}`` for the corpus as indexed.
+    """
+    out = {}
+    for pids, texts in iter_passages(path, deduplicate=True, min_words=min_words):
+        for pid, text in zip(pids, texts):
+            out.setdefault(text, pid)
+    return out
+
+
 def count(path, deduplicate=True):
     """Total passages the corpus will contain. Cheap enough to call first."""
     return sum(len(p) for p, _ in iter_passages(path, deduplicate=deduplicate))

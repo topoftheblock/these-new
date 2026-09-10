@@ -1,82 +1,91 @@
 # evaluation
 
-Scores the generations and computes the reported effect.
+Scores the generations and estimates the effect of a rewording.
 
     judge.py           the language-model judge and its fixed prompts
     metrics/           the four measures
-    cost.py            l(y), the weighted sum of breaches
-    analysis.py        empirical risk, tau_hat, paired tests, Holm
+    analysis.py        tau_hat per measure, 95% CIs, Holm, the verdict
     run_scoring.py     generations.jsonl -> scores.jsonl
     run_analysis.py    scores.jsonl -> results.json
+    agreement.py       Cohen's kappa of the judge against human labels
 
 ## Run
 
-    python3 -m evaluation.run_scoring --program-only    # no model needed
+    python3 -m evaluation.run_scoring --program-only    # no judge, no key needed
     python3 -m evaluation.run_scoring                   # with the judge
     python3 -m evaluation.run_analysis
 
 `--program-only` computes correctness and adherence and skips the two judged
-measures. It loads no model, so it is the fast way to check the plumbing.
+measures. It needs no API key, so it is the fast way to check the plumbing.
 
 ## The four measures
 
-| measure | how | what it detects | cost term |
-|---------|-----|-----------------|-----------|
-| faithfulness | judged | claims the passages do not support | n_1 |
-| relevance | judged | answers that drift, hedge or pad | n_2 |
-| correctness | program | disagreement with the reference answer | n_3 |
-| adherence | program | requirements of the prompt not met | n_4 |
+| measure | how | what it detects |
+|---------|-----|-----------------|
+| faithfulness | judged | claims the passages do not support |
+| relevance | judged + encoder | answers that drift, hedge or pad |
+| correctness | program | disagreement with the reference answer |
+| adherence | program | rule-checkable requirements of the prompt not met |
 
-Each returns a `MetricResult` with `breaches` (the count entering the cost) and
-`score` (the rate on [0,1], higher better). Both are kept because the cost needs
-the count and the results table needs the rate: a raw count grows with answer
-length, and prompts change how much a model writes.
+Each returns a `MetricResult` carrying `score`, the rate on [0,1] with higher
+meaning better. **`score` is what the analysis reads as M(Y).** `breaches`, the
+raw count, is still recorded for inspection but nothing downstream sums it: a
+raw count grows with answer length and prompts change how much a model writes.
 
-**Faithfulness** decomposes the answer into atomic claims and asks the judge
-whether the passages support each. n_1 is the number unsupported.
+**Faithfulness** has the judge decompose the answer into atomic claims, then
+asks it, claim by claim, whether the passages support it. The score is the
+supported fraction.
 
-**Relevance** has the judge write questions the answer would answer well, then
-compares them with the question actually asked, by cosine in the retrieval
-encoder's space. Reusing that encoder avoids introducing a second space.
+**Relevance** has the judge write three questions the answer would answer well,
+then compares them with the question actually asked, by mean cosine in the
+retrieval encoder's space; the score is that cosine, and below 0.5 counts as a
+breach. A refusal when evidence was supplied scores zero. (The abstention branch
+that scored a refusal as *correct* applied to the empty evidence level, which
+this design no longer runs.)
 
-**Correctness** checks whether the answer contains the reference, rather than
-matching it exactly. MS MARCO's well-formed answers are complete sentences, so
-exact match would fail on a correct answer phrased differently and report
-verbosity as error. Token F1 and exact match are kept in `detail` so a reader
-can see how much the containment judgement is carrying.
+**Correctness** checks whether the normalised answer contains the normalised
+reference, rather than matching it exactly. MS MARCO's well-formed answers are
+complete sentences, so exact match would report verbosity as error. Token F1 and
+exact match are kept in `detail`.
+
+Containment **floors on this data**: mean 0.053, exact match 0.012, and 849 of
+6,768 generations score zero while their token F1 is above 0.6. It cannot see
+through a paraphrase, and paraphrase is what the rewordings change. So token F1
+is reported beside it as a *secondary* measure, `correctness_f1` in
+`analysis.SECONDARY`, read from `detail["token_f1"]`.
+
+Secondary measures are estimated by the same estimator and corrected within
+their own family of nine rewordings, and they are **excluded from the verdict on
+H0**. The decision stays on the four measures fixed before the run. Swapping in
+the measure that gave the clearer answer would make the hypothesis depend on the
+result; reporting both does not. Where they disagree, the disagreement is a fact
+about the instrument: a null on containment means containment could not detect a
+change, not that none happened.
 
 **Adherence** is prompt-level strict: one failed requirement fails the whole
-generation. Only rule-verifiable requirements are checked, which is the design
-principle of verifiable instructions.
+generation. Only rule-verifiable requirements are checked, and only those the
+baseline's own prompt states:
 
-## Two decisions the thesis leaves open
+| baseline | rule checked |
+|----------|--------------|
+| A | none; adherence is **undefined** and is skipped, not scored as a pass |
+| B | every sentence carries one to three `[n]` citation markers |
+| C | the answer contains a justification marker (*because*, *since*, ...) |
 
-**Grounding is not counted twice.** The requirement set includes "answer only
-from the retrieved passages", and that is exactly what faithfulness measures.
-Checking it again inside adherence would count one failure in both n_1 and n_4
-and silently weight grounding double in the cost. Adherence therefore checks
-`length`, `abstain` and `disagree`, and records the exclusion in
-`detail["not_checked"]` rather than leaving it implicit.
+Grounding is never checked inside adherence, because faithfulness already
+measures it. Register, comprehension and concision-without-a-threshold are not
+decidable by rule and are recorded in `detail["not_checked"]`.
 
-`disagree` is only partly rule-checkable: a keyword rule catches an explicit
-statement of conflict but will miss a paraphrase, so its failures are more
-trustworthy than its passes.
-
-**Faithfulness is inapplicable under the empty evidence level.** With no
-passages every claim is unsupported by construction, so scoring it there would
-report the absence of context as a failure of grounding. The measure returns
-`applicable=False` and contributes nothing, instead of returning a misleading
-zero.
-
-That makes raw costs comparable within an evidence level but not across them,
-since the empty level sums over fewer terms. The main result compares conditions
-inside a level, so this is not a problem for it, but a cost averaged over all
-four levels would be meaningless. `n_applicable` is recorded on every row.
+Because adherence is undefined for baseline A, `tau_hat` for adherence is
+reported for baselines B and C only. An inapplicable measure is skipped rather
+than counted as satisfied, which would put a free point into the mean.
 
 ## The judge
 
-Faithfulness and relevance have no reference string, so a separate model scores
-them. Since the thesis assumes models are sensitive to their instructions, the
+Faithfulness and relevance have no reference string, so a second model scores
+them: `config.JUDGE_MODEL` at temperature 0, built by `judge.make_judge()`. It
+is a different model from the generator, so the generator never grades its own
+output. Since the thesis assumes models are sensitive to their instructions, the
 judge cannot be assumed reliable either. Three precautions:
 
 - **Its prompt is fixed.** A module constant, not a parameter.
@@ -88,64 +97,58 @@ judge cannot be assumed reliable either. Three precautions:
   in the sequence cannot correlate with condition.
 
 `Judge` wraps any callable mapping a prompt to a string, so a stub can be
-substituted in tests without loading a model.
+substituted in tests without a key.
 
-Agreement with human labelling is not implemented. It needs about 100 held-out
-outputs labelled by hand, and it should be reported per condition rather than
-pooled. `sklearn.metrics.cohen_kappa_score` is available for it.
-
-## The cost function
-
-    l(y) = sum_k lambda_k * n_k(y)
-
-**The weights are not fixed by the thesis.** Section 4.9 argues that the four
-requirements are not equally serious and that their weight depends on the
-deployment setting, but assigns no values. Rather than invent them, `cost.py`
-offers two schemes:
-
-- `equal`, the default. Every weight is 1, so the cost is a count of breaches
-  and the headline number has no free parameters.
-- `grounding`, which doubles faithfulness. Intended as a pre-specified
-  sensitivity analysis: if the ordering of conditions survives reweighting, say
-  so; if it flips, say that.
-
-Record the scheme with any result. Costs are not comparable across weightings.
+Agreement with human labelling: `agreement.py sample` draws about 100 scored
+outputs, stratified by condition, and writes a labelling sheet with the judge's
+verdict withheld. After a person fills in the `human` column, `agreement.py
+report` computes Cohen's kappa per condition and measure. **The labelling has
+not been done**, so the judged measures currently carry no reliability estimate.
 
 ## The analysis
 
+There is **no cost function**. The four measures are never combined. Each is
+used in turn as the measured property M of Equation 4.12, so a rewording gets
+four effect estimates rather than one pooled score. Combining them would hide
+direction: a rewording that improved grounding and damaged relevance equally
+would average to no effect.
+
 `run_analysis.py` reports, in order:
 
-1. **Empirical risk**, the mean cost in each of the 20 cells.
-2. **tau_hat**, the cost of each condition relative to S0, computed within each
-   evidence level.
-3. **The manipulation check**, whether the evidence levels differ at the
-   baseline prompt. This establishes that the evidence manipulation moved the
-   outcome at all. It is a validity check, not a claim about which evidence is
-   better.
-4. **The interaction**, whether the prompt matters more under corrupted evidence.
+1. **Cell means** — the mean of each measure for each condition in each cell, so
+   an effect can be read against the level it moves from.
+2. **tau_hat** — for each measure and each cell, the effect of each rewording
+   against the canonical form of *its own* baseline, with a standard error and
+   a 95% confidence interval.
+3. **The verdict on H0** — whether any rewording moved any measure after
+   correction.
 
-All comparisons are paired at query level, because every query runs in every
-condition and pairing removes between-query variation. Repeats are averaged
-before pairing: they measure decoding noise, not variation between queries, and
-treating them as independent observations would overstate the sample size.
+Every comparison is paired at query level, because every query runs in every
+condition on a byte-identical context, and pairing removes between-query
+variation. The repeats are averaged before pairing: they measure decoding
+noise, not variation between queries, and treating them as independent
+observations would overstate the sample size fivefold.
 
-A paired t-test is used where the differences look normal by Shapiro-Wilk, and
-Wilcoxon signed-rank otherwise. Which test ran is reported, since the choice is
-data-dependent. Constant non-zero differences have no variance for a normality
-test and go straight to Wilcoxon.
-
-Each family is Holm-corrected separately. Pooling them would let the
-manipulation check inflate the correction on the result of interest.
+**Uncertainty and multiplicity.** `tau_hat` is a sample mean and is almost never
+exactly zero even when the true effect is, so a point estimate alone cannot
+decide H0. Each estimate carries a 95% CI. H1 is an "at least one" claim over
+nine rewordings, so reading nine intervals and declaring H1 because one excluded
+zero would report chance as a finding; Holm's method is applied across the nine
+rewordings within each measure. Both the raw and adjusted verdicts are recorded.
 
 ## Output contract
 
 `runs/scores.jsonl`, one object per generation:
 
-    query_id, category, condition, evidence_level, repeat
-    cost                 l(y) under the chosen weights
-    n_applicable         how many measures contributed
-    excluded             measures that did not apply
-    metrics              per measure: breaches, score, applicable, detail
+    query_id, category, query_type, condition, evidence_level, depth, cell, repeat
+    generator_model, judge_model
+    metrics    per measure: breaches, score, applicable, detail
 
-`runs/results.json` holds the empirical risks, the effects with raw and
-Holm-adjusted p-values, the manipulation check and the interaction contrasts.
+`runs/results.json`:
+
+    cell_means          mean of each measure per condition per cell
+    tau_hat             per cell and measure: tau, se, ci, p, p_holm,
+                        significant, n
+    tau_hat_secondary   the same, for the secondary measures
+    hypothesis          h0_rejected, how many estimates, which survived
+                        (computed from `tau_hat` alone)

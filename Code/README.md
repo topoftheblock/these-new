@@ -1,15 +1,15 @@
 # Experiment code
 
-Code for the thesis experiment: does changing the system prompt of a
-retrieval-augmented generation system change its behaviour, when everything else
-is held fixed?
+Implements the experiment of Chapter 5: does changing the *structure* of the
+system prompt of a retrieval-augmented generation system change its behaviour,
+when the prompt's meaning and everything else in the system are held fixed?
 
-Three packages, in the order data flows through them.
+Five packages, in the order data flows through them.
 
     preprocessing/   MS MARCO in, query set out
     ingest/          the knowledge base: embed the corpus, build the index
-    rag/             the retrieval-augmented generation model itself
-    experiment/      the study that drives the model across conditions
+    rag/             the retrieval-augmented generation system itself
+    experiment/      the study that drives that system across conditions
     evaluation/      scoring the generations and computing the effect
 
 The split is not cosmetic. `rag/` knows nothing about the experiment: it is a
@@ -17,59 +17,119 @@ working RAG system you could point at any corpus. `experiment/` knows about
 prompt conditions and evidence levels but implements no retrieval or generation
 of its own. `preprocessing/` knows about MS MARCO and nothing downstream.
 
+## The design in one place
+
+`experiment/design.py` enumerates the cells and is the only definition of what
+the crossing is. Everything else asks it.
+
+    12 prompt conditions   3 published requirement sets x 4 wordings
+                           (canonical, lexical, syntactic, format);
+                           every wording states the same requirements
+     2 evidence levels     gold (annotated passages), ret (the real top-K)
+     2 retrieval depths    K = 5, 10, applying to `ret` alone
+    ---
+    36 cells               24 at K=5, +12 for ret at K=10
+
+    36 cells x 100 queries x n=5 repeats = 18,000 generations
+
+Run `python3 verify.py --runs` to check the implementation against Chapter 5.
+Every check is labelled with the section it enforces. Run it before collecting
+data and after any change to the design.
+
 ## Install
 
-Python 3.10 or newer. The project environment already has everything needed:
+Python 3.10 or newer, and the packages in `requirements.txt`:
 
-    torch, transformers, numpy
+    torch, transformers, numpy, faiss-cpu, pyarrow, scipy, statsmodels
 
-`faiss-cpu` is optional. At this corpus size a flat index is exact search either
-way, and `rag/index.py` falls back to numpy with identical results. See
-`requirements.txt`.
+`python-dotenv` is optional (reads `.env`); `accelerate` is optional and only
+matters for the local generator backend.
 
-The first run downloads two models from Hugging Face, about 420 MB for the
-encoder and several gigabytes for the generator. Set `HF_HOME` if you want them
-somewhere other than `~/.cache/huggingface`.
+The encoder (`all-mpnet-base-v2`, ~420 MB) is downloaded on first use. The
+generator and the judge are API models and download nothing.
 
-## Input
+## The API key
 
-Download the MS MARCO v2.1 QnA release and place a split here:
+Generation and judged scoring call the OpenAI chat completions API. The key is
+read from the environment variable `OPENAI_API_KEY`, or from `Code/.env`:
 
-    data/dev_v2.1.json
+    cp .env.example .env
+    # edit .env: OPENAI_API_KEY=sk-...
 
-The ranking release will not work: it has no `wellFormedAnswers` field and no
-`is_selected` flags, both of which the filtering depends on.
+`.env` is git-ignored. The key is never written into source and never logged.
+The HTTP call is made with the standard library (`rag/openai_generator.py`), so
+the `openai` package is not needed; on this machine it cannot be imported
+anyway because of a pydantic version conflict.
+
+Which models are used is fixed in `config.py`:
+
+    GENERATOR_MODEL = "gpt-4o-mini"     temperature 1.0, max 256 new tokens
+    JUDGE_MODEL     = "gpt-4.1-mini"    temperature 0
+
+The judge is a different model from the generator on purpose: the generator
+must not grade its own output. Both ids are written into every row so a result
+can always be traced to the model that produced it.
+
+`GENERATOR_BACKEND = "local"` swaps in a Hugging Face checkpoint
+(`LOCAL_GENERATOR_MODEL`) for smoke tests without network access. A run made
+with one backend is not comparable with a run made with the other.
 
 ## Run
 
-    python3 -m preprocessing.build --input ../data/dev_v2.1.json
-    python3 -m experiment.run_retrieval
-    python3 -m experiment.run_generation --limit 2     # smoke test first
-    python3 -m experiment.run_generation               # full run
-    python3 -m evaluation.run_scoring                  # score them
-    python3 -m evaluation.run_analysis                 # the reported effect
+    # once: corpus, index, query set
+    python3 -m preprocessing.fetch                     # MS MARCO -> parquet
+    python3 -m ingest.build_index                      # the vector database
+    python3 -m ingest.export_corpus                    # passage id -> text
+    python3 -m preprocessing.build \
+        --input ../data/ms_marco_v2.1_validation_wellformed.parquet
 
-Run these from inside `code/`. Everything is written to `runs/`.
+    # stage 1: retrieval, at every depth, before any prompt exists
+    python3 -m experiment.run_retrieval
+
+    # stage 2: generation
+    python3 -m experiment.run_generation --limit 2     # smoke test first
+    python3 -m experiment.run_generation               # the full run
+    python3 -m experiment.run_generation --resume      # continue if interrupted
+
+    # stage 3: scoring and analysis
+    python3 -m evaluation.run_scoring
+    python3 -m evaluation.run_analysis
+
+    # the judge audit (Section 5.7)
+    python3 -m evaluation.agreement sample --n 100     # writes a labelling sheet
+    # ... a human fills in the 'human' column ...
+    python3 -m evaluation.agreement report
+
+Run these from inside `Code/`. Everything is written to `runs/`.
 
 ## What comes out
 
-    runs/queries.json       40 queries with their reference answers and gold ids
-    runs/corpus.json        passage id to text
-    data/vector_store/      the vector database: index.faiss, pids.npy, meta.json
-    runs/retrieval.json     top-K per query, plus the retrieval gate result
-    runs/generations.jsonl  one line per generation, 30000 on a full run
-    runs/scores.jsonl       per-generation measure scores and cost
-    runs/results.json       empirical risks, effects, tests
+    runs/queries.json          100 queries, reference answers, gold ids
+    runs/corpus.json           passage id -> text, all 122,678
+    data/vector_store/         index.faiss, pids.npy, meta.json
+    runs/retrieval_k5.json     top-5 per query, plus that depth's gate result
+    runs/retrieval_k10.json    top-10 per query, plus that depth's gate result
+    runs/generations.jsonl     one line per generation, 18,000 on a full run
+    runs/scores.jsonl          per-generation scores for the four measures
+    runs/results.json          cell means, tau_hat with 95% CIs, the verdict
+    runs/agreement.json        Cohen's kappa per condition
 
 ## Configuration
 
 `config.py` holds every parameter the study fixes, and it is the only place any
-of them appears. The rule is simple: if a value is in that file it must not
-differ between conditions, and if it is not in that file it is not a controlled
+of them appears. The rule: if a value is in that file it must not differ
+between conditions, and if it is not in that file it is not a controlled
 parameter. Changing a value there invalidates comparison with earlier runs, so
-record `SEED` and both model identifiers alongside any results.
+record `SEED` and the model identifiers alongside any results.
 
 ## Design constraints the code enforces
+
+**Only the wording changes.** The four conditions of a baseline state the same
+requirement set. `experiment/conditions.py` documents the rule each wording
+was written under, and `verify.py` refuses a condition outside the four
+wordings. A variant that changed what the prompt asks for would change the
+requirement set, and a difference it produced could not be read as an effect of
+structure; no such variant is in the design.
 
 **Retrieval and generation are separate passes.** `run_retrieval.py` finishes
 and writes to disk before `run_generation.py` starts. There is no execution
@@ -77,23 +137,70 @@ path along which a prompt condition could influence what was retrieved. This is
 the assumption the causal claim rests on, so it is enforced structurally rather
 than asserted.
 
-**The retrieval gate.** A query counts as retrieved successfully when *every*
-passage its annotation marks as necessary is in the top K. Partial retrieval on
-a multi-hop query is a failure, because an answer needing two passages cannot be
-produced from one. Failed queries are excluded from the retrieved evidence level
-only; the other three levels set the context directly and cannot fail.
+**The system prompt goes in the system role.** `rag/prompts.py` returns the
+system turn and the user turn separately and the generator puts each in its own
+chat role. Concatenating them would erase the distinction between a standing
+instruction and the user's message, which is the distinction the thesis is
+built on, and it would do it silently.
+
+**The retrieval gate, per depth.** A query succeeds when *every* passage its
+annotation marks as necessary is in the top K. Partial retrieval on a multi-hop
+query is a failure, because an answer needing two passages cannot be produced
+from one. The gate is recomputed at each depth, since a query missed at K=5 may
+be recovered at K=10, and failed queries are excluded from the retrieved level
+of that depth only, uniformly across all twelve conditions so the pairing
+survives.
+
+**The context never depends on the condition.** Passage order is drawn from a
+generator seeded on the query, evidence level, depth and repeat, and not on the
+prompt condition, so all twelve conditions receive a byte-identical user turn.
+Without that, the comparison would be between different evidence rather than
+between different prompts.
 
 **One encoder, one index, built once.** Rebuilding the index mid-run would
 change what is retrieved and break the comparison between conditions.
 
+**The decision is made on the measures fixed before the run.** Containment
+correctness floors on this data, so token F1 is reported beside it as a
+secondary measure. Secondary measures never enter the verdict on H0, and
+`verify.py` fails if one does. See `evaluation/README.md`.
+
+**Adherence is checked per baseline.** A condition is held only to what its own
+prompt states. Baseline A states only grounding, which faithfulness already
+measures, so its adherence measure is undefined by construction rather than a
+free pass.
+
+## The query set
+
+100 queries, balanced on two axes at once:
+
+                DESCRIPTION  ENTITY  LOCATION  NUMERIC  PERSON
+    direct               10      10        10       10      10   = 50
+    multi-hop            10      10        10       10      10   = 50
+
+`query_type` is MS MARCO's coarse intent label. It is balanced so it can be
+entered as a covariate rather than confounded with the category, and it is
+carried through generation and scoring into `runs/scores.jsonl`. The
+`--covariate` flag on `run_analysis` breaks the prompt effect down by it.
+
+That balance is not free: the natural distribution is uneven (DESCRIPTION 44%,
+PERSON 7% on the well-formed rows), so a figure averaged over this query set is
+an average over the design, not an estimate on the natural distribution. The
+prompt effect is unaffected, because every contrast is taken within a query.
+
+## Measured retrieval performance
+
+A property of the fixed pipeline, reported ahead of the results (Section 5.6):
+
+    K = 5     gate 74/100  (direct 41/50, multi-hop 33/50)  gold recall 123/152 = 80.9%
+    K = 10    gate 88/100  (direct 45/50, multi-hop 43/50)  gold recall 139/152 = 91.4%
+
+By query type, out of 20 each:
+
+    K = 5     DESCRIPTION 16  ENTITY 15  LOCATION 15  NUMERIC 15  PERSON 13
+    K = 10    DESCRIPTION 17  ENTITY 16  LOCATION 19  NUMERIC 18  PERSON 18
+
 ## Not settled yet
 
-**The cost weights.** Section 4.9 of the thesis argues the four requirements are
-not equally serious but assigns no values to lambda_k. `evaluation/cost.py`
-defaults to equal weights, so the headline number has no free parameters, and
-offers a grounding-weighted scheme for a sensitivity analysis. Fix the weights
-in the thesis and record which scheme produced any reported result.
-
-**Judge agreement.** Section 5.4.1 requires Cohen's kappa against human labels on
-about 100 held-out outputs, reported per condition. That needs hand labelling
-and is not implemented.
+**Judge agreement needs a human.** `evaluation/agreement.py` draws the sample
+and computes kappa; the labelling itself is manual and has not been done.

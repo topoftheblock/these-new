@@ -1,0 +1,9 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# editor backups made before the thesis/code alignment pass
+.backup_pre_alignment/

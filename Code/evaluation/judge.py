@@ -2,9 +2,12 @@
 The language-model judge.
 
 Faithfulness and answer relevance have no reference string to compare against,
-so they are scored by a separate model. This thesis assumes language models are
-sensitive to their instructions, which means the judge cannot be assumed
-reliable either. Three precautions follow Zheng et al. (2023).
+so they are scored by a second model. It is a different model from the
+generator (:data:`config.JUDGE_MODEL`), run at temperature 0, so the generator
+never grades its own output and a verdict does not depend on a draw. This
+thesis assumes language models are sensitive to their instructions, which means
+the judge cannot be assumed reliable either. Three precautions follow Zheng et
+al. (2023).
 
 **The judge's own prompt is fixed.** It is a module constant, not a parameter.
 Varying it between conditions would confound the judge with the thing being
@@ -23,6 +26,8 @@ reported per condition rather than pooled. See :mod:`evaluation.agreement`.
 """
 
 import re
+
+import config
 
 #: Fixed. Do not vary between conditions or runs.
 CLAIM_PROMPT = """Break the following answer into atomic factual claims.
@@ -95,3 +100,22 @@ class Judge:
         qs = [re.sub(r"^\s*[-*\d.)]+\s*", "", line).strip()
               for line in raw.splitlines()]
         return [q for q in qs if q.endswith("?") or len(q.split()) >= 3][:n]
+
+
+def make_judge(model_id=None, backend=None):
+    """The judge the experiment uses: a fixed second model at temperature 0.
+
+    Built through :func:`rag.make_generator` so the same key handling and the
+    same backends apply. The judge's model id is recorded on the returned
+    object so the scoring runner can write it into every row.
+    """
+    from rag import make_generator
+    generator = make_generator(
+        model_id=model_id or config.JUDGE_MODEL,
+        backend=backend or config.JUDGE_BACKEND,
+        temperature=config.JUDGE_TEMPERATURE,
+        max_new_tokens=config.JUDGE_MAX_TOKENS)
+    judge = Judge(lambda p: generator(p)[0])
+    judge.model_id = generator.model_id
+    judge.backend_name = generator.backend    # ``backend`` is the callable
+    return judge
