@@ -3,7 +3,7 @@ From scored generations to the average treatment effect.
 
 The reported quantity is Equation 4.12 of the thesis, the average causal effect
 of a prompt condition relative to its baseline, estimated once for each of the
-evaluation measures of Section 5.7:
+four evaluation measures of Section 5.7:
 
     tau_hat(j, M) = mean over queries of
                         [ mean M(Y) under S_j  -  mean M(Y) under S_0 ]
@@ -50,11 +50,30 @@ from statsmodels.stats.multitest import multipletests
 #: taken within a baseline, against that baseline's canonical condition.
 from experiment.conditions import BASELINE_OF, CANONICAL
 
-#: The measures, in the order Section 5.7 introduces them. Correctness is
-#: measured twice, by ROUGE-L and by BLEU-1, the two metrics MS MARCO's
-#: free-form answer task is scored with; each is its own instance of M. All five
-#: are confirmatory: the hypothesis of Section 5.1 is decided on these.
-MEASURES = ("faithfulness", "relevance", "rouge_l", "bleu1", "adherence")
+#: the four measures, in the order Section 5.7 introduces them. These are the
+#: confirmatory family: the hypothesis of Section 5.1 is decided on these and
+#: only these.
+MEASURES = ("faithfulness", "relevance", "correctness", "adherence")
+
+#: Secondary measures, reported alongside but never part of the decision.
+#:
+#: ``correctness_f1`` reads the token-level F1 already recorded in the detail of
+#: the correctness measure. It exists because containment, the preregistered
+#: form, floors on this data: it asks whether the reference string appears
+#: inside the answer, so a paraphrase of a correct answer scores zero. The
+#: reference answers of MS MARCO are full sentences and the generator rarely
+#: reproduces one verbatim, which puts the measure near the bottom of its range
+#: and leaves it little room to move.
+#:
+#: Reporting both is deliberate. Replacing the preregistered measure with the
+#: one that happened to produce a clearer result would make the choice of
+#: measure depend on the result, so containment keeps its place and F1 is added
+#: beside it. The disagreement between them is itself reportable: it says the
+#: containment measure could not detect a change, not that no change occurred.
+SECONDARY = ("correctness_f1",)
+
+#: Where a secondary measure is read from: ``metrics[measure][detail][key]``.
+SECONDARY_SOURCE = {"correctness_f1": ("correctness", "token_f1")}
 
 #: "do not filter on depth". Distinct from None, which is the real depth value
 #: of the gold cells, so the two must not collide.
@@ -87,6 +106,14 @@ def measure_score(row, measure):
     an inapplicable measure is skipped rather than counted as a pass, which
     would put a free point into the mean.
     """
+    if measure in SECONDARY_SOURCE:
+        parent, key = SECONDARY_SOURCE[measure]
+        result = (row.get("metrics") or {}).get(parent)
+        if not result or not result.get("applicable", True):
+            return None
+        value = (result.get("detail") or {}).get(key)
+        return None if value is None else float(value)
+
     result = (row.get("metrics") or {}).get(measure)
     if not result or not result.get("applicable", True):
         return None

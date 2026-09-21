@@ -21,7 +21,6 @@ Usage::
     python3 -m evaluation.run_scoring                    # judged, needs a key
     python3 -m evaluation.run_scoring --resume           # continue an interrupted run
     python3 -m evaluation.run_scoring --program-only     # no judge, no key
-    python3 -m evaluation.run_scoring --update-program   # re-score program measures in place
 
 Resuming
 --------
@@ -42,8 +41,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import config
 from evaluation.judge import make_judge
-from evaluation.metrics import (Adherence, AnswerRelevance, Bleu1,
-                                Faithfulness, RougeL)
+from evaluation.metrics import (Adherence, AnswerRelevance, Correctness,
+                                Faithfulness)
 
 
 def attach_passages(record, corpus):
@@ -54,69 +53,8 @@ def attach_passages(record, corpus):
     return record
 
 
-def attach_references(record, references):
-    """Every well-formed answer for the query, which correctness scores against.
-
-    Generation rows carry only the first reference. The full list lives in
-    queries.json, and a query missing from it is an error rather than a silent
-    fall-back to one reference.
-    """
-    record["references"] = references[record["query_id"]]
-    return record
-
-
-def load_references():
-    queries = json.loads((config.RUNS / "queries.json").read_text())["queries"]
-    missing = [q["query_id"] for q in queries if not q.get("references")]
-    if missing:
-        raise SystemExit(f"{len(missing)} queries in queries.json have no "
-                         "'references'; rebuild it with preprocessing.build")
-    return {q["query_id"]: q["references"] for q in queries}
-
-
-def program_metrics():
-    """The measures computed by program: correctness twice, and adherence."""
-    return [RougeL(), Bleu1(), Adherence()]
-
-
-def update_program(path, generations_path, corpus):
-    """Re-score the program measures of an existing scores file in place.
-
-    The judged measures are kept exactly as they are; the program measures are
-    recomputed from the generations and replace whatever program measures the
-    row carried before, including any no longer in the design. No judge is
-    called, so this needs no key and costs nothing.
-    """
-    references = load_references()
-    gens = {}
-    with open(generations_path, encoding="utf-8") as fh:
-        for line in fh:
-            if line.strip():
-                g = attach_references(json.loads(line), references)
-                gens[(g["query_id"], g["condition"], g["evidence_level"],
-                      g.get("depth"), g["repeat"])] = g
-    judged = {"faithfulness", "relevance"}
-    metrics = program_metrics()
-    tmp = path.with_suffix(".jsonl.tmp")
-    n = 0
-    with open(path, encoding="utf-8") as src, open(tmp, "w", encoding="utf-8") as out:
-        for line in src:
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            g = gens[(row["query_id"], row["condition"], row["evidence_level"],
-                      row.get("depth"), row["repeat"])]
-            kept = {k: v for k, v in row["metrics"].items() if k in judged}
-            kept.update({m.name: m.score(g).to_dict() for m in metrics})
-            row["metrics"] = kept
-            out.write(json.dumps(row, ensure_ascii=False) + "\n")
-            n += 1
-    tmp.replace(path)
-    print(f"re-scored the program measures of {n:,} rows in {path}")
-
-
 def build_metrics(program_only, embedder=None):
-    metrics = program_metrics()
+    metrics = [Correctness(), Adherence()]
     if not program_only:
         metrics = [Faithfulness(), AnswerRelevance(embedder)] + metrics
     return metrics
@@ -133,22 +71,13 @@ def main(argv=None):
                     help="records scored at once; affects only the wall clock")
     ap.add_argument("--resume", action="store_true",
                     help="skip records already present in the output file")
-    ap.add_argument("--update-program", action="store_true",
-                    help="re-score only the program measures of an existing "
-                         "scores file; the judged measures are kept")
     args = ap.parse_args(argv)
 
     corpus = json.loads((config.RUNS / "corpus.json").read_text())
-    path = config.RUNS / args.out
-    if args.update_program:
-        update_program(path, config.RUNS / args.generations, corpus)
-        return
-
-    references = load_references()
     with open(config.RUNS / args.generations, encoding="utf-8") as fh:
-        records = [attach_references(attach_passages(json.loads(line), corpus),
-                                     references)
-                   for line in fh if line.strip()]
+        records = [attach_passages(json.loads(line), corpus) for line in fh if line.strip()]
+
+    path = config.RUNS / args.out
 
     def coord(row):
         """The cell coordinate of a record or a scored row."""

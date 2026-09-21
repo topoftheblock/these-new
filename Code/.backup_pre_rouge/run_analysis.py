@@ -9,9 +9,12 @@ within-query difference between a rewording and the canonical form of its own
 baseline. Positive means the rewording scored higher, since every measure is
 oriented so that higher is better.
 
-Correctness is measured by ROUGE-L and by BLEU-1, so there are five measures,
-each corrected within its own family at each evidence level, and all five
-decide the hypothesis.
+The four measures are the confirmatory family and they alone decide the
+hypothesis. The secondary measures of ``analysis.SECONDARY`` are estimated the
+same way and printed in their own section, with their own Holm correction, and
+are excluded from the verdict. They are reported because a measure that floors
+can return a null that belongs to the instrument rather than to the system; see
+Section 5.8.
 
 Usage::
 
@@ -23,7 +26,8 @@ import argparse
 import json
 
 import config
-from evaluation.analysis import ANY_DEPTH, MEASURES, cell_means, effects, verdict
+from evaluation.analysis import (ANY_DEPTH, MEASURES, SECONDARY, cell_means,
+                                 effects, verdict)
 from experiment.design import evidence_depths
 
 
@@ -89,6 +93,31 @@ def main(argv=None):
                       f"n={res['n']:3d}  p_holm={res.get('p_holm', float('nan')):.4f} {mark}")
             print()
 
+    # ----------------------------------------------------------- secondary
+    # Estimated identically, corrected within their own family, and kept out
+    # of the verdict below: the decision stays on the preregistered measures.
+    print("secondary measures: reported, not part of the decision on H0\n")
+    secondary = {}
+    for level, depth in columns:
+        for measure in SECONDARY:
+            family = effects(rows, level, measure, conditions,
+                             ANY_DEPTH if depth is None else depth, args.alpha)
+            if not family:
+                continue
+            secondary[(level, depth, measure)] = family
+            cells = cell_means(rows, conditions, level, measure,
+                               ANY_DEPTH if depth is None else depth)
+            for condition, cell in cells.items():
+                means[f"{condition}/{label(level, depth)}/{measure}"] = cell
+            print(f"  {label(level, depth)}  /  {measure}")
+            for condition, res in family.items():
+                mark = "*" if res.get("significant") else " "
+                lo, hi = res["ci"]
+                print(f"    {condition} vs {res['compared_with']}: "
+                      f"tau={res['tau']:+.3f}  95% CI [{lo:+.3f}, {hi:+.3f}]  "
+                      f"n={res['n']:3d}  p_holm={res.get('p_holm', float('nan')):.4f} {mark}")
+            print()
+
     # ------------------------------------------------------------- verdict
     decision = verdict(all_effects)
     print("=" * 70)
@@ -113,9 +142,12 @@ def main(argv=None):
     path.write_text(json.dumps({
         "alpha": args.alpha,
         "measures": list(MEASURES),
+        "secondary_measures": list(SECONDARY),
         "cell_means": means,
         "tau_hat": {f"{label(lv, d)}/{m}": fam
                     for (lv, d, m), fam in all_effects.items()},
+        "tau_hat_secondary": {f"{label(lv, d)}/{m}": fam
+                              for (lv, d, m), fam in secondary.items()},
         "hypothesis": decision,
     }, indent=2, default=str), encoding="utf-8")
     print(f"\nwrote {path}")

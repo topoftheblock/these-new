@@ -250,61 +250,76 @@ def _faithfulness_empty():
 def _inapplicable_skipped():
     from evaluation.analysis import measure_score
     row = {"metrics": {"adherence": {"score": 1.0, "applicable": False},
-                       "rouge_l": {"score": 1.0, "applicable": True}}}
+                       "correctness": {"score": 1.0, "applicable": True}}}
     assert measure_score(row, "adherence") is None, (
         "adherence is undefined for baseline A; counting it would put a free "
         "point into the mean")
-    assert measure_score(row, "rouge_l") == 1.0
+    assert measure_score(row, "correctness") == 1.0
 
 
-@check("5.7", "correctness is ROUGE-L and BLEU-1 against every reference")
-def _correctness_overlap():
-    """Section 5.7: the two MS MARCO metrics, multi-reference, citations removed."""
-    from evaluation.metrics.correctness import (Bleu1, RougeL, bleu1,
-                                                references_of, rouge_l)
-    ref = "Scituate, Rhode Island is in Providence County."
-    assert rouge_l(ref, [ref]) == 1.0 and bleu1(ref, [ref]) == 1.0
-    # the best reference counts, not the first
-    other = "Providence County contains the town of Scituate."
-    assert rouge_l(ref, [other, ref]) == 1.0 and bleu1(ref, [other, ref]) == 1.0
-    # citation markers are not content: baseline B must not lose for obeying
-    cited = "Scituate, Rhode Island is in Providence County [3][6]."
-    assert rouge_l(cited, [ref]) == 1.0 and bleu1(cited, [ref]) == 1.0
-    # a paraphrase earns partial credit, a wrong answer less, nothing earns 0
-    para = "Scituate, Rhode Island, is located in Providence County."
-    wrong = "It is in Kent County, in the state of Rhode Island."
-    assert 0 < rouge_l(wrong, [ref]) < rouge_l(para, [ref]) < 1
-    assert 0 < bleu1(wrong, [ref]) < bleu1(para, [ref]) < 1
-    assert rouge_l("", [ref]) == 0.0 and bleu1("", [ref]) == 0.0
-    # brevity: a correct fragment is penalised against a full reference
-    assert bleu1("Providence County", [ref]) < 0.5
-    # no silent fall-back to one reference
-    try:
-        references_of({"reference_answer": ref})
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("a record without 'references' must be refused")
-    row = {"output": para, "references": [ref]}
-    assert RougeL().score(row).score == rouge_l(para, [ref])
-    assert Bleu1().score(row).score == bleu1(para, [ref])
+@check("5.7", "a secondary measure is reported but never decides H0")
+def _secondary_is_not_confirmatory():
+    """Section 5.7: the decision rests on the four preregistered measures.
+
+    correctness_f1 is reported beside containment because containment floors on
+    this data (Section 5.8). Letting it into the confirmatory family would make
+    the hypothesis depend on a measure chosen after the results were seen, so
+    the two sets must stay disjoint and the verdict must read MEASURES only.
+    """
+    import inspect
+    from evaluation import run_analysis
+    from evaluation.analysis import MEASURES, SECONDARY, SECONDARY_SOURCE, verdict
+
+    assert not set(SECONDARY) & set(MEASURES), (
+        "a secondary measure must not also be confirmatory")
+    assert set(SECONDARY) == set(SECONDARY_SOURCE), (
+        "every secondary measure needs a source in SECONDARY_SOURCE")
+
+    # the verdict is computed from all_effects, which is filled from MEASURES
+    source = inspect.getsource(run_analysis.main)
+    assert "verdict(all_effects)" in source, source[:200]
+    body = source.split("secondary = {}")[1].split("verdict(all_effects)")[0]
+    assert "all_effects[" not in body, (
+        "the secondary section must not write into the confirmatory family")
+
+    # and a secondary estimate carries no weight in it
+    fake = {("gold", None, "correctness_f1"): {
+        "B1": {"tau": 0.9, "p": 0.0, "p_holm": 0.0, "significant": True,
+               "ci": (0.8, 1.0), "n": 10, "compared_with": "B0"}}}
+    assert verdict({})["h0_rejected"] is False
+    assert verdict(fake)["n_tested"] == 1, (
+        "verdict() is only ever handed the confirmatory family; if this "
+        "changes, the caller in run_analysis.py must be rechecked")
+
+
+@check("5.7", "a secondary measure reads its own source, not the parent score")
+def _secondary_reads_detail():
+    from evaluation.analysis import measure_score
+    row = {"metrics": {"correctness": {
+        "score": 0.0, "applicable": True, "detail": {"token_f1": 0.75}}}}
+    assert measure_score(row, "correctness") == 0.0
+    assert measure_score(row, "correctness_f1") == 0.75, (
+        "correctness_f1 must read detail.token_f1, not the containment score")
+    bare = {"metrics": {"correctness": {"score": 0.0, "applicable": True}}}
+    assert measure_score(bare, "correctness_f1") is None, (
+        "a missing token_f1 is skipped, never scored as zero")
 
 
 @check("5.7", "tau_hat is estimated once per measure, with an interval")
 def _ate_per_measure():
     from evaluation.analysis import MEASURES, ate
-    assert MEASURES == ("faithfulness", "relevance", "rouge_l", "bleu1",
+    assert MEASURES == ("faithfulness", "relevance", "correctness",
                         "adherence"), MEASURES
 
     def row(condition, qid, score):
         return {"condition": condition, "evidence_level": "gold",
                 "depth": None, "query_id": qid, "repeat": 0,
-                "metrics": {"rouge_l": {"score": score, "applicable": True}}}
+                "metrics": {"correctness": {"score": score, "applicable": True}}}
 
     # B1 beats B0 by exactly 0.2 on every query
     rows = ([row("B0", q, 0.5) for q in range(10)]
             + [row("B1", q, 0.7) for q in range(10)])
-    out = ate(rows, "B1", "B0", "gold", "rouge_l")
+    out = ate(rows, "B1", "B0", "gold", "correctness")
     assert abs(out["tau"] - 0.2) < 1e-9, out
     assert out["n"] == 10, out
     assert "ci" in out and "p" in out, out

@@ -1258,55 +1258,25 @@ For one measure $M$, one evidence level and one baseline $b$, the estimate of th
 \end{equation}
 where $I$ is the set of queries in that cell and $\bar{M}_{ij}$ is the mean of the measure over the $n$ repetitions of query $i$ under condition $S_{b,j}$. Equation~\eqref{eq:tauhat} is the sample version of Equation~\eqref{eq:estimand}. The inner average takes the expectation over decoding, and the outer one takes it over queries.
 
-\subsection{Deciding the Hypothesis}
+\paragraph{Deciding the hypothesis.}
 \label{sec:decision}
+$\hat{\tau}_{j}$ is an average over a finite sample and is therefore almost never exactly zero, even when the true effect is. Every estimate is consequently reported with its standard error and a 95\% confidence interval, computed from the paired differences that produced it, and an interval that excludes zero is taken as evidence that the rewording moved that measure.
 
-$\hat{\tau}_{j}$ is an average over a finite sample, so it is almost never exactly zero even when the true effect is. A point estimate on its own therefore cannot decide between the hypotheses of Section~\ref{sec:goal}. Each estimate is reported with its standard error and a 95\% confidence interval, computed from the same paired differences that produced it. An interval that excludes zero is evidence that the rewording changed that measure; one that contains zero is not.
-
-The hypothesis $H_1$ claims that \textit{at least one} rewording changes answer quality, and it ranges over nine rewordings for each measure. Reading nine intervals and concluding $H_1$ because one of them excluded zero would report chance as a finding: at the 5\% level roughly one interval in twenty excludes zero when nothing is happening. The intervals are therefore corrected by the method of \citet{holm1979} within each measure at each evidence level, across the rewordings that measure is estimated for: nine for faithfulness, answer relevance, ROUGE-L and BLEU-1, and six for instruction adherence, which is undefined under baseline $A$. That gives ten families, and each is the set of rewordings the claim ranges over for one measure in one cell. Section~\ref{sec:robust} also reports the result when all estimates are corrected as a single family. Both the uncorrected and the corrected verdict are reported, so a reader can see what the correction changed.
-
-$H_0$ is rejected if, after correction, at least one rewording moves at least one measure. If no interval survives correction, $H_0$ is not rejected. That is a weaker statement than showing the effect to be zero, and Section~\ref{sec:limits} states how large an effect this design could have detected.
-
-Alongside the estimates, the mean of each measure in each cell is reported, so that an effect can be read against the level it moves from. A change of two points means something different at a faithfulness of $0.9$ than at one of $0.4$.
-
-\section{Limitations}
-\label{sec:limits}
-
-The evaluation rests on a single collection. Every result is conditional on MS MARCO: on its queries, its passages, its relevance judgements and its written answers. Section~\ref{sec:knowledgebase} argues that the topical spread within the collection is wide, but spread within one corpus is not replication across several. A prompt effect found here bounds what may be expected elsewhere; it does not establish it.
-
-The query set is balanced across intent types. That makes the type usable as a covariate, but it detaches the query set from the natural distribution of queries: \textsc{person} and \textsc{location} queries are over-represented relative to MS MARCO and \textsc{description} queries under-represented. The prompt effect $\tau_j$ is unaffected, because it is an average of within-query differences and each query is its own control. Any marginal figure over the query set is a balanced average over the design, not an estimate of what the system would do on the queries a deployment receives.
-
-MS MARCO records what people type into a web search engine. Its queries are short, mostly factoid, and drawn from the domains web search covers. Several of the settings that motivate retrieval in Section~\ref{sec:usecase}, such as clinical decision support and legal question answering, are absent from it, and their documents differ from web passages in length, structure and register. Whether an instruction that governs behaviour here governs it there is left to future work.
-
-The design can detect a medium effect but not a small one. With the 88 queries that pass the retrieval gate at $K = 10$, a paired comparison at the 5\% level has an 80\% chance of detecting a standardised effect of about $0.30$, and about $0.39$ once the correction across the nine rewordings is applied; at the gold level, where all 100 queries are usable, the corresponding figures are $0.28$ and $0.37$. Those thresholds are stated in units of the observed paired differences. Two choices make those differences noisier than they need to be: three repetitions per cell where five would have tightened the cell means, and a decoding temperature of $1.0$ where a lower one was available. Both raise the variation within a cell, so a given true effect is harder to detect. If a rewording changes a measure by less than that, this experiment will not distinguish it from decoding noise, and a failure to reject $H_0$ has to be read as that limit rather than as evidence that prompt structure does not matter.
-
-Correctness was not measured the way it was planned. The measure fixed before the run was containment, in the sense of \citet{chen2024rgb}: an answer counted as correct when it contained the reference answer word for word. \citet{chen2024rgb} apply it to short answers such as a name or a date. MS MARCO's references are full sentences, and the generator rarely repeats one word for word, so containment scored near zero in every condition, at a mean of $0.052$, and could not have detected any change. It was replaced by the two metrics MS MARCO's own answer task is scored with. The replacement was made after the results of the planned measure were known and after the effect of rewording on the replacement metrics had been examined, so it is a decision taken with the data in view, and it is reported here for that reason.
-
-ROUGE-L and BLEU-1 have limits of their own. They reward overlapping words, not truth, so a fluent wrong answer that reuses the wording of the reference can outscore a short correct one. They also favour answers close in length to the reference: a longer answer contains more words the reference lacks, which lowers precision in both. A rewording that makes answers shorter can therefore raise both metrics without making the answers more correct. Section~\ref{sec:reading} returns to this.
-
-The generator and the judge are models behind an API. Their weights are not available, and the provider may update a model under the same name. The model identifier, the decoding settings and the backend fingerprint returned by the API are recorded with every generation, so any such change is visible in the data, but an exact repetition of the run depends on the provider keeping the model unchanged.
-
-Two of the four measures are judged by a language model. The precautions of Section~\ref{sec:judge} limit the ways in which the judge can bias the comparison between conditions, but they do not remove the dependence on it, and the agreement study those precautions call for was not carried out, so faithfulness and answer relevance carry no reliability estimate. The measures that carry most of the result of Chapter~\ref{ch:results}, the two correctness metrics and instruction adherence, are computed by program and do not depend on the judge, which limits how far this weakness reaches. An audit after the run found two further weaknesses in the judged measures. The judge's output was capped at 256 tokens, and when claim extraction was re-run on the twenty answers with the longest claim lists, 13 of them reached that cap, so for the longest answers the last claims were cut off and faithfulness was scored on the first part of the answer only. Answers that long make up an estimated 2\% of the data. The same re-run showed that the judge is not fully deterministic at temperature 0: for three of the twenty answers the number of extracted claims differed markedly between runs. Neither weakness touches the correctness metrics or the adherence measure, which are computed by program. Instruction adherence, in turn, checks only the requirements a rule can decide; requirements such as an unbiased tone are stated by the prompts but not scored.
+$H_1$ claims only that at least one rewording changes answer quality, so the claim is assessed against every estimate at once, and at the 5\% level approximately one interval in twenty excludes zero when no effect is present. The intervals are for this reason corrected by the method of \citet{holm1979}, applied within one measure at one evidence level. Each such group forms a \textit{family}, the set of rewordings over which the claim ranges for that measure in that cell. Five measures at two evidence levels yield ten families. Eight of them contain nine rewordings each, three baselines with three rewordings apiece, while the two instruction-adherence families contain six, since adherence is undefined under baseline $A$. $H_0$ is rejected if at least one rewording still moves at least one measure after correction, and is retained if no interval survives. Retaining $H_0$ would be a weaker statement than establishing the effect to be zero, since it would indicate only that the design could not separate an effect from decoding noise.
 
 
 \chapter{Results and Discussion}
 \label{ch:results}
 
-Chapter 5 fixed the experiment: twelve system prompts, two evidence levels, a fixed retriever and generator, and five measures, correctness being measured twice. This chapter reports what came out of it. It first describes the data that were collected and how the system behaved before any two conditions are compared, because an effect can only be read against the level it moves from. It then gives the effect of each rewording, measure by measure, states the verdict on the hypothesis of Section~\ref{sec:goal}, and checks how far that verdict depends on choices that could have been made differently. The last two sections look at what changed inside the answers themselves, and at what these results do not establish.
+Chapter 5 fixed the experiment. It is comprised of twelve system prompts, two evidence levels, a fixed retriever and generator, and five measures, correctness being measured twice. This chapter reports the results. It gives the effect of each rewording states the verdict on the hypothesis of Section~\ref{sec:goal}. 
 
-\section{What Was Collected}
-\label{sec:collected}
 
-The run produced 6,768 answers. At the gold level all 100 queries are usable, which gives $100 \times 12 \times 3 = 3{,}600$ answers. At the retrieved level 88 of the 100 queries pass the gate of Section~\ref{sec:procedure} at $K = 10$, which gives $88 \times 12 \times 3 = 3{,}168$. Every answer was scored on the four measures of Section~\ref{sec:metrics}, and the two judged measures took 30,636 calls to the judge model.
-
-Three checks were run on the collected data before any of it was analysed. Every one of the twelve conditions received a byte-identical user turn for the same query, repetition and evidence level, which is the property Section~\ref{sec:variables} requires and the one the comparison depends on. No answer appears twice. No answer is empty. Together these say that the only thing that differs between two conditions in the same cell is the system prompt.
-
-One property of the run was outside the experiment's control. The API reports an identifier of the backend configuration that served each request. Eleven of the twelve conditions were spread across about eighty such identifiers, but 540 of the 564 answers under B3 were served by a single one. The requests themselves were as specified; Section~\ref{sec:robust} tests whether the backend changed the answers.
+The run produced 6,768 answers. At the gold level all 100 queries are usable, which gives $100 \times 12 \times 3 = 3{,}600$ answers. At the retrieved level 88 of the 100 queries pass the gate of Section~\ref{sec:procedure} at $K = 10$, which gives $88 \times 12 \times 3 = 3{,}168$. Every answer was scored on the five measures of Section~\ref{sec:metrics}, and the two judged measures took 30,636 calls to the judge model.
 
 \section{How the System Behaved Before Any Comparison}
 \label{sec:descriptive}
 
-Table~\ref{tab:cellmeans} gives the mean of each measure in each cell. It is worth reading before the effects, because an effect of two points means something different at a faithfulness of $0.92$ than at an adherence of $0.08$.
+Table~\ref{tab:cellmeans} gives the mean of each measure in each cell. 
 
 \begin{table}[htbp]
 \centering
@@ -1347,20 +1317,15 @@ C3 & 0.959 & 0.730 & 0.267 & 0.170 & 0.886 \\
 \end{tabular}
 \end{table}
 
-Three things stand out. Faithfulness is high everywhere, between $0.912$ and $0.976$. Relevance is stable, between $0.693$ and $0.746$. Both sit in a narrow band, so neither has much room to move. Adherence is the opposite. It runs from $0.083$ to $0.898$, a spread of more than eighty points across conditions that ask for the same thing. Whatever the prompt is doing, this is where it shows.
-
-Correctness sits in the middle of its range. ROUGE-L runs from $0.201$ to $0.550$ and BLEU-1 from $0.119$ to $0.505$. Both are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose prompt asks the model to explain its answer, so that much of what it writes has no counterpart in the reference. Both are lower at the retrieved level than at the gold level in every condition, which fits the retrieved context being the harder one to answer from.
-
-One pattern in the table runs against expectation. Faithfulness is higher at the retrieved level than at the gold level, in every condition. The gold context contains only the passages annotated as necessary, so it is the easier setting for answering the question, but it is the harder setting for being fully supported: with fewer passages in front of it, more of what the model writes has no source in the context to point at. The retrieved context at $K = 10$ carries more text, and more text gives more claims something to rest on. This is an observation about the data, not something the design was built to test, and it is not part of the hypothesis.
+Three things are worth mentioning. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$.  Adherence runs from $0.083$ to $0.898$, a spread of more than eighty points across conditions that ask for the same thing. It is the only measure with  an effect of that size.  ROUGE-L runs from $0.201$ to $0.550$ and BLEU-1 from $0.119$ to $0.505$. Both are highest under baseline $A$. One pattern in the table runs against expectation. In every condition, faithfulness is higher at the retrieved level than at the gold level. The gold context contains only the passages annotated as necessary, so it is the easier setting for answering the question.
 
 \section{The Effect of Rewording}
 \label{sec:effects}
 
-Each rewording is compared with the canonical form of its own baseline, using Equation~\eqref{eq:tauhat}. Every comparison is paired within a query. The results are grouped by measure below, because that is the family the correction of Section~\ref{sec:decision} is applied within.
-
+Using Equation~\eqref{eq:tauhat}, each rewording is compared with the canonical form of its own baseline. Every comparison is paired within a query.
 \subsection{Instruction Adherence}
 
-This is where the effect lives. Table~\ref{tab:adherence} gives all six estimates in both cells. It covers baselines $B$ and $C$ only, because baseline $A$ asks for nothing except that the answer come from the supplied context, which faithfulness already measures, so no checkable instruction is left for adherence and the measure is skipped for $A$ rather than scored as a pass (Section~\ref{sec:notshown}).
+The largest effects are reported for this measure. Table~\ref{tab:adherence} gives all six estimates in both cells. It covers baselines $B$ and $C$ only, because baseline $A$ asks for nothing except that the answer come from the supplied context, which faithfulness already measures. Hence, no checkable instruction is left for adherence and the measure is skipped for $A$ (Section~\ref{sec:notshown}).
 
 \begin{table}[htbp]
 \centering
@@ -1382,21 +1347,20 @@ C3 format    & $-0.073$* & $[-0.142, -0.005]$ & $-0.011$\phantom{*} & $[-0.071, 
 \end{tabular}
 \end{table}
 
-Eleven of the twelve estimates exclude zero after correction. Ten of them do so in both cells, which means the same rewording produced the same change on two different sets of evidence. Only C3 at the retrieved level fails to, and it is the smallest effect in the table.
+Eleven of the twelve estimates are significant. Five of the six rewordings do so in both cells, which means the same rewording produced the same change on two different sets of evidence. Only C3 fails at the retrieved level, and it is the smallest effect in the table.
 
-The sizes are not small. Rewording baseline $C$ with synonyms costs it 44 points of adherence at the gold level, and rewriting the same requirements in the syntactic form costs it 46. Baseline $B$ moves the other way: every rewording of it scores higher than the published form, and the lexical rewording gains 22 points at the gold level and 26 at the retrieved level.
 
 \subsection{Faithfulness}
 
-One estimate of nine survives correction: B1 at the gold level, $\hat{\tau} = +0.031$ with a 95\% interval of $[+0.014, +0.047]$. The same comparison at the retrieved level gives $+0.009$ with an interval that contains zero. A result that appears in one cell and not the other is weak evidence. Given the ceiling reported in Section~\ref{sec:descriptive}, where faithfulness never falls below $0.91$, it should not be read as more than that.
+One estimate of nine is significant, namely, B1 at the gold level, $\hat{\tau} = +0.031$ with a 95\% interval of $[+0.014, +0.047]$. The same comparison at the retrieved level gives $+0.009$ with an interval that contains zero. A result that appears in one cell and not the other is weak evidence. 
 
 \subsection{Answer Relevance}
 
-Nothing survives correction, in either cell. The largest estimate is $+0.012$. Relevance sits between $0.693$ and $0.746$ in every condition and the rewordings do not move it.
+No cell is significant. The largest estimate is $+0.012$. Relevance sits between $0.693$ and $0.746$ in every condition and the rewordings do not move it.
 
 \subsection{Correctness}
 
-Correctness moves under most rewordings. Tables~\ref{tab:rouge} and~\ref{tab:bleu} give the estimates. Of the 36, 23 exclude zero after correction.
+Correctness responded to most rewordings. Tables~\ref{tab:rouge} and~\ref{tab:bleu} give the estimates.
 
 \begin{table}[htbp]
 \centering
@@ -1444,66 +1408,16 @@ C3 format    & $+0.050$* & $[+0.041, +0.059]$ & $+0.051$* & $[+0.044, +0.058]$ \
 \end{tabular}
 \end{table}
 
-The pattern is the same on both metrics and at both evidence levels. Every rewording of baseline $B$ raises correctness, by $0.034$ to $0.064$. Of the rewordings of $C$, the syntactic and format ones raise it, the format one most, by $0.050$ to $0.066$; no estimate for the lexical rewording C1 survives correction. For baseline $A$, the lexical rewording A1 lowers it: by $0.022$ on ROUGE-L and $0.031$ on BLEU-1 at the gold level, and by $0.018$ on ROUGE-L at the retrieved level. The BLEU-1 estimate there, $-0.017$, just misses the correction. The effects are small next to those on adherence, a few points against tens of points, but they are consistent. Section~\ref{sec:reading} shows that they follow the length of the answers closely.
+Every rewording of baseline $B$ raises correctness, by $0.034$ to $0.064$. Of the rewordings of $C$, the syntactic and format ones raise it, the format one most, by $0.050$ to $0.066$; no estimate for the lexical rewording C1 survives correction. For baseline $A$, the lexical rewording A1 lowers it: by $0.022$ on ROUGE-L and $0.031$ on BLEU-1 at the gold level, and by $0.018$ on ROUGE-L at the retrieved level. The BLEU-1 estimate there, $-0.017$, misses the correction. The effects are small compared to those on adherence, a few points against tens of points, but they are consistent. 
 
 \section{The Verdict on the Hypothesis}
 \label{sec:verdict}
 
-Eighty-four estimates were made across the five measures of Section~\ref{sec:metrics}. Thirty-five exclude zero after the correction of Section~\ref{sec:decision}: eleven on adherence, twenty-three on the two correctness metrics, and one on faithfulness.
-
-$H_0$ states that prompts stating the same requirements in different wordings produce the same distribution of answer quality, so that $\tau_j = 0$ for every baseline and every wording. That is rejected. $H_1$ claims that at least one rewording changes answer quality, and seven of the nine rewordings do, most of them in both cells.
+Eighty-four estimates were made across the five measures of Section~\ref{sec:metrics}. $H_0$ states that prompts stating the same requirements in different wordings produce the same distribution of answer quality, so that $\tau_j = 0$ for every rewording, in every baseline, on every measure and at both evidence levels. That is rejected. $H_1$ claims that at least one rewording changes answer quality, and seven of the nine rewordings do, most of them in both cells.
 
 The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where the effects are large and present in both directions, and on correctness, where they are small but consistent. On both, most effects replicate across the two evidence levels.
 
-That replication also answers the secondary question of Section~\ref{sec:goal}, which asked whether the answer to the main question survives a change in the quality of the evidence. It does. Ten of the eleven adherence effects appear at both evidence levels, and their sizes are close: B1 gains $0.223$ on gold and $0.261$ on the retrieved context, C2 loses $0.457$ and $0.424$. Giving the generator the real output of the retriever, distractors included, rather than only the passages the annotation marks as supporting, does not remove the effect of how the prompt is worded. The correctness effects behave the same way: every rewording with a ROUGE-L effect that survives correction at one level has one at the other.
-
-\section{How Robust the Verdict Is}
-\label{sec:robust}
-
-The verdict rests on choices that could reasonably have been made differently. Five checks test the most important of them. None of them changes an estimate reported above. Each asks whether a conclusion depends on the choice, and all five are reproduced by the module \texttt{evaluation/sensitivity.py}.
-
-\paragraph{The correction family.} Section~\ref{sec:decision} corrects within each measure at each evidence level. The strictest alternative is to correct all 84 estimates as one family. Under it, 30 of the 35 effects survive. The five that drop out are the three smallest adherence effects, B2 at the retrieved level and B3 and C3 at the gold level, and the two ROUGE-L effects of A1. $H_0$ is still rejected.
-
-\paragraph{The justification rule for baseline $C$.} As Section~\ref{sec:metrics} states, the rule accepts attribution phrases such as \textit{based on} and \textit{according to} as well as causal connectives. Re-scoring every answer with only \textit{because}, \textit{since} and \textit{therefore} gives pass rates of $78.2\%$ under C0, $39.9\%$ under C1, $28.2\%$ under C2 and $82.6\%$ under C3. The effects of C1 and C2 survive and grow: $-0.450$ and $-0.527$ at the gold level, $-0.307$ and $-0.470$ at the retrieved level, all excluding zero. C3 does not survive. It moves to $-0.020$ at the gold level, with an interval that contains zero, and to $+0.117$ at the retrieved level, which excludes zero in the opposite direction. The C3 effect in Table~\ref{tab:adherence} therefore depends on how the rule is read and is not interpreted further. The C1 and C2 effects do not depend on it.
-
-\paragraph{The sentence rule for baseline $B$.} The rule splits an answer into sentences at a full stop. A citation written after the full stop is therefore credited to the next sentence, and a list item is not split at all. Each of these occurs in at most $2\%$ of the answers under any $B$ condition. Re-scoring with a splitter that corrects both leaves every $B$ estimate unchanged to two decimal places.
-
-\paragraph{Truncated answers.} 88 of the 6,768 answers stopped at the 256-token limit, most of them under C0 and C1. Dropping them changes no verdict.
-
-\paragraph{The API backend.} Section~\ref{sec:collected} noted that almost all answers under B3 were served by one backend configuration. If that backend behaved differently, the B3 effect would be confounded with it. The same backend also served some answers under the other conditions, and in groups whose three repetitions were split between that backend and others, the scores can be compared directly: 104 answers ran on it and 133 elsewhere. There is no shift on faithfulness ($p = 0.55$), answer relevance ($p = 0.90$) or adherence ($p = 0.56$). On the two correctness metrics, answers served by that backend score about two points lower than their own repetitions served elsewhere ($p = 0.014$ for ROUGE-L, $p = 0.033$ for BLEU-1), and neither difference survives a correction across the five tests. If it were real it would work against B3, which was served almost entirely by that backend and still raises correctness. The backend therefore does not explain the B3 result, but the check rests on about two hundred answers and cannot rule out a small effect.
-
-\section{What Changed in the Answers}
-\label{sec:reading}
-
-An effect of forty points needs an explanation of what changed in the text. This section gives one for each baseline, and then looks at how the correctness effects relate to the length of the answers. It describes what the answers look like; it does not add anything to the test above.
-
-\subsection{Baseline B: The Model Cites, But Not in Every Sentence}
-
-Baseline $B$ asks for a citation in every sentence, and the rule of Section~\ref{sec:metrics} follows it strictly: one sentence without a citation fails the whole answer. Under the canonical form only $15.8\%$ of answers pass. That figure is easy to misread. The model does cite. A citation marker appears somewhere in $98.6\%$ of the canonical answers. What it fails to do is cite in every sentence: across all of $B_0$, $53.0\%$ of sentences carry a marker.
-
-The rewordings change that coverage. Under B1 it rises to $65.3\%$. Measured per sentence rather than per answer, the effect of B1 is $+0.153$ at the gold level and $+0.150$ at the retrieved level, both excluding zero. So the improvement in coverage is real.
-
-It is not the whole story, because the strict rule is easier to pass with fewer sentences to get right, and B1 writes fewer. Canonical answers run to $3.1$ sentences on average and B1 answers to $2.5$. Part of the $+0.223$ gain in Table~\ref{tab:adherence} is that shortening, and part is better coverage. The per-sentence estimate separates the two: the coverage gain survives on its own, at about two thirds the size.
-
-\subsection{Baseline C: Compliance Falls When the Instruction Stops Being an Instruction}
-
-Baseline $C$ asks for three things, and the rule checks the one a rule can decide: the answer must explain its choice. Under the canonical form $89.4\%$ of answers do. Under C1 that falls to $50.4\%$ and under C2 to $45.2\%$.
-
-The two prompts that lose compliance are the two that move furthest from a direct instruction. C0 says \textit{give the answer and explain why you choose this answer}. C1 says \textit{supply the response and justify why you select this response}, which asks for the same thing in different words. C2 says \textit{the answer is then given, with an explanation of why it is chosen}, which describes the requirement rather than issuing it. Compliance is lowest under C2. The syntactic rewording changes voice, mood and clause order at once, so this observation cannot be narrowed to any one of them; Section~\ref{sec:notshown} returns to that limit.
-
-C3 is the one rewording of $C$ that holds. It rewrites the prompt as a labelled list, with \texttt{EXPLAIN:} on its own line, and $84.9\%$ of its answers still explain. It also produces the shortest answers of the four, at 77 output tokens against 117 for the canonical form, so the compliance is not bought with length. The small negative effect C3 shows under the rule as run comes from attribution phrases rather than from explanations. The first marker the rule finds is \textit{based on} or \textit{according to} in 128 of the 564 canonical answers, against 28 under C3. Counting only causal connectives, C3 is no worse than the canonical form at the gold level and better at the retrieved level (Section~\ref{sec:robust}).
-
-\subsection{Correctness Follows Answer Length}
-
-The correctness effects line up with a change in how long the answers are. Within every baseline, ordering the three rewordings by how much they shorten the answers orders them by how much they raise correctness, on both metrics and at both evidence levels. All three rewordings of $B$ shorten the answers, from 88 output tokens under B0 to between 75 and 82, and all three raise correctness. Under $C$, C3 and C2 shorten the answers most, to 77 and 100 tokens against 117, and raise correctness most, while C1 barely shortens them and does not move it. A1 is the only rewording that lengthens its answers, from 53 to 61 tokens, and the only one that lowers correctness.
-
-This is what the two metrics would be expected to do. Both favour an answer that stays close to the reference in length, and a longer answer contains more words the reference does not. It also explains why baseline $C$ shows the two measures pulling apart. C's prompt asks the model to explain its answer, and an explanation is exactly the kind of text the reference lacks: C2 lowers adherence by 46 points at the gold level and raises ROUGE-L by 3. The data show that correctness and length move together, not that length is the whole reason. But a rise in these metrics cannot be read simply as the answers becoming more correct.
-
-\subsection{The Direction Is Not Fixed}
-
-The most useful thing in Table~\ref{tab:adherence} is that the signs differ. Every rewording of $B$ improves adherence, while the lexical and syntactic rewordings of $C$ damage it badly. Rewording is therefore not a source of degradation that a system should be protected from. It is a variable that can be set well or badly.
-
-It follows that the published form of a prompt is not the best form of it. Baseline $B$ is taken from a paper, and three separate rewritings of it, none of which changes what it asks for, all score higher than the original. A practitioner who copies a prompt from a paper is copying one point in a space, not the best point in it.
+That replication also answers the secondary question of Section~\ref{sec:goal}, which asked whether the answer to the main question survives a change in the quality of the evidence. It does. Five of the six rewordings of adherence move it at both evidence levels, and their sizes are close: B1 gains $0.223$ on gold and $0.261$ on the retrieved context, C2 loses $0.457$ and $0.424$. Giving the generator the real output of the retriever, distractors included, rather than only the passages the annotation marks as supporting, does not remove the effect of how the prompt is worded. The correctness effects behave the same way: every rewording with a ROUGE-L effect that survives correction at one level has one at the other.
 
 \section{What These Results Do Not Show}
 \label{sec:notshown}
@@ -1554,6 +1468,25 @@ The second is a design that holds the rest of the system fixed by construction r
 The third is empirical. Prompt sensitivity has been shown for user prompts outside retrieval-augmented settings. This thesis measures it for the system prompt inside one, with the retriever, the corpus, the index and the generator held constant, and reports effects on instruction adherence that are large, bidirectional and replicated across two evidence levels. It also gives a practical result for anyone building such a system: the published form of a prompt is one point in a space of equivalent wordings, not the best point in it.
 
 The fourth is methodological, and it was not planned. The correctness measure fixed before the run, containment of the reference answer, is standard in RAG evaluation but was designed for short answer spans. On MS MARCO's sentence-length references it scored near zero in every condition and could not have detected any effect, while the dataset's own metrics, applied to the same answers, found many. A study of this kind should check that a measure suits its references and has room to move before it reads a null as an absence of effect.
+
+\section{Limitations}
+\label{sec:limits}
+
+The evaluation rests on a single collection. Every result is conditional on MS MARCO: on its queries, its passages, its relevance judgements and its written answers. Section~\ref{sec:knowledgebase} argues that the topical spread within the collection is wide, but spread within one corpus is not replication across several. A prompt effect found here bounds what may be expected elsewhere; it does not establish it.
+
+The query set is balanced across intent types. That makes the type usable as a covariate, but it detaches the query set from the natural distribution of queries: \textsc{person} and \textsc{location} queries are over-represented relative to MS MARCO and \textsc{description} queries under-represented. The prompt effect $\tau_j$ is unaffected, because it is an average of within-query differences and each query is its own control. Any marginal figure over the query set is a balanced average over the design, not an estimate of what the system would do on the queries a deployment receives.
+
+MS MARCO records what people type into a web search engine. Its queries are short, mostly factoid, and drawn from the domains web search covers. Several of the settings that motivate retrieval in Section~\ref{sec:usecase}, such as clinical decision support and legal question answering, are absent from it, and their documents differ from web passages in length, structure and register. Whether an instruction that governs behaviour here governs it there is left to future work.
+
+The design can detect a medium effect but not a small one. With the 88 queries that pass the retrieval gate at $K = 10$, a paired comparison at the 5\% level has an 80\% chance of detecting a standardised effect of about $0.30$, and about $0.39$ once the correction across the nine rewordings is applied; at the gold level, where all 100 queries are usable, the corresponding figures are $0.28$ and $0.37$. Those thresholds are stated in units of the observed paired differences. Two choices make those differences noisier than they need to be: three repetitions per cell where five would have tightened the cell means, and a decoding temperature of $1.0$ where a lower one was available. Both raise the variation within a cell, so a given true effect is harder to detect. If a rewording changes a measure by less than that, this experiment will not distinguish it from decoding noise, and a failure to reject $H_0$ has to be read as that limit rather than as evidence that prompt structure does not matter.
+
+Correctness was not measured the way it was planned. The measure fixed before the run was containment, in the sense of \citet{chen2024rgb}: an answer counted as correct when it contained the reference answer word for word. \citet{chen2024rgb} apply it to short answers such as a name or a date. MS MARCO's references are full sentences, and the generator rarely repeats one word for word, so containment scored near zero in every condition, at a mean of $0.052$, and could not have detected any change. It was replaced by the two metrics MS MARCO's own answer task is scored with. The replacement was made after the results of the planned measure were known and after the effect of rewording on the replacement metrics had been examined, so it is a decision taken with the data in view, and it is reported here for that reason.
+
+ROUGE-L and BLEU-1 have limits of their own. They reward overlapping words, not truth, so a fluent wrong answer that reuses the wording of the reference can outscore a short correct one. They also favour answers close in length to the reference: a longer answer contains more words the reference lacks, which lowers precision in both. A rewording that makes answers shorter can therefore raise both metrics without making the answers more correct. Section~\ref{sec:reading} returns to this.
+
+The generator and the judge are models behind an API. Their weights are not available, and the provider may update a model under the same name. The model identifier, the decoding settings and the backend fingerprint returned by the API are recorded with every generation, so any such change is visible in the data, but an exact repetition of the run depends on the provider keeping the model unchanged.
+
+Two of the four measures are judged by a language model. The precautions of Section~\ref{sec:judge} limit the ways in which the judge can bias the comparison between conditions, but they do not remove the dependence on it, and the agreement study those precautions call for was not carried out, so faithfulness and answer relevance carry no reliability estimate. The measures that carry most of the result of Chapter~\ref{ch:results}, the two correctness metrics and instruction adherence, are computed by program and do not depend on the judge, which limits how far this weakness reaches. An audit after the run found two further weaknesses in the judged measures. The judge's output was capped at 256 tokens, and when claim extraction was re-run on the twenty answers with the longest claim lists, 13 of them reached that cap, so for the longest answers the last claims were cut off and faithfulness was scored on the first part of the answer only. Answers that long make up an estimated 2\% of the data. The same re-run showed that the judge is not fully deterministic at temperature 0: for three of the twenty answers the number of extracted claims differed markedly between runs. Neither weakness touches the correctness metrics or the adherence measure, which are computed by program. Instruction adherence, in turn, checks only the requirements a rule can decide; requirements such as an unbiased tone are stated by the prompts but not scored.
 
 \section{Future Work}
 \label{sec:futurework}

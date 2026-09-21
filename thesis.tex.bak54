@@ -68,25 +68,25 @@ Frankfurt am Main, den DATUM \hfill \rule{5cm}{0.4pt}\\
 \chapter*{Abstract}
 
 Retrieval-augmented generation (RAG) combines information retrieval with language generation, so that a language model can condition its output on external and updatable evidence rather than only on what it learned during training. The system prompt specifies the instructions, constraints, and output
-format the generator should follow. Because it is written in natural language, its effect on system behaviour is hard to predict and hard to verify. Prior work on prompt sensitivity in language models has studied that effect almost entirely outside retrieval-augmented systems. This thesis addresses that gap
+format the generator should follow. Because it is written in natural language, its effect on system behaviour is hard to predict and hard to verify. Prior work on prompt sensitivity in language models has studied that effect outside retrieval-augmented systems. This thesis addresses that gap
 by asking how far systematic changes in the system prompt influence the behaviour and outcomes of a RAG system when the user input, knowledge base, retrieval
 mechanism, and underlying language model are held constant.
 
 The thesis builds a formal model of a RAG system on the formulation of \citet{lewis2020rag}. A retriever assigns probabilities
-$p_\eta(z\mid q,D)$ to documents from the knowledge base, a generator produces the answer token by token. The system prompt S enters as an explicit conditioning variable, $p_\theta(y_i\mid q,z,y_{1:i-1},S)$, and is modelled as a set of checkable
-requirements $\Sigma$ written in a wording $\varphi$, such that $S=\rho(\Sigma,\varphi)$. Each of three published baseline prompts is written in four wordings: its canonical form and three controlled rewordings, which change the vocabulary, the sentence structure or the layout. Every rewording leaves the requirements fixed and changes only $\varphi$.
+$p_\eta(z\mid q,D)$ to documents from the knowledge base, a generator produces the answer token by token. The system prompt $S$ enters as an explicit conditioning variable, $p_\theta(y_i\mid q,z,y_{1:i-1},S)$, and is modelled as a set of checkable
+requirements $\Sigma$ written in a wording $\varphi$, such that $S=\rho(\Sigma,\varphi)$. Each of three baseline prompts is written in four wordings: its canonical form and three controlled rewordings, which change the vocabulary, the sentence structure or the layout. Every rewording leaves the requirements fixed and changes only $\varphi$.
 
 Changing the system prompt is an intervention on the system. What counts as a
 good answer is fixed beforehand. An answer must be
 grounded in the retrieved evidence, relevant to the question asked, correct
-against the reference answer, and obedient to the instructions it was given. The knowledge base and the query set come from established
-question-answer datasets, which keeps the measurement reproducible and its results comparable with
+against the reference answer, and obedient to the instructions it was given. The knowledge base and the query set come from established a
+question-answer dataset to keep the measurement reproducible and its results comparable with
 published work. Only the system prompt is manipulated. The language model, the
 embedding model, the vector index, the chunking strategy and the retrieval
 depth stay fixed, so the passages that reach the generator are identical in
 every condition and any difference in the output originates at the generator
 alone. Generations are repeated to account for decoding
-randomness. 
+randomness.
 
 \selectlanguage{ngerman}
 \chapter*{Zusammenfassung}
@@ -96,7 +96,7 @@ Informationsretrieval mit Sprachgenerierung. Ein Sprachmodell kann seine
 Ausgabe damit auf externe Evidenz stützen und muss sich nicht
 ausschließlich auf während des Trainings erlernte Parameter verlassen. Der
 System-Prompt legt innerhalb eines solchen Systems die  Ausgabeanforderungen fest, denen der Generator folgen soll.
-Da er in natürlicher Sprache formuliert ist, lässt sich seine Wirkung auf das
+Da er in natürlicher Sprache formuliert ist, lässt sich sein Effekt auf das
 Systemverhalten nur schwer vorhersagen und überprüfen, und bisherige Arbeiten
 zur Prompt-Sensitivität von Sprachmodellen wurden fast ausschließlich außerhalb
 von Retrieval-Augmented-Systemen durchgeführt. Die vorliegende Arbeit
@@ -110,23 +110,24 @@ Die Arbeit entwickelt ein formales Modell eines RAG-Systems auf Grundlage der Fo
 Retriever den dokumenten Wahrscheinlichkeiten $p_\eta(z\mid q,D)$ zu,
 und ein Generator erzeugt die Antwort Token für Token. Der System-Prompt wird
 als freie Variable $p_\theta(y_i\mid q,z,y_{1:i-1},S)$ eingeführt
-und als eine Menge überprüfbarer Anforderungen $\Sigma$ in einer Formulierung $\varphi$ modelliert. Drei publizierte Baseline-Prompts werden in jeweils vier Formulierungen verwendet: der kanonischen Form und drei kontrollierten Umformulierungen, die Wortwahl, Satzbau oder Layout verändern, ohne die Anforderungen zu verändern.
+und als eine Menge überprüfbarer Anforderungen $\Sigma$ in einer Formulierung $\varphi$ modelliert. Drei Baseline-Prompts werden in jeweils vier Formulierungen verwendet: der kanonischen Form und drei kontrollierten Umformulierungen, die Wortwahl, Satzbau oder Layout verändern, ohne die Anforderungen zu verändern.
 Die Änderung des System-Prompts wird als Intervention auf dieses Modell
 behandelt. Was als gute Antwort gilt, wird vorher festgelegt. Eine Antwort muss vier Anforderungen zugleich erfüllen, nämlich
 in der abgerufenen Evidenz verankert, für die gestellte Frage relevant,
 gegenüber der Referenzantwort korrekt und den erteilten Anweisungen gehorsam zu
-sein. Wissensbasis und Anfragemenge stammen aus etablierten
-Frage-Antwort-Datensätzen und werden nicht eigens für das Experiment
+sein. Wissensbasis und Anfragemenge stammen aus etablierten einem
+Frage-Antwort-Datensatz und werden nicht eigens für das Experiment
 konstruiert. Dadurch bleibt die Messung reproduzierbar und mit publizierten
-Ergebnissen vergleichbar. Der System-Prompt ist die einzige manipulierte
+Ergebnissen vergleichbar. Der System-Prompt ist die einzige veränderte
 Komponente. Sprachmodell, Embedding-Modell, Vektorindex, Chunking-Strategie und
 Retrieval-Tiefe werden konstant gehalten, sodass in jeder Bedingung dieselben
 Passagen den Generator erreichen und jede Abweichung in der Ausgabe allein am
 Generator entsteht. Generierungen werden wiederholt, um die Stochastizität der Dekodierung zu
-berücksichtigen. 
+berücksichtigen.
+
 \selectlanguage{english}
 \chapter*{Acknowledgments}
-I want to express my sincere gratitude to Professor Ramesh for his guidance and mentorship throughout this thesis.
+I want to express my sincere gratitude to Professor Ramesh for his guidance and mentorship throughout this thesis and Professor Gao for being the second supervisor of this thesis.
 
 \tableofcontents
 
@@ -144,22 +145,22 @@ I want to express my sincere gratitude to Professor Ramesh for his guidance and 
 
 Retrieval-Augmented Generation (RAG) systems combine information retrieval with
 language generation. This design addresses a limit of purely parametric large
-language models (LLMs) since model's knowledge is fixed at training time and
-cannot be updated without retraining or fine-tuning it. \citet{lewis2020rag}
+language models (LLMs), whose knowledge is fixed at training time and cannot be
+updated without retraining or fine-tuning. \citet{lewis2020rag}
 introduced RAG by combining a pretrained retriever with a pretrained
 sequence-to-sequence generator, so the model can base its output on external and
 updatable evidence. A RAG
 system takes the user query, retrieves relevant information from an external
-knowledge base, a vector database, and gives that information to a
+knowledge base and gives that information to a
 language model with instructions for generating the final response.
 
 The system prompt connects the intended system behaviour to the
 observable output. The retrieved evidence varies with the query and the
 knowledge base, but the system prompt is written to specify how
 the model should behave, which instructions and constraints apply, and which
-output format it should produce. Since it is written in natural language, its effect on behaviour is hard to
-predict and hard to check in beforehand. Therefore, its influence on both intended behaviour
-and actual output has to be examined through controlled experiments.
+output format it should produce. Because it is written in natural language, its effect on behaviour is hard to
+predict and hard to check in advance. Its influence therefore has to be examined
+through controlled experiments.
 
 \section{Motivation and Research Objective}
 
@@ -174,15 +175,16 @@ of the exact wording of the instructions, and all of these have to be controlled
 before any change in behaviour can be assigned to the prompt. Small, seemingly harmless changes to the wording of an instruction can cause large changes in model behaviour
 \citep{salinas2024butterfly}.
 
-The central research question is the following: \textit{To what extent do
+The central research question is the following: \\
+\textit{To what extent do
 systematic changes in the system prompt influence the behaviour and outcomes of a
 RAG system when the user input, knowledge base, retrieval mechanism, and
-underlying language model are held fixed?} Answering this question requires a formal
+underlying language model are held fixed?} \\
+Answering this question requires a formal
 model of the RAG system in order to identify system prompt as a controlled parameter, as well as an experimental design that holds every other source
-of variation fixed. The rest of this thesis builds both, and builds them for the
-most single retrieval-augmented architecture. The simple RAG architecture
-is the configuration in which the system prompt reaches the answer through a
-single path to ensure its effect is identifiable. 
+of variation fixed. The rest of this thesis builds both, and builds them for the simplest
+retrieval-augmented architecture. In that architecture the system prompt reaches
+the answer through a single path. That is what makes its effect identifiable.
 
 
 \section{Thesis Structure}
@@ -193,9 +195,11 @@ generation developed and introduces the different components of a RAG system. Ch
 formal model of the RAG system used in this thesis. It takes the probabilistic
 formulation of \citet{lewis2020rag} and extends it such that the system prompt
 becomes an explicit variable of the generator, grounds the knowledge base, and defines what counts as a good answer.
-Chapter 5 describes the experimental setup. Chapter 6 presents and discusses the results of
-the experiments. Chapter 7 concludes the thesis by summarising the findings and
-outlining directions for future work.
+Chapter 5 describes the experimental setup. Chapter 6 presents and discusses the results.
+Chapter 7 concludes the thesis by summarising the findings and outlining
+directions for future work. The Notation section at the end of this chapter
+lists every symbol used later, so that the formal chapters can be read without
+searching back for a definition.
 
 \section*{Notation}
 \label{sec:notation}
@@ -208,7 +212,7 @@ The notation follows \citet{lewis2020rag} for the RAG system and the interventio
 \begin{itemize}
     \item $q \in \mathcal{Q}$ denotes a user query, drawn from the space of possible queries $\mathcal{Q}$, and $P_{\mathcal{Q}}$ denotes the distribution over that space from which queries are drawn.
     \item $D = \{d_1, d_2, \ldots, d_N\} \in \mathcal{D}$ denotes the knowledge base, where each $d_i$ is a document, $N$ is the number of documents, and $\mathcal{D}$ is the space of possible knowledge bases.
-    \item $S \in \mathcal{S}$ denotes a system prompt, drawn from the space of possible system prompts $\mathcal{S}$. It is the standing instruction supplied in the system role, fixed across requests, and is distinct from the query $q$, which the user supplies anew with each request.
+    \item $S \in \mathcal{S}$ denotes a system prompt, drawn from the space of possible system prompts $\mathcal{S}$. It is the standing instruction supplied in the system role, fixed across requests, and is distinct from the query $q$ that the user supplies anew with each request.
     \item $C \in \mathcal{C}$ denotes the retrieved context supplied to the language model.
     \item $y = (y_1,\ldots,y_L) \in \mathcal{Y}$ denotes the generated system output, a sequence of $L$ tokens drawn from the space of possible responses $\mathcal{Y}$; $y_{1:i-1}$ denotes the tokens produced before position $i$.
     \item $R$ and $G$ denote the retrieval and generation functions of the pipeline, and $\chi$ the chunking strategy by which documents are divided into retrievable units.
@@ -240,13 +244,6 @@ The notation follows \citet{lewis2020rag} for the RAG system and the interventio
     \item $\mathbb{E}[\cdot]$ denotes expectation, and $\hat{\cdot}$ marks a quantity estimated from the sample rather than defined in the model.
 \end{itemize}
 
-\subsection*{Evidence and evaluation}
-
-\begin{itemize}
-    \item $\Phi$ denotes the facts the dataset annotations hold true, $\Phi_y$ the facts an answer asserts, $\Phi_C$ the facts contained in the retrieved context, and $a_q$ the reference answer annotated for query $q$.
-    \item $\mathcal{Y}^{*}(q,C)$ denotes the set of acceptable answers.
-\end{itemize}
-
 \subsection*{Experimental design}
 
 \begin{itemize}
@@ -263,48 +260,32 @@ RAG system's intended behaviour is specified, and asked how systematically
 varying that interface changes system behaviour and outcomes. Answering that
 question formally first requires the components of a RAG system and the reasons
 behind its design. Section 2.1 traces how retrieval-augmented approaches to
-language generation developed, Section 2.2 introduces the components used
-throughout later chapters, and Section 2.3 discusses typical use cases.
+language generation developed. Section 2.2 introduces the four components used
+throughout the later chapters. Section 2.3 contrasts retrieval with fine-tuning,
+Section 2.4 gives the settings in which RAG is typically deployed, and Section 2.5
+reviews the advanced architectures this thesis deliberately does not use.
 
 \section{Path towards RAG}
-
-The need to store knowledge outside of any single memory, and to retrieve it
-again on demand, predates computing. Inca administrators
-recorded census and tax data in knotted cords, quipu, that only specially
-trained officials could encode or decode. Long before that, the Library of Alexandria's
-cataloguer Callimachus organised its holdings by author and subject in the
-Pinakes. This was one of the first attempts to make a large external collection
-searchable rather than merely stored. \citet{bush1945asmaythink} made the need
-for machine-assisted retrieval and proposed a device that could store a
-person's library and retrieve from it through associative links between related
-items instead of a fixed order. \citet{codd1970relational} gave the idea a
-rigorous computational form by treating a knowledge store as a formally
-queryable structure. \citet{salton1975vectorspace} then extended retrieval from
-exact structured queries to similarity ranking over unstructured text. This is the
-direct ancestor of the embedding-based retrieval described later in this
-chapter.
-
-The need for a mechanism to retrieve from an external store instead of
-remembering everything internally resulted into question-answering systems. Early systems relied on
+The need to retrieve from an external store instead of remembering everything
+internally led to the first question-answering systems. Early systems relied on
 hand-crafted rules and pattern matching over the input question, and mapped recognised syntactic patterns onto retrieval or answer-generation procedures
 \citep{pandya2021qasurvey}. Statistical and later neural methods replaced those
 rule-based components. The dominant approach shifted toward learning the
 mapping from question to answer from data. Large language models are
 the end point of that shift since they generate answers from parameters learned over
-large text corpora instad from any explicit rule set.
+large text corpora.
 
-Large language models generate text using only parametric knowledge, that is,
+Large language models generate text using only parametric knowledge, and these are 
 information encoded in their weights during training
 \citep{wang2024knowledgemechanisms}. This leads to two problems. First, a model's
-knowledge is fixed at the point its training data was collected. Any event,
-fact, or document after that point is unknown to the model unless it is
+knowledge is fixed at the point its training data was collected. Any Information after that point is unknown to the model unless it is
 retrained or fine-tuned. Second, purely parametric models are prone to
-hallucination becaus they can generate fluent, plausible-sounding statements that no
+hallucination, because they can generate plausible-sounding statements that no
 evidence supports, since nothing in their design forces an output to trace
 back to a verifiable source.
 
-Instead of relying only on what is stored in its parameters, both problems are the reason to give a language model access to an external and
-updatable source of evidence at inference time \citep{lin2025llminference}. \citet{lewis2020rag}
+Both problems are the reason to give a language model access to an knowledge base at inference time, instead of relying only on what
+is stored in its parameters \citep{lin2025llminference}. \citet{lewis2020rag}
 formalised this idea as Retrieval-Augmented Generation. RAG combines a retriever, which selects relevant passages from a document
 collection, with a pretrained generator, which conditions its output on those retrieved passages in addition to the input query.
 
@@ -313,34 +294,32 @@ RAG has developed beyond that original design since it was introduced.
 generation as one fixed pipeline; Advanced RAG, which adds steps such as query
 reformulation or re-ranking of retrieved passages before generation; and Modular
 RAG, which makes retrieval, generation, and other steps separate
-components that can be rearranged for different tasks. Retrieval and generation stay separate steps in all three. This thesis therefore treats them as two
-distinct functions, such that their interaction with the system prompt can be studied
-on its own, as will be formalised in Chapter 4.
+components that can be rearranged for different tasks. Retrieval and generation stay separate steps in all three. 
 \section{Components of RAG}
 
-A RAG system is comprised of four components. First, the knowledge base the evidence comes from, and second,
-the retriever that selects relevant evidence for a given query, and third, the generator
-that produces a response from the query and the retrieved evidence, and lastly, the
-system prompt which specifies how the generator should behave. This section
+A RAG system has four components. The knowledge base the evidence comes from,
+the retriever that selects relevant evidence for a given query, the generator
+that produces a response from the query and the retrieved evidence, and the
+system prompt that specifies how the generator should behave. This section
 introduces each component. Chapter 4 treats them formally.
-Figure~\ref{fig:rag} shows how they fit together and which data passes between
+Figure~\ref{fig:rag} shows how they fit together and which information passes between
 them.
 
 \begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}{\input{figures/rag_architecture.tex}}
-\caption{Architecture of a RAG system, showing the four components introduced. The retrieval stage matches the user query against a vector database and returns the top-$K$ chunks. The generation stage combines those chunks with the user query and the system prompt into a single prompt and produces the answer.}
+\caption{Architecture of a RAG system showing the four components introduced. The retrieval stage matches the user query against a vector database and returns the top-$K$ chunks. The generation stage combines those chunks with the user query and the system prompt into a single prompt and produces the answer.}
 \label{fig:rag}
 \end{figure}
 
-\subsection{Knowledge Base / Vector Database}
+\subsection{Knowledge Base }
 
 The knowledge base $D = \{d_1, d_2, \ldots, d_N\}$ is the collection of documents
 the evidence comes from. In most RAG systems, documents are first split
 into smaller passages, called chunks. Chunking is needed because a language
 model can only take in a limited amount of context. 
 
-An embedding model maps each chunk to a high-dimensional vector, to ensure that
+An embedding model maps each chunk to a high-dimensional vector, so that
 chunks with similar meaning end up close together in the embedding space.
 Representing text as vectors and measuring relatedness by geometric proximity
 goes back to the vector space model of \citet{salton1975vectorspace}.
@@ -352,22 +331,21 @@ nearest-neighbour search over large collections of chunks. Comparing a query
 against every stored vector is exact but becomes too slow as the collection
 grows. Therefore vector databases index the vectors and use approximate nearest-neighbour search. The most widely used index of this kind is the hierarchical navigable
 small world graph of \citet{malkov2020hnsw}.
-collection.
 
 Several systems build on such indexes. \citet{pan2024vectordb} survey how they
-differ in indexing, query processing and storage. It matters here is how they
+differ in indexing, query processing and storage. What matters here is how they
 are deployed. FAISS is a library embedded directly in an application, with
 fine-grained control over the index structure \citep{johnson2021faiss}. Chroma
 is a lightweight database aimed at local development and small deployments. The
 \texttt{pgvector} extension adds vector columns and similarity operators to
-PostgreSQL to ensure that vectors can sit next to existing relational data. Pinecone is a
+PostgreSQL, so that vectors can sit next to existing relational data. Pinecone is a
 managed service in which the provider handles indexing and scaling.
 \subsection{Retriever}
 
 Given a user query $q$ and a knowledge base $D$, the retriever selects the chunks
 that are relevant for answering $q$. Chapter 4 formalises this as a probability
-distribution $p_\eta(z \mid q,D)$ over relevant documents. Three approaches are
-common, and they fail in different ways.
+distribution $p_\eta(z \mid q,D)$ over relevant documents. Two approaches are
+common and match a query to a passage in different ways.
 \subsubsection{Dense Retrieval}
 
 Dense retrieval embeds the query with the same embedding model used for the
@@ -384,7 +362,7 @@ method is BM25 \citep{robertson2009bm25}. BM25 weights each matching term by how
 often it occurs in the chunk, how rare it is across the collection, and how long
 the chunk is. Common words therefore contribute little, and long chunks are not
 favoured only for containing more words. The representation is sparse since
-a chunk is described by the vocabulary it contains. BM25 requires no training and remains a strong baseline. .
+a chunk is described by the vocabulary it contains. BM25 requires no training and remains a strong baseline.
 
 \subsubsection{Retrieval Depth}
 
@@ -406,7 +384,7 @@ token in a sequence. It generates text by autoregressive decoding. Its parameter
 $\theta$ in Chapter 4, encode what the model learned during training. This
 encoded knowledge is often called parametric memory.
 
-Within a RAG pipeline the model is used to reads the retrieved chunks, selects the parts that answer the query,
+Within a RAG pipeline the model reads the retrieved chunks, selects the parts that answer the query,
 resolves references between them, and writes the result as fluent text
 \citep{lewis2020rag}.
 
@@ -444,12 +422,12 @@ For open-ended writing this variety is useful. For a RAG system it is mostly har
 is one that the evidence does not support well. Consequently, raising the
 temperature increases the chance of producing a statement the retrieved documents
 do not contain. High temperature also makes the system harder to evaluate, since
-the same query and the same evidence no longer yield the same answer. RAG systems
+the same query and the same evidence no longer result in the same answer. RAG systems
 intended to be faithful to their sources are therefore usually run at a low
-temperature. This thesis holds
-$T$ fixed and low across all experimental conditions, and the randomness that remains
-at a fixed temperature is the reason each condition is repeated several times in
-Chapter 5.
+temperature. This thesis holds $T$ fixed across all experimental conditions, but
+fixes it at the API default of $1.0$. The noise that remains at that setting is the
+reason each condition is repeated several times in Chapter 5, and its cost is
+stated in Section~\ref{sec:limits}.
 \subsection{System Prompt}
 
 The system prompt $S$ specifies the instructions, constraints and output
@@ -457,11 +435,11 @@ requirements the generator should follow. The query changes with every request, 
 with the query and the knowledge base. The system prompt is usually fixed across
 many requests.
 
-The system prompt has two functions. The first is to define the role it occupies, the audience it addresses,
+The system prompt has two functions. The first is to define the role the RAG system occupies, the audience it addresses,
 and the format its output takes. The second is to
 install hard constraints on that behaviour, of which the grounding constraint is
-the most consequential. A grounding constraint restricts the model to the
-retrieved context and specifies what to do when that context is inadequate. Listing~\ref{lst:prompt} illustrates both in a minimal example.
+the most important. A grounding constraint restricts the model to the
+retrieved context and specifies what to do when that context does not suffice. Listing~\ref{lst:prompt} illustrates both in a minimal example.
 
 \begin{lstlisting}[style=promptbox,caption={A minimal system prompt combining an operational scope with two hard constraints.},label={lst:prompt}]
 You are a customer service assistant for a parcel delivery company.
@@ -483,7 +461,7 @@ document you use, in square brackets.
 The first line fixes the operational scope. The two blocks that follow are hard
 constraints. One restricts the admissible source of fact, the other defines the
 response for the case in which no admissible source exists. The final block
-constrains form rather than content, and belongs to the first function. Each of
+constrains form. Each of
 these instructions is stated so that it can be checked against an output. That is
 the property Chapter 4 requires of the requirement set $\Sigma$.
 \section{Retrieval-Augmented Generation versus Fine-Tuning}
@@ -496,7 +474,7 @@ continues training on domain-specific data and changes the model parameters
 $\theta$, consequently what the model learns enters the parametric memory described in
 Section~\ref{sec:generator}. RAG leaves $\theta$ untouched and changes what is
 placed in the context window at inference time. The two therefore act on
-different parts of the system rather than competing to answer one question. Fine-tuning requires a training run over the
+different parts of the system instead of competing to answer one question. Fine-tuning requires a training run over the
 model's parameters whenever the underlying information changes. Adding a document
 to a knowledge base requires only that the new chunks be embedded and indexed \citep{cheerla2025enterpriserag}. 
 \citet{wang2024knowledgemechanisms} survey the difficulty of locating and editing
@@ -506,16 +484,13 @@ retrieval is preferred in regulated settings, where sensitive data can remain in
 a controlled external store instead of entering the parameters
 \citep{he2025biomedicinerag}. Because a RAG answer is
 produced from a specific set of retrieved chunks, each claim in the output can in
-principle be checked against the passage that supports it, and unsupported claims
-can be identified at the level of the individual statement \citep{niu2024ragtruth}.
+principle be checked against the passage that supports it \citep{niu2024ragtruth}.
 
 \section{Use-Case of RAG}
 \label{sec:usecase}
 
 RAG systems are typically used where the needed knowledge is too large, too
-specific, or changes too often to be captured reliably by a model's parametric
-knowledge. Deployments span many domains: question-answering over
-enterprise and internal document collections \citep{cheerla2025enterpriserag},
+specific, or changes too often to be captured reliably by a model's parameters. The fields of use span many domains: question-answering over internal document collections \citep{cheerla2025enterpriserag},
 customer support systems that must answer from current product or policy
 documentation, coding assistants that retrieve from a specific codebase instead
 of relying on general programming knowledge, legal question-answering over case
@@ -526,26 +501,26 @@ institutional protocols \citep{he2025biomedicinerag}.
 \label{sec:advanced}
 
 The architecture described so far retrieves once per query and generates once
-from what was retrieved. Recent work relaxes both assumptions, and the resulting
+from what was retrieved. Recent work relaxes that procedure, and the resulting
 variants can be grouped by which stage of the pipeline they modify. The summary
-below is for completeness. None of these variants is used in this thesis since
-studies the standard architecture.
+below is given for completeness. None of these variants is used here, because this
+thesis studies the standard architecture.
 
 \begin{description}
-    \item[Conversational RAG.] Retaining prior turns of a dialogue as state, so that a follow-up question can be resolved against what was already asked and answered. A query such as ``and the second one?'' is meaningless to a retriever on its own, so the conversation history has to supply what is missing.
-    \item[Pre-retrieval optimisation.] Rewriting or expanding the query before it reaches the retriever. Hypothetical Document Embeddings (HyDE) generate a hypothetical answer to the query and embed that instead of the query itself, on the argument that an answer lies closer in embedding space to the passage containing it than a question does \citep{gao2023hyde}.
-    \item[Routing and adaptive retrieval.] Deciding where and how much to retrieve. Where several collections or indexes are available, a routing step can select among them according to what the query is about, rather than searching one combined collection for everything. Adaptive-RAG goes further and varies the depth of retrieval with the difficulty of the query, answering simple questions directly and reserving multi-step retrieval for those that need it \citep{jeong2024adaptiverag}.
-    \item[Self-correction and reflection.] Evaluating retrieved evidence before or during generation. Corrective RAG (CRAG) grades each retrieved document, decomposes the ones it keeps into smaller knowledge strips, discards the strips that are not relevant, and falls back to a wider search when retrieval fails \citep{yan2024crag}. Self-RAG instead trains the model to decide for itself when to retrieve and to critique its own draft output, so that retrieval and generation interleave rather than run once each \citep{asai2024selfrag}.
+    \item[Conversational RAG.] Retaining prior turns of a dialogue as a state, such that a follow-up question can be answered.
+    \item[Pre-retrieval optimisation.] Rewriting or expanding the query before it reaches the retriever. Hypothetical Document Embeddings generate a hypothetical answer to the query and embed that instead of the query itself, based on the rationale that an answer lies closer in embedding space to the passage containing it than a question does \citep{gao2023hyde}.
+    \item[Routing and adaptive retrieval.] Deciding where and how much to retrieve. Adaptive-RAG varies the depth of retrieval with the difficulty of the query, answering simple questions directly and reserving multi-step retrieval for those that need it \citep{jeong2024adaptiverag}.
+    \item[Self-correction and reflection.] Evaluating retrieved evidence before or during generation. Corrective RAG grades each retrieved document, decomposes the ones it keeps into smaller knowledge strips, discards the strips that are not relevant, and falls back to a wider search when retrieval fails \citep{yan2024crag}. Self-RAG instead trains the model to decide for itself when to retrieve and to critique its own draft output, so that retrieval and generation Intertwine \citep{asai2024selfrag}.
     \item[Agentic RAG.] Treating retrieval as one action among several available to an agent. A meta-agent delegates to document-specific or tool-specific agents and combines their results, which turns a fixed pipeline into a workflow whose steps are chosen at run time \citep{singh2025agentic}.
 \end{description}
 
 Understanding the standard architecture
 formalised in this thesis remains a prerequisite for all advanced RAG architectures. Each variant
 changes the retrieval function $R$, the generation function $G$, or the number of
-times they are applied, but none changes the underlying distribution
-$p_{\mathrm{RAG}}(y \mid q,D,S)$.
+times they are applied, but all of them are still built from a retrieval step and
+a generation step, and all of them still produce a distribution over outputs.
 
-As being said, this thesis implements the most simple architecture and none of the variants above.
+This thesis therefore implements the simplest architecture and none of the variants above.
 The reason is methodological as the research objective is to estimate the causal
 effect of the system prompt on the output, that Chapter 4 formalises as the
 intervention $\mathrm{do}(S = S_j)$. This particular effect is identifiable only as long as
@@ -554,13 +529,11 @@ breaks that condition. Under Self-RAG the model decides for itself when to
 retrieve \citep{asai2024selfrag}, thus the system prompt influences which documents
 are fetched as well as how they are used. Under routing, corrective and agentic
 designs the prompt shapes the decisions of the router, the retrieval evaluator or
-the meta-agent, such the retrieved context $C$ ceases to be determined by the query
+the meta-agent, so that the retrieved context $C$ ceases to be determined by the query
 and the corpus alone. Retrieval would then have to be written
 $p_\eta(z \mid q,D,S)$ rather than $p_\eta(z \mid q,D)$, and the arrow from $S$
 into the retriever that Figure~\ref{fig:causal} deliberately omits would be
-present. A measured difference between two prompt conditions could be attributed
-either to the prompt's effect on generation or to its effect on what was
-retrieved, with no way to separate the two. 
+present. 
 
 \chapter{Literature Review}
 
@@ -579,18 +552,25 @@ The first branch of literature studies language models with no retrieval
 component at all. \citet{cheng2026systemprompts} vary
 the system prompt given to instruction-tuned models for code generation, crossing
 prompt specificity and prompting strategy with model, programming language and
-decoding settings. They report that the system prompt moves the quality of
+decoding settings. They report that the system prompt influences the quality of
 generated code independently of the task description. Theirs is the closest
 published design to the one used here, and the present experiment carries it from
 code generation into a retrieval-augmented setting, where the model is also given
-evidence to work from. \citet{mu2025robustness} examine how reliably models honour
-a system prompt when the user turn contains instructions conflicting with it.
-Their result establishes the system prompt as a control whose authority is
-contingent rather than guaranteed. \citet{zheng2024helpful} assign personas
+evidence to work from. What it varies, however, is specificity and strategy: how
+much the prompt asks for and how it asks the model to go about the task. In the
+terms of Section~\ref{sec:promptreq} that is variation in $\Sigma$, the requirement
+set, and their design therefore leaves open the question this thesis asks, which
+is what happens when $\Sigma$ is held fixed and only the wording $\varphi$ changes.
+\citet{mu2025robustness} examine how reliably models follow a system prompt when the
+user turn contains instructions conflicting with it, and report that the system
+prompt does not always retain authority in that competition. Their result cuts
+both ways for the present design: it establishes the system prompt as a channel
+with measurable influence over behaviour, and it shows that the influence is not
+guaranteed. \citet{zheng2024helpful} assign personas
 through the system prompt across a large set of roles and find that doing so does
-not reliably improve accuracy over one carrying no persona at all. 
+not reliably improve accuracy over one carrying no persona at all.
 
-A larger group varies the user-side prompt. \citet{lu2024sensitivity} compare
+A larger body of research varies the user-side prompt. \citet{lu2024sensitivity} compare
 prompting techniques for in-context learning and measure sensitivity through
 gradient-based saliency scores. They report that sensitivity correlates
 negatively with accuracy and can serve as an unsupervised proxy for it.
@@ -611,10 +591,9 @@ used instead. \citet{qin2026interactions} decompose a model's output score into
 interactions between input variables and observe that small changes to the prompt
 destabilise those interactions even where the final output is unchanged.
 
-Two further studies sit outside both groups. \citet{ruiz2026promptcarefully} state
+Two further studies fall outside both groups. \citet{ruiz2026promptcarefully} state
 a rule in the instruction given to a model and then shift the contingencies that
-rule was written for, and find that models keep following the stated rule after it
-has stopped paying, a pattern that resembles rule-governed behaviour in humans.
+rule was written for.
 The channel carrying the rule is not the variable of interest there, but the
 finding bears on how a stated requirement competes with what the evidence in front
 of the model supports. \citet{ying2024intuitive} study conflict between a model's
@@ -634,13 +613,12 @@ formatting-level \citep{sclar2024quantifying}, or not visible in the output at a
 \citep{qin2026interactions}, and that the apparent size of such an effect depends
 on how it is measured \citep{hua2025flaw}. This second conclusion is established
 for the user-side prompt, and its transfer to the system prompt is an assumption
-rather than a result. The assumption is reasonable, since both texts reach the
+instead of a result. The assumption is reasonable, since both texts reach the
 same decoder as tokens in the same context window, but it is untested.
 
 \section{Retrieval-Augmented Generation: Architecture, Evaluation, and Failure Modes}
 
-The second branch narrows to retrieval-augmented generation itself, and to the
-failure modes it shows even when no one is manipulating the system prompt.
+The second branch is closer to retrieval-augmented generation.
 
 \citet{lewis2020rag} introduce Retrieval-Augmented Generation, combining a
 pretrained neural retriever with a pretrained sequence-to-sequence generator, and
@@ -649,55 +627,44 @@ parametric models on knowledge-intensive tasks. Their probabilistic formulation,
 in which retrieval is a distribution over documents and the retrieved document is
 marginalised out, is the direct basis for the model formalised in Chapter 4.
 \citet{gao2023survey} survey the development of RAG systems through Naive,
-Advanced and Modular paradigms, organising the field around a tripartite
-retrieval-generation-augmentation structure. Their taxonomy supports treating
+Advanced and Modular paradigms. Their taxonomy supports treating
 retrieval and generation as separable functions whose interaction with the system
 prompt can be studied independently, as this thesis does. Two later developments
 extend this taxonomy in directions this thesis deliberately does not follow.
 \citet{edge2024graphrag} restructure the retrieval side into a knowledge graph,
-grouped into thematic communities and pre-summarised by an LLM, so that a query is
-answered by traversing entities and community summaries rather than by a flat
-nearest-neighbour lookup over $D$. \citet{singh2025agentic} and
+grouped into thematic segments and pre-summarised by an LLM, so that a query is
+answered by traversing entities and summaries. \citet{singh2025agentic} and
 \citet{jin2025searchr1} restructure the generation side into an agent loop, in
 which the model itself decides when and what to retrieve, calling $R$ repeatedly
-and adaptively rather than once per query; \citet{jin2025searchr1} train this
-behaviour directly with reinforcement learning and report large gains over
+and adaptively; \citet{jin2025searchr1} train this
+behaviour directly with reinforcement learning and report improvements over
 standard RAG baselines. Both directions relax exactly the components Chapter 4
 holds fixed: $R$ in the first case, and the single-call structure of $G$ in the
 second. For that reason this thesis retains \citeauthor{gao2023survey}'s simplest,
-Naive-RAG form since any change in the outcomes measured here can then be attributed to
-the system prompt, rather than to the added architectural complexity of a
+Naive-RAG form, so that any change in the outcomes measured here can be attributed to
+the system prompt rather than to the added architectural complexity of a
 graph-structured retriever or an agentic generation loop.
 
-\citet{es2023ragas} propose Ragas, a reference-free evaluation framework for RAG
+\citet{es2023ragas} propose Ragas. It is a reference-free evaluation framework for RAG
 pipelines built around three metrics that need no ground-truth human annotation:
-faithfulness, answer relevance and context relevance. This thesis adopts two of
-them directly as measures, faithfulness and answer relevance. The third, context
+faithfulness, answer relevance and context relevance. This thesis adopts faithfulness and answer relevance. The third, context
 relevance, is a retrieval-side measure and is excluded for the reasons given in
 Section~\ref{sec:metrics}. Their framework also motivates evaluating the effect of
 the system prompt independently of retrieval quality. \citet{chen2024rgb}
 construct the Retrieval-Augmented Generation Benchmark (RGB) and show that current
 language models tolerate a moderate amount of retrieval noise but struggle with
 negative rejection, with information integration across multiple retrieved
-passages, and with robustness to counterfactual or contradictory evidence. Their
-four testbeds map onto the experimental design of this thesis: the first two as
-query categories, the remaining two as levels of retrieved-evidence quality.
+passages, and with robustness to counterfactual or contradictory evidence. Two of their four test environments shape the design of this thesis.
 \citet{niu2024ragtruth} introduce RAGTruth, a manually annotated corpus of
 word-level hallucinations produced by RAG systems, and benchmark
 hallucination-detection methods across multiple language models. Their finding
 that hallucination persists even when relevant evidence has been retrieved
 motivates measuring faithfulness as an outcome distinct from retrieval quality, as
-this thesis does. \citet{yu2024ragevalsurvey} draw this body of work together into
-a survey of RAG evaluation, separating the targets that assess the retrieval stage
-from those that assess generation and naming three that belong to the latter:
-relevance, faithfulness and correctness. The measures adopted in
-Section~\ref{sec:metrics} come from that account, and this thesis's restriction to
-generation-stage measurement rests on the separation it draws.
+this thesis does.
 
-Together, these studies establish the architecture, evaluation vocabulary, and
-known failure modes of RAG systems specifically. They show that a RAG system's
-output quality depends on both retrieval quality and how faithfully the generator
-uses the retrieved evidence \citep{es2023ragas,niu2024ragtruth}. Current systems
+Taken together, these studies show that a RAG system's output quality depends on
+both retrieval quality and on how faithfully the generator uses the evidence it
+was given \citep{es2023ragas,niu2024ragtruth}. Current systems
 already struggle with conflicting or insufficient
 retrieved evidence, even without any prompt manipulation \citep{chen2024rgb}.
 None of the studies in this branch, however, treats the system prompt as a
@@ -706,19 +673,19 @@ specified at all.
 
 \section{Adversarial and Competing Instructions in Retrieved Content}
 
-A third line of work concerns instructions that arrive in the retrieved content rather than in the system prompt, and that compete with the system prompt for control of the model's behaviour. The first branch shows that a model's own system prompt can lose authority to instructions arriving in the user turn \citep{mu2025robustness}; \citet{greshake2023notwhat} go further, showing that text hidden inside a document the model is told to process can override the system prompt altogether. This is the same instruction competition taken to its adversarial extreme, except that the competing instruction reaches the model through the retrieved context $C$ rather than through $S$, which this thesis holds fixed rather than varies. \citet{zhang2025poisoning} build a RAG-specific benchmark on this basis, covering 13 poisoning attack methods and 7 defenses across 5 base question-answering datasets and 10 expanded variants. \citet{chen2024rgb} and \citet{niu2024ragtruth} in the second branch already find that retrieved evidence is often noisy, incomplete, or contradictory. Both studies, however, treat instruction competition exclusively as a security problem: an adversary deliberately crafts malicious content, and the goal is to detect or defend against it. Neither examines benign linguistic variation in the system prompt itself, the kind the prompt-sensitivity literature reviewed above studies outside of RAG, and the kind this thesis's conditions are built to isolate inside it. The question here is therefore not whether a RAG system can be attacked, but whether ordinary, well-intentioned rewordings of its own instructions change its behaviour at all.
+A third line of work concerns instructions that arrive in the retrieved content rather than in the system prompt, and that compete with it for control of the model's behaviour. The first branch shows that a model's own system prompt can lose authority to instructions arriving in the user turn \citep{mu2025robustness}; \citet{greshake2023notwhat} show that text hidden inside a document the model is told to process can override the system prompt altogether. \citet{zhang2025poisoning} build a RAG-specific benchmark on this basis, covering 13 poisoning attack methods and 7 defenses across 5 base question-answering datasets and 10 expanded variants. \citet{chen2024rgb} and \citet{niu2024ragtruth} in the second branch already find that retrieved evidence is often noisy, incomplete, or contradictory, so competing content reaches the generator even when no attacker is involved. The work in this branch, however, treats instruction competition exclusively as a security problem: an adversary deliberately crafts malicious content. The goal is to detect or defend against it. None of them examines benign linguistic variation in the system prompt itself, the kind the prompt-sensitivity literature reviewed above studies outside of RAG, and the kind this thesis' conditions are built to isolate inside it. The question here is therefore not whether a RAG system can be attacked, but whether ordinary, well-intentioned rewordings of its own instructions change its behaviour at all.
 
 \section{Synthesis and Research Gap}
 
-The first branch shows two things separately: that the system prompt is a controllable way of shaping language model behaviour, and that instructions are sensitive to rewording that leaves their semantic meaning intact. It establishes the controllability result for the system prompt, the sensitivity result mostly for the user-side prompt, and both outside any retrieval-augmented setting. The second branch establishes the architecture, evaluation vocabulary, and known failure modes of RAG systems, including problems with evidence integration, rejection, and faithfulness, but does not treat the system prompt as a controlled experimental variable. The third branch shows that instructions can compete with the system prompt in RAG systems and that this competition is actively studied, but only as a deliberate security threat delivered through retrieved content, never as benign, controlled linguistic variation of the system prompt itself. The overlap between all three branches is still largely unexamined. \citet{ying2024intuitive} comes nearest, but the conflict studied there runs between a model's parametric memory and its retrieved context rather than between two wordings of one instruction, and neither retrieval nor the underlying model is held fixed as an explicit experimental control.
+The first branch shows two things: that the system prompt is a controllable way of shaping language model behaviour, and that instructions are sensitive to rewording that leaves their semantic meaning unchanged. It establishes the controllability result for the system prompt, the sensitivity result mostly for the user-side prompt, and both outside any retrieval-augmented setting. The second branch establishes the architecture, evaluation vocabulary, and known failure modes of RAG systems. The third branch shows that instructions can compete with the system prompt in RAG systems and that this competition is actively studied, but only as a deliberate security threat delivered through retrieved content, never as benign, controlled linguistic variation of the system prompt itself. The overlap between all three branches is still largely unexamined.
 
-This thesis addresses that gap. It treats the system prompt as a controlled experimental variable inside a RAG pipeline, holding the query, knowledge base, retrieval mechanism, and underlying language model fixed, so that any change in the system's behaviour and outcomes can be traced to the prompt itself. Every condition varies only the wording of the instructions and leaves what they require untouched, which separates the effect of phrasing from the effect of content.
+This thesis treats the system prompt as a controlled experimental variable inside a RAG pipeline, holding the query, knowledge base, retrieval mechanism, and underlying language model fixed, so that any change in the system's behaviour and outcomes can be traced to the prompt itself. Every condition varies only the wording of the instructions and leaves what they require untouched, which separates the effect of phrasing from the effect of content.
 
- The next Chapter, Chapter 4, builds the formal model that makes this control precise. It describes the RAG system as a retrieval function combined with a generation function, with the system prompt as an explicit parameter of the generation function, and states the assignment of a prompt condition as an intervention on that model.
+Chapter 4 builds the formal model that makes this control precise. It describes the RAG system as a retrieval function combined with a generation function, with the system prompt as an explicit parameter of the generation function, and states the assignment of a prompt condition as an intervention on that model.
 
 \chapter{Formal Model of a RAG System}
 
-Chapter 3 identified the research gap since prompt sensitivity is studied outside retrieval, and RAG evaluation does not treat the system prompt as a controlled variable. Closing it requires a model of the system precise enough to isolate the system prompt. This chapter builds that model on the probabilistic formulation of retrieval-augmented generation given by \citet{lewis2020rag}, and extends it by making the system prompt an explicit variable of the generation process.
+Chapter 3 identified the research gap: prompt sensitivity is studied outside retrieval, and RAG evaluation does not treat the system prompt as a controlled variable. Closing that gap requires a model of the system precise enough to isolate the system prompt. This chapter builds that model on the probabilistic formulation of retrieval-augmented generation given by \citet{lewis2020rag}, and extends it by making the system prompt an explicit variable of the generation process.
 
 \section{Modelling Objective}
 
@@ -757,7 +724,7 @@ and the retrieved context handed to the generator is the resulting collection,
 C = \{z_1,\ldots,z_K\}, \qquad z_k \in \mathcal{Z}_K(q,D).
 \end{equation}
 
-The distinction between $z$ and $C$ matters later: the first is a candidate the model sums over, the second the concrete collection the running system retrieves and logs.
+The distinction between $z$ and $C$ matters later. The first is a candidate the model sums over, the second the concrete collection the running system retrieves.
 
 \section{Prompt-Conditioned Generation}
 
@@ -768,7 +735,7 @@ The distinction between $z$ and $C$ matters later: the first is a candidate the 
 p_\theta(y_i \mid q,z,y_{1:i-1},S).
 \end{equation}
 
-Equation~\eqref{eq:token} is the point at which this thesis departs from the original formulation, and the departure is deliberately small. The generator is the same model with the same parameters $\theta$; what changes is that the system prompt is now written into the conditioning information rather than left implicit.
+Equation~\eqref{eq:token} is the point at which this thesis departs from the original formulation. The generator is the same model with the same parameters $\theta$; the system prompt is now written into the conditioning information.
 
 Because generation is autoregressive, the probability of a complete output sequence follows from the token probabilities by multiplication:
 
@@ -780,7 +747,7 @@ p_\theta(y \mid q,z,S) = \prod_{i=1}^{L} p_\theta(y_i \mid q,z,y_{1:i-1},S).
 \section{Marginalizing over Retrieved Documents}
 \label{sec:ragdist}
 
-Equation~\eqref{eq:sequence} gives the probability of an output under one particular document $z$. Since the system does not know which retrieved document supports the answer, the model averages over the candidates, weighting each by its retrieval probability. \citet{lewis2020rag} give two ways of doing this, which differ only in where the sum is placed.
+Equation~\eqref{eq:sequence} gives the probability of an output under document $z$. Since the system does not know which retrieved document supports the answer, the model averages over the candidates, weighting each by its retrieval probability. \citet{lewis2020rag} give two ways of doing this, which differ only in where the sum is placed.
 
 \subsection{RAG-Sequence}
 
@@ -802,14 +769,9 @@ RAG-Token makes the weaker assumption that different parts of an answer may come
 p_{\text{RAG-Token}}(y \mid q,D,S) \;\approx\; \prod_{i=1}^{L} \sum_{z \in \mathcal{Z}_K(q,D)} p_\eta(z \mid q,D) \, p_\theta(y_i \mid q,z,y_{1:i-1},S).
 \end{equation}
 
-The whole difference between the two is the order of the two operators: $\sum_z \prod_i$ against $\prod_i \sum_z$. RAG-Sequence commits to one document for the length of the answer; RAG-Token lets one document supply the first half of a sentence and another the second, the more flexible assumption and the one better suited to answers that combine several sources.
+The whole difference between the two is the order of the operators: $\sum_z \prod_i$ against $\prod_i \sum_z$. RAG-Sequence commits to one document for the length of the answer; RAG-Token lets one document supply the first half of a sentence and another the second.
 
-Where the distinction does not matter, both are written here as $p_{\mathrm{RAG}}(y \mid q,D,S)$. It does not matter for the experiment: the system prompt $S$ appears in exactly the same place in both, inside the generator and nowhere else.
-
-\begin{equation}
-\label{eq:ragdist}
-p_{\mathrm{RAG}}(y \mid q,D,S).
-\end{equation}
+Where the distinction does not matter, both are written here as $p_{\mathrm{RAG}}(y \mid q,D,S)$, the distribution the Notation section of Chapter 1 names. It does not matter for this experiment: the system prompt $S$ appears in exactly the same place in both, inside the generator and nowhere else, so nothing that follows depends on which of the two is assumed.
 
 \section{The System Prompt: Requirements and Wording}
 \label{sec:promptreq}
@@ -823,13 +785,13 @@ S = \rho(\Sigma,\varphi), \qquad \Sigma = \{\sigma_1,\ldots,\sigma_m\},
 
 which separates what a prompt asks for from the words it asks in. Two prompts built from the same $\Sigma$ ask for the same thing. Two built from the same $\varphi$ say things the same way.
 
-The conditions cross two factors. The first is the requirement set. Three are used, each taken from a prompt published with a retrieval-augmented system and reproduced in Section~\ref{sec:conditions}. Writing $\Sigma_A$, $\Sigma_B$ and $\Sigma_C$ for the three: $\Sigma_A$ is the response-generation prompt of \citet{friel2024ragbench}, which states a single requirement; $\Sigma_B$ is the VANILLA instruction of \citet{gao2023alce}, that states about ten clauses falling into four independently checkable families. $\Sigma_C$ is the instruction of \citet{mao2024fitrag}. 
+The conditions cross two factors. The first is the requirement set. Three are used, each taken from a prompt published with a retrieval-augmented system and reproduced in Section~\ref{sec:conditions}. Writing $\Sigma_A$, $\Sigma_B$ and $\Sigma_C$ for the three: $\Sigma_A$ is the response-generation prompt of \citet{friel2024ragbench}, which states a single requirement; $\Sigma_B$ is the VANILLA instruction of \citet{gao2023alce}, which states about ten clauses falling into four independently checkable families; and $\Sigma_C$ is the instruction of \citet{mao2024fitrag}, which states three. The three sets therefore differ by roughly an order of magnitude in how much they ask for, which is what lets the wording effect be separated from the density of the prompt it acts on.
 
-The second factor is the wording. Four wordings are written for each requirement set, holding $\Sigma$ fixed and changing only $\varphi$. The axes along which the wording is varied are taken from three prior studies rather than devised here. \citet{wahle2024paraphrase} vary prompts by linguistically defined paraphrase type rather than by ad hoc rewriting, and group those types into families, of which morphology, syntax and lexicon apply to a standing instruction. \citet{zhan2024lexical} isolate the lexical axis by substituting single semantically similar words, and report that models are over-sensitive to variations imperceptible to a reader. \citet{kostic2026samemeaning} separate a lexical pipeline built on synonym substitution from a syntactic one built on dependency parsing, and find that the two behave differently since lexical perturbation degrades performance consistently, syntactic perturbation does not. 
+The second factor is the wording. Four wordings are written for each requirement set, holding $\Sigma$ fixed and changing only $\varphi$. The axes along which the wording is varied are taken from three prior studies rather than devised here. \citet{wahle2024paraphrase} vary prompts by linguistically defined paraphrase type rather than by ad hoc rewriting, and group those types into families, of which morphology, syntax and lexicon apply to a standing instruction. \citet{zhan2024lexical} isolate the lexical axis by substituting single semantically similar words, and report that models are over-sensitive to variations imperceptible to a reader. \citet{kostic2026samemeaning} separate a lexical pipeline built on synonym substitution from a syntactic one built on dependency parsing, and find that the two behave differently since lexical perturbation degrades performance consistently, syntactic perturbation does not.
 
 This thesis follows their approach of varying a prompt along linguistically defined, meaning-preserving axes one at a time, and applies it to the standing system prompt of a retrieval-augmented system. Its research question requires that application, and none of the three studies addresses it. Writing $S_{b,j}$ for the $j$-th wording of baseline $b$:
 \begin{description}
-    \item[$S_{b,0} = \rho(\Sigma_b,\varphi_0)$, canonical.] The published form, unchanged. The reference the other four are measured against.
+    \item[$S_{b,0} = \rho(\Sigma_b,\varphi_0)$, canonical.] The published form, unchanged. The reference the other three are measured against.
     \item[$S_{b,1} = \rho(\Sigma_b,\varphi_1)$, lexical.] Synonym substitution with clause order and voice held fixed.
     \item[$S_{b,2} = \rho(\Sigma_b,\varphi_2)$, syntactic.] Clause reordering and active to passive, with the vocabulary held as far as English allows.
     \item[$S_{b,3} = \rho(\Sigma_b,\varphi_3)$, format.] The same wording laid out as a list rather than as prose.
@@ -851,9 +813,9 @@ A3  CONTEXT: the following pieces
     TASK: use them to answer the question
 \end{lstlisting}
 
-The variants for baselines $B$ and $C$ are written on the same principle and are longer in proportion to their requirement sets. Within each baseline the four conditions are held to within one tenth of the canonical form in length, so that a difference between two of them cannot be read as an effect of how much text the prompt contains rather than of the axis being varied. 
+The variants for baselines $B$ and $C$ are written on the same principle and are longer in proportion to their requirement sets. Within each baseline the four conditions are held to within one tenth of the canonical form in length, so that a difference between two of them cannot be read as an effect of how much text the prompt contains rather than of the axis being varied.
 
-Crossing the wording axes with three requirement sets rather than one is what lets the central question be asked properly. If the system responded only to what a prompt requires and not to how it is written, $S_{b,0}$ through $S_{b,3}$ would produce the same output distribution within every baseline, since they differ in $\varphi$ alone. Whether they do is the empirical question. The format condition in particular follows \citet{sclar2024quantifying}, who report large performance differences from formatting changes of this kind. They apply those changes to few-shot task templates rather than to a system prompt, so carrying the manipulation across to $S$ is itself part of what is tested here. Using three baselines also answers an objection a single one cannot. 
+Crossing the wording axes with three requirement sets rather than one is what lets the central question be asked properly. If the system responded only to what a prompt requires and not to how it is written, $S_{b,0}$ through $S_{b,3}$ would produce the same output distribution within every baseline, since they differ in $\varphi$ alone. Whether they do is the empirical question. The format condition in particular follows \citet{sclar2024quantifying}, who report large performance differences from formatting changes of this kind. They apply those changes to few-shot task templates rather than to a system prompt, so carrying the manipulation across to $S$ is itself part of what is tested here. Using three baselines also answers an objection a single one cannot. An effect found with one requirement set might be a quirk of that particular prompt rather than a property of rewording. Three sets, differing in how much they ask for, show whether the same sensitivity appears in more than one place.
 
 Every contrast is taken within a baseline. Comparing $S_{B,1}$ against $S_{A,0}$ would confound a change of wording with a change in what is asked for, so each variant is measured against the canonical form of its own requirement set.
 
@@ -896,7 +858,9 @@ The prompt appears in the generator (Equation~\eqref{eq:token}) and not in the r
 \label{fig:causal}
 \end{figure}
 
-For the effect of the prompt to be interpretable, the following are held constant across conditions. Each query is used unchanged in every condition it is run in, so that every comparison is made within a query rather than between queries, and the knowledge base is fixed at $D = D_0$. The retriever and its parameters are fixed at $\eta = \eta_0$, and the language model at $\theta = \theta_0$, so the model is neither retrained nor replaced between conditions.  Generation is prompt-dependent: although $\theta$ stays fixed, the conditional distribution it defines may differ between $S_0$ and $S_j$. Finally, decoding is stochastic, so the same configuration can produce different outputs from one run to the next; the term $\varepsilon$ carries that variation:
+For the effect of the prompt to be interpretable, the following are held constant across conditions. Each query is used unchanged in every condition it is run in, so that every comparison is made within a query rather than between queries, and the knowledge base is fixed at $D = D_0$. The retriever and its parameters are fixed at $\eta = \eta_0$, and the language model at $\theta = \theta_0$, so the model is neither retrained nor replaced between conditions.
+
+What is deliberately not held constant is the generator's output distribution. Although $\theta$ stays fixed, the conditional distribution it defines may differ between $S_0$ and $S_j$: that difference is the effect the experiment is built to measure. Decoding is also stochastic, so the same configuration can produce different outputs from one run to the next; the term $\varepsilon$ carries that variation:
 
 \begin{equation}
 \label{eq:noise}
@@ -932,18 +896,20 @@ The choice of $M$ is left open here. Section~\ref{sec:goodanswer} describes what
 
 The knowledge base has so far been written as a set $D = \{d_1,\ldots,d_N\}$. Filling $D$ is a methodological decision rather than a further step of formalisation. It is settled here because the effect defined in Equation~\eqref{eq:estimand} is only as informative as the corpus and the queries it is estimated over.
 
-The  route taken here is to instantiate $D$ and the query set from established question-answer datasets. Three properties recommend it. The questions are naturally occurring rather than authored for the experiment. The corpora are public, versioned and split in a documented way, so a third party can repeat the experiment. And because published results for a wide range of retrieval and generation systems already exist on these datasets, the effect estimated in Chapter 5 can be read against a background of prior work instead of standing alone.
+The route taken here is to instantiate $D$ and the query set from established question-answer datasets. Three properties recommend it. The questions are naturally occurring rather than authored for the experiment. The corpora are public, versioned and split in a documented way, so a third party can repeat the experiment. And because published results for a wide range of retrieval and generation systems already exist on these datasets, the effect estimated in Chapter 5 can be read against a background of prior work instead of standing alone.
 
-The collection is built from queries sampled from Bing search logs, with candidate passages retrieved for each query and free-form answers written by human judges \citep{nguyen2016msmarco}. MS MARCO provides the queries $q$, the documents that populate $D$, and, through its annotations, both the reference answer $a_q$ and the fact set against which an output can be judged. 
+The collection is built from queries sampled from Bing search logs, with candidate passages retrieved for each query and free-form answers written by human judges \citep{nguyen2016msmarco}. MS MARCO provides the queries $q$, the documents that populate $D$, and, through its annotations, both the reference answers $A_q$ and the fact set against which an output can be judged.
 
 What it does not provide is a definition of a good answer. An annotation records which answer is correct; it says nothing about whether an answer is grounded in the evidence actually retrieved, whether it addresses the question directly rather than evading it, or whether it obeys the requirements the system prompt states. Those properties are the object of this thesis, and defining them is the subject of the next section.
 \section{What Counts as a Good Answer}
 \label{sec:goodanswer}
-Quality in a retrieval-augmented system is not one property but several, and they can fail independently of one another. The first is groundedness. An answer should rest on the documents the retriever actually supplied. The second is relevance. An answer should address the question that was asked and address it directly, so that hedging, padding and drift towards a neighbouring question all count as failures. The third is correctness. An answer should agree with what is in fact the case, which is a different demand from the first and is treated separately here for a reason given below. The fourth is obedience. Whatever the system prompt asks for should be visible in the output itself, whether in length, in form, or in the handling of missing evidence, since a prompt that is not followed cannot be said to have any effect on quality at all.
+Quality in a retrieval-augmented system is not one property but several, and they can fail independently of one another. The first is groundedness. An answer should rest on the documents the retriever actually supplied. The second is relevance. An answer should address the question that was asked and address it directly, so that hedging, padding and drift towards a neighbouring question all count as failures. The third is correctness. An answer should agree with what is in fact the case, which is a different demand from the first and is treated separately here for the reason given below. The fourth is obedience. Whatever the system prompt asks for should be visible in the output itself, whether in length, in form, or in the handling of missing evidence, since a prompt that is not followed cannot be said to have any effect on quality at all.
 
-All four are properties of the text the generator produces. Each of the four is estimated by a measure taken from published work. Groundedness by faithfulness, which asks whether every claim can be traced to a retrieved passage; relevance by answer relevance, that asks whether the response addresses the question put to it; correctness by agreement with the reference answer recorded in the data; and obedience by whether the output satisfies every instruction the prompt states.
+Groundedness and correctness are kept apart deliberately, because collapsing them would conceal the failure this thesis is concerned with. The retrieved context is neither complete nor guaranteed to be free of error. An answer can therefore be correct while ignoring the evidence entirely, drawing instead on what the generator already holds in its parameters, and it can use the evidence faithfully and still be wrong because the evidence was wrong. A system that scored well on correctness alone would reveal nothing about whether retrieval was used at all, which is precisely the behaviour a system prompt is supposed to govern.
 
-The formal definitions this evaluation rests on are introduced in Chapter 5. That chapter states the set of acceptable answers precisely and fixes faithfulness, answer relevance, correctness and instruction adherence as the four measures that estimate the four properties. Each of them is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a prompt condition on each is estimated separately. Chapter 5 also specifies the corpus, the query set, the experimental conditions and the procedure by which those effects are estimated.
+All four are properties of the text the generator produces. Each of the four is estimated by a measure taken from published work. Groundedness by faithfulness, which asks whether every claim can be traced to a retrieved passage; relevance by answer relevance, which asks whether the response addresses the question put to it; correctness by agreement with the reference answer recorded in the data; and obedience by whether the output satisfies every instruction the prompt states.
+
+The formal definitions this evaluation rests on are introduced in Chapter 5. That chapter states the set of acceptable answers precisely and fixes the measures that estimate the four properties. There are five measures for the four, because correctness is measured twice: faithfulness for groundedness, answer relevance for relevance, ROUGE-L and BLEU-1 for correctness, and instruction adherence for obedience. Each of the five is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a prompt condition on each is estimated separately. Chapter 5 also specifies the corpus, the query set, the experimental conditions and the procedure by which those effects are estimated.
 
 \chapter{Experimental Setup}
 
@@ -952,7 +918,7 @@ Chapter 4 built a model of the RAG system and defined the effect of a prompt con
 \section{Research Question and Hypothesis}
 \label{sec:goal}
 
-The experiment asks one question: \textit{does a RAG system behave differently when the structure of its system prompt is changed while the meaning of the prompt stays the same?}
+Chapter 1 asked to what extent systematic changes in the system prompt influence the behaviour and outcomes of a RAG system when the user input, the knowledge base, the retrieval mechanism and the language model are held fixed. The experiment puts that question in the form it can be tested in: \textit{does a RAG system behave differently when the structure of its system prompt is changed while the meaning of the prompt stays the same?}
 
 Structure means how the prompt is written: which words are used, how the sentences are built, and how the text is laid out on the page. Meaning means the set of requirements $\Sigma$ that the prompt states, in the sense of Equation~\eqref{eq:prompt}. Every condition of the experiment keeps $\Sigma$ fixed and changes only the wording $\varphi$. If the system responded only to what a prompt requires and not to how it is written, all wordings of one prompt would produce the same distribution of answers. Whether they do is the empirical question. Stated as hypotheses:
 
@@ -1001,7 +967,7 @@ The system prompt is the only thing that changes between conditions. A condition
 
 \subsection{Three Published Baselines}
 
-The prompts are not written for this experiment. Each baseline is a system prompt published with a retrieval-augmented system, and its canonical form is reproduced here exactly as it appears in its source. The three sources state different numbers of requirements, and that is why three are used rather than one. A prompt with one requirement gives a change of wording little to act on. A prompt with ten requirements is long, and a wording effect found on it alone could be an effect of length. Finding the same wording effect on all three separates the effect of wording from the effect of how much the prompt asks for.
+The prompts are not written for this experiment. Each baseline is a system prompt published with a retrieval-augmented system, and its canonical form is reproduced here exactly as it appears in its source. The three sources state different numbers of requirements, and that is why three are used rather than one. A prompt with one requirement gives a change of wording little to act on. A prompt with ten requirements is long, and a wording effect found on it alone could be an effect of length. Running the same four wordings on all three separates the effect of wording from the effect of how much the prompt asks for: if rewording matters in the same way regardless of how much is asked, the effect should appear in all three, and if it does not, the difference between them is itself informative.
 
 Baseline $A$ is the response-generation prompt of \citet{friel2024ragbench}. It states one requirement: answer from the supplied context.
 
@@ -1147,24 +1113,24 @@ Twelve conditions result: three baselines in four wordings each. They are writte
 \section{Variables and Controlled Factors}
 \label{sec:variables}
 
-The experiment has one independent variable, one dependent variable, two controlled factors that are varied for robustness, and a set of components that are held constant.
+The experiment has one independent variable, one dependent variable, one controlled factor that is varied for robustness, and a set of components that are held constant.
 
 \paragraph{Independent variable.} The wording $j$ of the system prompt, with four levels, nested within the baseline $b$. Changing $j$ changes the structure of the prompt and nothing else. The requirement set $\Sigma_b$ is the same at every level of $j$.
 
-\paragraph{Dependent variable.} The quality of the answer, measured by the four measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence. Each is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated four times, once per measure, and the four are never combined into a single score. Pooling them would hide direction: a rewording that improved grounding and damaged relevance by the same amount would average to no effect at all.
+\paragraph{Dependent variable.} The quality of the answer, measured by the measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence, with correctness measured twice, by ROUGE-L and by BLEU-1. Each of the five is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated five times, once per measure, and the five are never combined into a single score. Pooling them would hide direction: a rewording that improved grounding and damaged relevance by the same amount would average to no effect at all.
 
-\paragraph{Controlled factors.} Two factors are varied so that the main question can be asked under more than one condition of the evidence. Neither is a treatment. The prompt effect is estimated separately at each level of each factor, and the levels are not compared with one another as a result of their own.
+\paragraph{Controlled factor.} One factor is varied so that the main question can be asked under more than one condition of the evidence. It is not a treatment. The prompt effect is estimated separately at each of its levels, and the levels are not compared with one another as a result of their own.
 
-The first factor is the \textbf{evidence level}. The context $C$ handed to the generator is set directly, as the intervention $\mathrm{do}(C = c_{ik})$ of Chapter 4, at two levels:
+That factor is the \textbf{evidence level}. The context $C$ handed to the generator is set directly, as the intervention $\mathrm{do}(C = c_{ik})$ of Chapter 4, at two levels:
 \begin{description}
     \item[$c^{\text{gold}}$.] Only the passages the annotation marks as supporting the answer. The evidence needed for the answer is certainly present, so a failure here belongs to the generator rather than to retrieval. Every query is usable at this level, which makes it the more sensitive of the two.
     \item[$c^{\text{ret}}$.] The $K$ passages the fixed retriever actually returns, gold and distractors alike. This is the system as it would be deployed.
 \end{description}
 Both levels are produced by setting the context, never by changing the corpus and retrieving again, so the index and the retriever are identical for both.
 
-There is no second factor. The retrieval depth is held constant at $K = 10$. That depth admits more of the annotated evidence than a shallower one, as Table~\ref{tab:gate} shows, so more queries are usable at the retrieved level and the comparison there rests on a larger sample; and ten passages give the prompt a longer and noisier context to govern than five would. A second depth was considered as a further robustness factor, but it would have doubled the size of the run to answer a question secondary to the one being asked, and it is not part of this design.
+The retrieval depth is not a second factor. It is held constant at $K = 10$. That depth admits more of the annotated evidence than a shallower one, as Table~\ref{tab:gate} shows, so more queries are usable at the retrieved level and the comparison there rests on a larger sample; and ten passages give the prompt a longer and noisier context to govern than five would. A second depth was considered as a further robustness factor, but it would have doubled the size of the run to answer a question secondary to the one being asked, and it is not part of this design.
 
-\paragraph{Held constant.} Everything in Table~\ref{tab:fixed}. The generator is one model behind one API, with a fixed temperature and a fixed output limit. Queries and passages are encoded by one embedding model, applied to both sides in the manner of the dense retriever of \citet{karpukhin2020dpr}. The index, built with the library of \citet{johnson2021faiss}, is constructed once and never rebuilt. Each passage is one chunk. Because the embedding model, the index, the chunking and the depth are all fixed, the set $\mathcal{Z}_K(q,D)$ of Equation~\eqref{eq:topk} depends only on the query and the depth and never on the system prompt. The context is held identical in a stronger sense than that. Not only the set of passages but also their order, and at the corrupted level the substituted facts, are the same in every condition: they are determined by the query, the evidence level, the depth and the repetition, and by nothing else. Two conditions compared on the same query therefore receive a character-for-character identical user turn, and the only text that differs between them is the system prompt. Any change in the answer originates at the generator, which is the localisation the intervention of Section~\ref{sec:intervention} assumes.
+\paragraph{Held constant.} Everything in Table~\ref{tab:fixed}. The generator is one model behind one API, with a fixed temperature and a fixed output limit. Queries and passages are encoded by one embedding model, applied to both sides in the manner of the dense retriever of \citet{karpukhin2020dpr}. The index, built with the library of \citet{johnson2021faiss}, is constructed once and never rebuilt. Each passage is one chunk. Because the embedding model, the index, the chunking and the depth are all fixed, the set $\mathcal{Z}_K(q,D)$ of Equation~\eqref{eq:topk} depends only on the query and the depth and never on the system prompt. The context is held identical in a stronger sense than that. Not only the set of passages but also their order are the same in every condition: they are determined by the query, the evidence level, the depth and the repetition, and by nothing else. Two conditions compared on the same query therefore receive a character-for-character identical user turn, and the only text that differs between them is the system prompt. Any change in the answer originates at the generator, which is the localisation the intervention of Section~\ref{sec:intervention} assumes.
 
 \paragraph{Covariates.} Two properties of each query are recorded and can be conditioned on in the analysis: the category (direct or multi-hop) and MS MARCO's intent type. Both are defined in Section~\ref{sec:corpus}.
 
@@ -1180,7 +1146,7 @@ Within a cell the only remaining source of variation is the decoding randomness 
 \section{Knowledge Base and Query Set}
 \label{sec:corpus}
 
-Following Section~\ref{sec:knowledgebase}, both the knowledge base and the query set come from MS MARCO \citep{nguyen2016msmarco}, read from the Hugging Face export of version 2.1. The validation split is used. It holds 101,093 queries, of which 12,467 carry a non-empty \texttt{wellFormedAnswers} field. Only those rows are used, because the well-formed answer is the reference string against which correctness is measured, and a query without one cannot be scored.
+Following Section~\ref{sec:knowledgebase}, both the knowledge base and the query set come from MS MARCO \citep{nguyen2016msmarco}, read from the Hugging Face export of version 2.1. The validation split is used. It holds 101,093 queries, of which 12,467 carry a non-empty \texttt{wellFormedAnswers} field. Only those rows are used, because the well-formed answers are the references against which correctness is measured, and a query without one cannot be scored.
 
 \paragraph{The knowledge base.} The corpus is defined by a rule, not by a sample: it holds every passage attached to any of the 12,467 rows. MS MARCO ships about ten candidate passages per query, retrieved by Bing and then judged by annotators, so the corpus contains the gold evidence for every query together with the near-misses that were retrieved alongside it. Identical passage texts are indexed once; 124,316 passages become $N = 122{,}678$ after deduplication. There is no distractor pool to size, and the gold passages of a query compete against the whole corpus. Each passage is one chunk and is used at the length at which it was published. The median passage has about 50 words and three sentences; eight in ten passages have between two and six sentences.
 
@@ -1195,7 +1161,7 @@ Within each category the draw is balanced across MS MARCO's five intent types, \
 
 The multi-hop half is drawn from a much smaller pool than the direct half. Of the 12,467 well-formed rows, 12,062 are direct and only 386 are multi-hop; 19 have no passage marked at all and are dropped. The thinnest cell, multi-hop \textsc{person}, holds 27 candidates for the ten drawn. The multi-hop sample is therefore a substantial fraction of what exists, which bounds how much a different seed could change it.
 
-For every query the reference answer $a_q$ is its first well-formed answer, and its gold passages are the ones marked \texttt{is\_selected}. Because the corpus is deduplicated, a gold passage whose text also appears under an earlier row is indexed under that earlier row's identifier; the gold identifiers are rewritten accordingly, so that the retrieval check of the next section looks for an identifier that exists.
+For every query the reference answers $A_q$ are all of its well-formed answers, between one and six per query, with 68 of the 100 queries having more than one; its gold passages are the ones marked \texttt{is\_selected}. Because the corpus is deduplicated, a gold passage whose text also appears under an earlier row is indexed under that earlier row's identifier; the gold identifiers are rewritten accordingly, so that the retrieval check of the next section looks for an identifier that exists.
 
 \section{Experimental Procedure}
 \label{sec:procedure}
@@ -1224,7 +1190,7 @@ $10$ (used) & 88 / 100 & 45 / 50 & 43 / 50 & 139 / 152 (91.4\%) \\
 \end{tabular}
 \end{table}
 
-Queries that fail the gate at a depth are excluded from the retrieved level at that depth. The measures of Section~\ref{sec:metrics} are not defined on evidence that was never supplied: when the context lacks the passage carrying the answer, a correct answer can only have come from the generator's memory, and an incorrect answer cannot be told apart from a faithful reading of the other passages. Scoring such a cell would measure the retriever and report the result as an effect of the prompt. The exclusion is applied to all twelve conditions at once, because retrieval is identical across them, so the pairing survives: every comparison is still made within a query, and no condition is evaluated on queries another condition was not. The gold, corrupted and empty levels set the context directly, cannot fail retrieval, and run over the full query set.
+Queries that fail the gate at a depth are excluded from the retrieved level at that depth. The measures of Section~\ref{sec:metrics} are not defined on evidence that was never supplied: when the context lacks the passage carrying the answer, a correct answer can only have come from the generator's memory, and an incorrect answer cannot be told apart from a faithful reading of the other passages. Scoring such a cell would measure the retriever and report the result as an effect of the prompt. The exclusion is applied to all twelve conditions at once, because retrieval is identical across them, so the pairing survives: every comparison is still made within a query, and no condition is evaluated on queries another condition was not. The gold level sets the context directly, cannot fail retrieval, and runs over the full query set.
 
 \subsection{Stage 2: Generation}
 
@@ -1235,9 +1201,9 @@ For every query, every cell of the design is run $n = 3$ times. The cells are vi
     \item At $c^{\text{ret}}$, the passages are the top $K$ from the stored retrieval output at that depth.
 \end{itemize}
 
-The order of the passages within the context is shuffled, and the positions of the gold passages are recorded, because answer accuracy depends on where the relevant passage sits \citep{liu2024lostmiddle}. The shuffle is drawn from a generator seeded on the query, the evidence level, the depth and the repetition, and deliberately not on the prompt condition. That is what makes the context identical across conditions. Because the seed still varies with the repetition, the order differs between the five repetitions of a cell, so the mean of a cell is an average over five arrangements rather than a figure tied to one; and because it does not vary with the condition, that same set of five arrangements is used in every condition. The substitutions at the corrupted level are drawn from the same generator and are identical across conditions for the same reason. The system prompt $S_{b,j}$ is sent in the system role and the passages and question in the user role, in the template of Listing~\ref{lst:userturn}. The generator is \texttt{gpt-4o-mini} at temperature 1.0 with at most 256 new tokens.
+The order of the passages within the context is shuffled, and the positions of the gold passages are recorded, because answer accuracy depends on where the relevant passage sits \citep{liu2024lostmiddle}. The shuffle is drawn from a generator seeded on the query, the evidence level, the depth and the repetition, and deliberately not on the prompt condition. That is what makes the context identical across conditions. Because the seed still varies with the repetition, the order differs between the three repetitions of a cell, so the mean of a cell is an average over three arrangements rather than a figure tied to one; and because it does not vary with the condition, that same set of three arrangements is used in every condition. The system prompt $S_{b,j}$ is sent in the system role and the passages and question in the user role, in the template of Listing~\ref{lst:userturn}. The generator is \texttt{gpt-4o-mini} at temperature 1.0 with at most 256 new tokens.
 
-For each generation the following are written to disk: the query and its category and type; the condition, evidence level, depth and repetition; the identifiers and order of the passages in the context and the positions of the gold passages; the number of substitutions at the corrupted level; the exact system prompt; the model identifier, the decoding settings and the backend fingerprint the API returned; the answer and its token count; and a timestamp. Nothing needed to reconstruct a generation is left implicit.
+For each generation the following are written to disk: the query and its category and type; the condition, evidence level, depth and repetition; the identifiers and order of the passages in the context and the positions of the gold passages; the exact system prompt; the model identifier, the decoding settings and the backend fingerprint the API returned; the answer and its token count; and a timestamp. Nothing needed to reconstruct a generation is left implicit.
 
 \subsection{The Pipeline}
 
@@ -1246,9 +1212,9 @@ In summary, the experiment proceeds in the following steps.
     \item Download the MS MARCO v2.1 validation split and keep the 12,467 rows with a well-formed answer.
     \item Embed every passage attached to those rows and build the index: 122,678 passages.
     \item Sample the query set: 50 direct and 50 multi-hop queries, ten per intent type, seed 20260904.
-    \item Retrieve the top 5 and the top 10 passages for every query and apply the retrieval gate at each depth.
+    \item Retrieve the top 10 passages for every query and apply the retrieval gate. The top 5 are retrieved as well, so that the gate can be reported at that depth for comparison in Table~\ref{tab:gate}, but no generation is run at that depth.
     \item For every query, every one of the 24 cells and every one of the 3 repetitions, build the context, send $S_{b,j}$ and the user turn to the generator, and record the answer.
-    \item Score every answer with the four measures of Section~\ref{sec:metrics} and compute its cost.
+    \item Score every answer with the five measures of Section~\ref{sec:metrics}.
     \item Estimate the effect of each rewording in every cell, once per measure, with a confidence interval, and correct for multiple comparisons.
 \end{enumerate}
 
@@ -1264,31 +1230,33 @@ Many different texts can express the same answer, so the standard defines a set 
     \item[Obedient.] It satisfies every requirement the system prompt states.
 \end{description}
 
-An answer that breaks none of the four is a good answer. One that breaks several is worse than one that breaks one. Each requirement is estimated by one measure. All four measures are taken from published RAG evaluation work rather than defined here. The first three are the measures that the survey of \citet{yu2024ragevalsurvey} names as the evaluation targets of the generation component: faithfulness relates the response to the retrieved documents, answer relevance relates it to the query, and correctness relates it to the reference answer. Retrieval measures are excluded by construction, because the system prompt cannot change what is retrieved.
+An answer that breaks none of the four is a good answer. One that breaks several is worse than one that breaks one. Each requirement is estimated by one measure, except correctness, which is estimated by two. All of them are taken from published evaluation work rather than defined here. The first three are the measures that the survey of \citet{yu2024ragevalsurvey} names as the evaluation targets of the generation component: faithfulness relates the response to the retrieved documents, answer relevance relates it to the query, and correctness relates it to the reference answer. Retrieval measures are excluded by construction, because the system prompt cannot change what is retrieved.
 
 \subsection{The Four Measures}
 
-\paragraph{Faithfulness.} Whether every claim in the answer can be traced to a supplied passage. It is scored reference-free, after \citet{es2023ragas}, in two steps. First the judge (Section~\ref{sec:judge}) breaks the answer into atomic factual claims. Then, for each claim, the judge decides whether the passages state it or directly entail it. The breach count $n_1(y)$ is the number of unsupported claims; the reported rate is the supported fraction, because a raw count grows with answer length and prompts change how much a model writes. This is the measure the experiment turns on. Every one of the twelve conditions states a grounding constraint, and faithfulness shows whether that constraint is followed in practice. Because the passages are identical across conditions, a change in faithfulness cannot come from a change in what the generator was given. Faithfulness is undefined at the empty level: with no passages every claim is unsupported by construction, and scoring it there would report the absence of context as a failure of grounding. The measure is marked inapplicable there and contributes nothing.
+\paragraph{Faithfulness.} Whether every claim in the answer can be traced to a supplied passage. It is scored reference-free, after \citet{es2023ragas}, in two steps. First the judge (Section~\ref{sec:judge}) breaks the answer into atomic factual claims. Then, for each claim, the judge decides whether the passages state it or directly entail it. The breach count $n_1(y)$ is the number of unsupported claims; the reported rate is the supported fraction, because a raw count grows with answer length and prompts change how much a model writes. This is the measure the experiment turns on. Every one of the twelve conditions states a grounding constraint, and faithfulness shows whether that constraint is followed in practice. Because the passages are identical across conditions, a change in faithfulness cannot come from a change in what the generator was given.
 
-\paragraph{Answer relevance.} Whether the answer addresses the question actually asked, and directly. A prompt can degrade an answer without making it false, by causing hedging, padding, or drift towards a neighbouring question. Relevance is scored reference-free, after \citet{es2023ragas}: the judge writes three questions that the answer would be a good answer to, and those are compared with the question actually asked by their mean cosine similarity in the space of the retrieval encoder, so that no second embedding space is introduced. A mean below $0.5$ counts as a breach. Abstention is read here. At the empty level nothing supports an answer, so an answer that declines is the responsive one and counts as relevant, while one that supplies unrelated material does not. A refusal is detected by a fixed list of patterns such as \textit{cannot be answered} and \textit{not enough information}, because none of the three baselines mandates a fixed abstention string. When evidence was supplied, a refusal counts as a breach.
+\paragraph{Answer relevance.} Whether the answer addresses the question actually asked, and directly. A prompt can degrade an answer without making it false, by causing hedging, padding, or drift towards a neighbouring question. Relevance is scored reference-free, after \citet{es2023ragas}: the judge writes three questions that the answer would be a good answer to, and those are compared with the question actually asked by their mean cosine similarity in the space of the retrieval encoder, so that no second embedding space is introduced. A mean below $0.5$ counts as a breach. Refusals are treated separately. Both evidence levels of this design supply passages, so an answer that declines to answer has declined in the presence of evidence and counts as a breach. A refusal is detected by a fixed list of patterns such as \textit{cannot be answered} and \textit{not enough information}, because none of the three baselines mandates a fixed abstention string.
 
-\paragraph{Correctness.} Whether the answer agrees with the reference answer $a_q$, in the sense of \citet{chen2024rgb}: the answer is correct when, after lowercasing and removing punctuation and articles, it contains the reference. Exact match is not used, because MS MARCO's well-formed answers are full sentences and a correct answer phrased differently would be counted wrong. Token-level F1 and exact match are recorded alongside for inspection. Correctness and faithfulness come apart under the corrupted level: an answer that repeats a corrupted passage is faithful but wrong, and one that overrides it from memory is right but ungrounded. Reporting both makes that distinction visible.
+\paragraph{Correctness.} Whether the answer agrees with the reference answers $A_q$. It is measured with the two metrics MS MARCO's free-form answer task is scored with \citep{nguyen2016msmarco}, and that \citet{lewis2020rag} report on it: ROUGE-L \citep{lin2004rouge} and BLEU-1 \citep{papineni2002bleu}. Both compare the answer with the references word by word, and both are computed against every reference of the query, so an answer phrased like any one of them is credited. Before scoring, the text is lowercased and punctuation is turned into spaces, and citation markers such as \texttt{[3]} are removed from the answer, because baseline $B$ asks for them and they would otherwise lower its score for obeying its prompt. ROUGE-L is the F-measure of the longest common subsequence of the answer and a reference: its precision and its recall are each taken at their best over the references and combined with $\beta = 1.2$, which weights recall slightly above precision, as the MS MARCO scorer does. BLEU-1 is the share of the answer's words that also occur in a reference, each word counted at most as often as it appears in any single reference, multiplied by a brevity penalty when the answer is shorter than the reference closest to it in length. The official scorer computes BLEU over the whole corpus; since the estimand averages a value per answer, the per-answer form is used here. Both scores lie between 0 and 1.
 
-\paragraph{Instruction adherence.} Whether the answer does what the prompt told it to. It is scored as prompt-level strict accuracy in the sense of \citet{zhou2023ifeval}: an answer is adherent only if it satisfies every checked requirement at once, so the score is binary. Only requirements that a rule can decide are checked, which is the principle of verifiable instructions, and a condition is held only to what its own baseline states. For baseline $B$ the rule parses the citation markers and checks that every sentence carries between one and three of them, which is what the prompt asks for. For baseline $C$ the rule checks that the answer contains a justification, marked by words such as \textit{because}, \textit{since} or \textit{therefore}. Baseline $A$ states only grounding, which faithfulness already measures, so its adherence is undefined by construction rather than a free pass. Grounding is never checked inside adherence for any baseline, because counting it there as well would count one failure twice. Requirements that no rule can decide, such as an unbiased tone, are recorded as not checked. The requirement set is the same for all four wordings of a baseline, so adherence is directly comparable across them.
+Correctness and faithfulness are separate demands. An answer can repeat a supplied passage accurately and still be wrong about the world, and it can be right about the world while resting on nothing the retriever returned. Measuring both keeps the two apart.
+
+\paragraph{Instruction adherence.} Whether the answer does what the prompt told it to. It is scored as prompt-level strict accuracy in the sense of \citet{zhou2023ifeval}: an answer is adherent only if it satisfies every checked requirement at once, so the score is binary. Only requirements that a rule can decide are checked, which is the principle of verifiable instructions, and a condition is held only to what its own baseline states. For baseline $B$ the rule parses the citation markers and checks that every sentence carries between one and three of them, which is what the prompt asks for. For baseline $C$ the rule checks that the answer contains a justification marker. The markers are the causal connectives \textit{because}, \textit{since} and \textit{therefore}, the phrases \textit{this is why} and \textit{the reason}, and three phrases that point to a source: \textit{as the passage} (or document, or text), \textit{according to} and \textit{based on}. The last group names where an answer came from rather than why it was chosen, so the rule is more lenient than the requirement it stands for. Section~\ref{sec:robust} reports what changes when only the causal connectives are counted. Baseline $A$ states only grounding, which faithfulness already measures, so its adherence is undefined by construction rather than a free pass. Grounding is never checked inside adherence for any baseline, because counting it there as well would count one failure twice. Requirements that no rule can decide, such as an unbiased tone, are recorded as not checked. The requirement set is the same for all four wordings of a baseline, so adherence is directly comparable across them.
 
 \subsection{The Judge}
 \label{sec:judge}
 
 Faithfulness and answer relevance have no reference string, so they are scored by a second language model, as \citet{es2023ragas} and \citet{saadfalcon2024ares} do. The judge is \texttt{gpt-4.1-mini}, a different model from the generator, so that the generator never grades its own output, and it is run at temperature 0 so that a verdict depends on the answer and the passages and not on a random draw. Since this thesis assumes that language models are sensitive to their instructions, the judge cannot be assumed reliable. Three precautions are taken, following \citet{zheng2023judge}, who document position and verbosity biases in this setting. The judge's own prompts are fixed constants and are never varied between conditions. The judge is shown only the answer and the passages, never the condition label, the query identifier or the evidence level; this matters because the format condition is recognisable from its surface alone, and a judge error that varied with condition would bias the estimated effect. And the answers are judged in random order, so that position in the judging sequence cannot correlate with condition.
 
-The judge's agreement with human labelling is measured on about 100 held-out answers, drawn evenly across the twelve conditions with the judge's own verdict withheld from the labeller, and reported as Cohen's kappa. It is reported for each condition separately rather than pooled, because a pooled figure can look reassuring while hiding an error that varies with condition.
+A fourth precaution is specified but was not carried out. The design provides for an agreement study against human labelling: about 100 scored answers are drawn evenly across the twelve conditions, the judge's own verdict is withheld from the labeller, and agreement is reported as Cohen's kappa for each condition separately rather than pooled, because a pooled figure can look reassuring while hiding an error that varies with condition. The sample is drawn by the implementation, but the labelling itself is manual and was not completed within the scope of this thesis. The two judged measures therefore carry no reliability estimate, which Section~\ref{sec:limits} states as a limitation and Section~\ref{sec:futurework} names as the first piece of work to follow.
 
 \subsection{Estimating the Effect of a Rewording}
 \label{sec:analysis}
 
-The quantity reported is the average treatment effect of Equation~\eqref{eq:estimand}. Chapter 4 left the measured property $M$ open. It is fixed here as each of the four measures in turn, so the effect of a rewording is estimated four times, once for faithfulness, once for answer relevance, once for correctness and once for instruction adherence. Every measure is oriented so that a higher value is better, and a positive effect therefore means the rewording improved that measure.
+The quantity reported is the average treatment effect of Equation~\eqref{eq:estimand}. Chapter 4 left the measured property $M$ open. It is fixed here as each of the five measures in turn, so the effect of a rewording is estimated five times: once for faithfulness, once for answer relevance, once each for ROUGE-L and BLEU-1, and once for instruction adherence. Every measure is oriented so that a higher value is better, and a positive effect therefore means the rewording improved that measure.
 
-The four are never added together. A single combined score would hide the direction of a change: a rewording that improved grounding and damaged relevance by the same amount would produce no combined effect at all, and the thesis would report that nothing happened when in fact two things did.
+The five are never added together. A single combined score would hide the direction of a change: a rewording that improved grounding and damaged relevance by the same amount would produce no combined effect at all, and the thesis would report that nothing happened when in fact two things did.
 
 For one measure $M$, one evidence level and one baseline $b$, the estimate of the effect of wording $j$ is
 \begin{equation}
@@ -1297,16 +1265,18 @@ For one measure $M$, one evidence level and one baseline $b$, the estimate of th
 \end{equation}
 where $I$ is the set of queries in that cell and $\bar{M}_{ij}$ is the mean of the measure over the $n$ repetitions of query $i$ under condition $S_{b,j}$. Equation~\eqref{eq:tauhat} is the sample version of Equation~\eqref{eq:estimand}: the inner average takes the expectation over decoding, and the outer one takes it over queries.
 
-Two properties of that formula matter. The difference is taken inside the sum, so every query is compared with itself and the variation between queries drops out. That is the pairing the design was built for, and it is possible only because every query is run in every condition on an identical context. And the repetitions are averaged before the difference is taken, so one query contributes one number. The repetitions measure decoding noise rather than variation between queries, and treating them as independent observations would make the sample look five times larger than it is.
+Two properties of that formula matter. The difference is taken inside the sum, so every query is compared with itself and the variation between queries drops out. That is the pairing the design was built for, and it is possible only because every query is run in every condition on an identical context. And the repetitions are averaged before the difference is taken, so one query contributes one number. The repetitions measure decoding noise rather than variation between queries, and treating them as independent observations would make the sample look three times larger than it is.
 
 A measure that does not apply to a generation is skipped rather than counted as satisfied. This affects instruction adherence under baseline $A$, whose only requirement is grounding: $\hat{\tau}$ for adherence is therefore reported for baselines $B$ and $C$ only.
+
+Correctness is estimated twice, once by ROUGE-L and once by BLEU-1. The two are treated as separate measures: each has its own estimate and its own correction, and both enter the decision of Section~\ref{sec:decision}.
 
 \subsection{Deciding the Hypothesis}
 \label{sec:decision}
 
 $\hat{\tau}_{j}$ is an average over a finite sample, so it is almost never exactly zero even when the true effect is. A point estimate on its own therefore cannot decide between the hypotheses of Section~\ref{sec:goal}. Each estimate is reported with its standard error and a 95\% confidence interval, computed from the same paired differences that produced it. An interval that excludes zero is evidence that the rewording changed that measure; one that contains zero is not.
 
-The hypothesis $H_1$ claims that \textit{at least one} rewording changes answer quality, and it ranges over nine rewordings for each measure. Reading nine intervals and concluding $H_1$ because one of them excluded zero would report chance as a finding: at the 5\% level roughly one interval in twenty excludes zero when nothing is happening. The intervals are therefore corrected by the method of \citet{holm1979} across the nine rewordings within each measure, which is the family the claim ranges over. Both the uncorrected and the corrected verdict are reported, so a reader can see what the correction changed.
+The hypothesis $H_1$ claims that \textit{at least one} rewording changes answer quality, and it ranges over nine rewordings for each measure. Reading nine intervals and concluding $H_1$ because one of them excluded zero would report chance as a finding: at the 5\% level roughly one interval in twenty excludes zero when nothing is happening. The intervals are therefore corrected by the method of \citet{holm1979} within each measure at each evidence level, across the rewordings that measure is estimated for: nine for faithfulness, answer relevance, ROUGE-L and BLEU-1, and six for instruction adherence, which is undefined under baseline $A$. That gives ten families, and each is the set of rewordings the claim ranges over for one measure in one cell. Section~\ref{sec:robust} also reports the result when all estimates are corrected as a single family. Both the uncorrected and the corrected verdict are reported, so a reader can see what the correction changed.
 
 $H_0$ is rejected if, after correction, at least one rewording moves at least one measure. If no interval survives correction, $H_0$ is not rejected. That is a weaker statement than showing the effect to be zero, and Section~\ref{sec:limits} states how large an effect this design could have detected.
 
@@ -1321,19 +1291,302 @@ The query set is balanced across intent types. That makes the type usable as a c
 
 MS MARCO records what people type into a web search engine. Its queries are short, mostly factoid, and drawn from the domains web search covers. Several of the settings that motivate retrieval in Section~\ref{sec:usecase}, such as clinical decision support and legal question answering, are absent from it, and their documents differ from web passages in length, structure and register. Whether an instruction that governs behaviour here governs it there is left to future work.
 
-The design can detect a medium effect but not a small one. With the 88 queries that pass the retrieval gate at $K = 10$, a paired comparison at the 5\% level has an 80\% chance of detecting a standardised effect of about $0.30$, and about $0.39$ once the correction across the nine rewordings is applied; at the gold level, where all 100 queries are usable, the corresponding figures are $0.28$ and $0.37$. Those thresholds are stated in units of the observed paired differences, and the three repetitions per cell make those differences noisier than five would, so a given true effect is harder to reach them with. If a rewording changes a measure by less than that, this experiment will not distinguish it from decoding noise, and a failure to reject $H_0$ has to be read as that limit rather than as evidence that prompt structure does not matter.
+The design can detect a medium effect but not a small one. With the 88 queries that pass the retrieval gate at $K = 10$, a paired comparison at the 5\% level has an 80\% chance of detecting a standardised effect of about $0.30$, and about $0.39$ once the correction across the nine rewordings is applied; at the gold level, where all 100 queries are usable, the corresponding figures are $0.28$ and $0.37$. Those thresholds are stated in units of the observed paired differences. Two choices make those differences noisier than they need to be: three repetitions per cell rather than five, and a decoding temperature of $1.0$ rather than a low one. Both raise the variation within a cell, so a given true effect is harder to detect. If a rewording changes a measure by less than that, this experiment will not distinguish it from decoding noise, and a failure to reject $H_0$ has to be read as that limit rather than as evidence that prompt structure does not matter.
+
+Correctness was not measured the way it was planned. The measure fixed before the run was containment, in the sense of \citet{chen2024rgb}: an answer counted as correct when it contained the reference answer word for word. \citet{chen2024rgb} apply it to short answers such as a name or a date. MS MARCO's references are full sentences, and the generator rarely repeats one word for word, so containment scored near zero in every condition, at a mean of $0.052$, and could not have detected any change. It was replaced by the two metrics MS MARCO's own answer task is scored with. The replacement was made after the results of the planned measure were known and after the effect of rewording on the replacement metrics had been examined, so it is a decision taken with the data in view, and it is reported here for that reason.
+
+ROUGE-L and BLEU-1 have limits of their own. They reward overlapping words, not truth, so a fluent wrong answer that reuses the wording of the reference can outscore a short correct one. They also favour answers close in length to the reference: a longer answer contains more words the reference lacks, which lowers precision in both. A rewording that makes answers shorter can therefore raise both metrics without making the answers more correct. Section~\ref{sec:reading} returns to this.
 
 The generator and the judge are models behind an API. Their weights are not available, and the provider may update a model under the same name. The model identifier, the decoding settings and the backend fingerprint returned by the API are recorded with every generation, so any such change is visible in the data, but an exact repetition of the run depends on the provider keeping the model unchanged.
 
-Two of the four measures are judged by a language model. The precautions of Section~\ref{sec:judge} limit the ways in which the judge can bias the comparison between conditions, and the agreement with human labels bounds its reliability, but they do not remove the dependence on it. Instruction adherence, in turn, checks only the requirements a rule can decide; requirements such as an unbiased tone are stated by the prompts but not scored.
+Two of the four measures are judged by a language model. The precautions of Section~\ref{sec:judge} limit the ways in which the judge can bias the comparison between conditions, but they do not remove the dependence on it, and the agreement study those precautions call for was not carried out, so faithfulness and answer relevance carry no reliability estimate. The measures that carry most of the result of Chapter~\ref{ch:results}, the two correctness metrics and instruction adherence, are computed by program and do not depend on the judge, which limits how far this weakness reaches. An audit after the run found two further weaknesses in the judged measures. The judge's output was capped at 256 tokens, and when claim extraction was re-run on the twenty answers with the longest claim lists, 13 of them reached that cap, so for the longest answers the last claims were cut off and faithfulness was scored on the first part of the answer only. Answers that long make up an estimated 2\% of the data. The same re-run showed that the judge is not fully deterministic at temperature 0: for three of the twenty answers the number of extracted claims differed markedly between runs. Neither weakness touches the correctness metrics or the adherence measure, which are computed by program. Instruction adherence, in turn, checks only the requirements a rule can decide; requirements such as an unbiased tone are stated by the prompts but not scored.
 
 
 \chapter{Results and Discussion}
+\label{ch:results}
+
+Chapter 5 fixed the experiment: twelve system prompts, two evidence levels, a fixed retriever and generator, and five measures, correctness being measured twice. This chapter reports what came out of it. It first describes the data that were collected and how the system behaved before any two conditions are compared, because an effect can only be read against the level it moves from. It then gives the effect of each rewording, measure by measure, states the verdict on the hypothesis of Section~\ref{sec:goal}, and checks how far that verdict depends on choices that could have been made differently. The last two sections look at what changed inside the answers themselves, and at what these results do not establish.
+
+\section{What Was Collected}
+\label{sec:collected}
+
+The run produced 6,768 answers. At the gold level all 100 queries are usable, which gives $100 \times 12 \times 3 = 3{,}600$ answers. At the retrieved level 88 of the 100 queries pass the gate of Section~\ref{sec:procedure} at $K = 10$, which gives $88 \times 12 \times 3 = 3{,}168$. Every answer was scored on the four measures of Section~\ref{sec:metrics}, and the two judged measures took 30,636 calls to the judge model.
+
+Three checks were run on the collected data before any of it was analysed. Every one of the twelve conditions received a byte-identical user turn for the same query, repetition and evidence level, which is the property Section~\ref{sec:variables} requires and the one the comparison depends on. No answer appears twice. No answer is empty. Together these say that the only thing that differs between two conditions in the same cell is the system prompt.
+
+One property of the run was outside the experiment's control. The API reports an identifier of the backend configuration that served each request. Eleven of the twelve conditions were spread across about eighty such identifiers, but 540 of the 564 answers under B3 were served by a single one. The requests themselves were as specified; Section~\ref{sec:robust} tests whether the backend changed the answers.
+
+\section{How the System Behaved Before Any Comparison}
+\label{sec:descriptive}
+
+Table~\ref{tab:cellmeans} gives the mean of each measure in each cell. It is worth reading before the effects, because an effect of two points means something different at a faithfulness of $0.92$ than at an adherence of $0.08$.
+
+\begin{table}[htbp]
+\centering
+\caption{Mean of each measure per condition. The gold level rests on 100 queries and the retrieved level on the 88 that pass the gate at $K = 10$. Correctness is given as ROUGE-L and BLEU-1. Adherence is undefined for baseline $A$, whose only requirement is grounding.}
+\label{tab:cellmeans}
+\begin{tabular}{lrrrrr}
+\toprule
+ & Faithfulness & Relevance & ROUGE-L & BLEU-1 & Adherence \\
+\midrule
+\multicolumn{6}{l}{\textit{gold, $|I| = 100$}} \\
+A0 & 0.917 & 0.736 & 0.541 & 0.494 & n/a \\
+A1 & 0.922 & 0.730 & 0.519 & 0.463 & n/a \\
+A2 & 0.930 & 0.734 & 0.550 & 0.505 & n/a \\
+A3 & 0.930 & 0.741 & 0.539 & 0.492 & n/a \\
+B0 & 0.912 & 0.696 & 0.362 & 0.285 & 0.223 \\
+B1 & 0.942 & 0.705 & 0.407 & 0.332 & 0.447 \\
+B2 & 0.924 & 0.703 & 0.397 & 0.319 & 0.343 \\
+B3 & 0.931 & 0.703 & 0.403 & 0.327 & 0.297 \\
+C0 & 0.924 & 0.729 & 0.262 & 0.164 & 0.890 \\
+C1 & 0.919 & 0.738 & 0.272 & 0.174 & 0.447 \\
+C2 & 0.941 & 0.728 & 0.296 & 0.193 & 0.433 \\
+C3 & 0.939 & 0.731 & 0.322 & 0.214 & 0.817 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{retrieved, $K = 10$, $|I| = 88$}} \\
+A0 & 0.968 & 0.737 & 0.436 & 0.377 & n/a \\
+A1 & 0.976 & 0.734 & 0.418 & 0.359 & n/a \\
+A2 & 0.974 & 0.732 & 0.443 & 0.383 & n/a \\
+A3 & 0.976 & 0.736 & 0.438 & 0.376 & n/a \\
+B0 & 0.962 & 0.693 & 0.233 & 0.157 & 0.083 \\
+B1 & 0.971 & 0.705 & 0.297 & 0.220 & 0.345 \\
+B2 & 0.957 & 0.696 & 0.267 & 0.192 & 0.193 \\
+B3 & 0.965 & 0.702 & 0.282 & 0.205 & 0.205 \\
+C0 & 0.963 & 0.734 & 0.201 & 0.119 & 0.898 \\
+C1 & 0.973 & 0.738 & 0.207 & 0.125 & 0.568 \\
+C2 & 0.973 & 0.746 & 0.229 & 0.141 & 0.473 \\
+C3 & 0.959 & 0.730 & 0.267 & 0.170 & 0.886 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three things stand out. Faithfulness is high everywhere, between $0.912$ and $0.976$. Relevance is stable, between $0.693$ and $0.746$. Both sit in a narrow band, so neither has much room to move. Adherence is the opposite. It runs from $0.083$ to $0.898$, a spread of more than eighty points across conditions that ask for the same thing. Whatever the prompt is doing, this is where it shows.
+
+Correctness sits in the middle of its range. ROUGE-L runs from $0.201$ to $0.550$ and BLEU-1 from $0.119$ to $0.505$. Both are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose prompt asks the model to explain its answer, so that much of what it writes has no counterpart in the reference. Both are lower at the retrieved level than at the gold level in every condition, which fits the retrieved context being the harder one to answer from.
+
+One pattern in the table runs against expectation. Faithfulness is higher at the retrieved level than at the gold level, in every condition. The gold context contains only the passages annotated as necessary, so it is the easier setting for answering the question, but it is the harder setting for being fully supported: with fewer passages in front of it, more of what the model writes has no source in the context to point at. The retrieved context at $K = 10$ carries more text, and more text gives more claims something to rest on. This is an observation about the data, not something the design was built to test, and it is not part of the hypothesis.
+
+\section{The Effect of Rewording}
+\label{sec:effects}
+
+Each rewording is compared with the canonical form of its own baseline, using Equation~\eqref{eq:tauhat}. Every comparison is paired within a query. The results are grouped by measure below, because that is the family the correction of Section~\ref{sec:decision} is applied within.
+
+\subsection{Instruction Adherence}
+
+This is where the effect lives. Table~\ref{tab:adherence} gives all six estimates in both cells. It covers baselines $B$ and $C$ only, because baseline $A$ asks for nothing except that the answer come from the supplied context, which faithfulness already measures, so no checkable instruction is left for adherence and the measure is skipped for $A$ rather than scored as a pass (Section~\ref{sec:notshown}).
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of each rewording on instruction adherence, against the canonical form of its own baseline. A star marks an interval that excludes zero after the correction across the six rewordings of the adherence family at that evidence level.}
+\label{tab:adherence}
+\begin{tabular}{lllll}
+\toprule
+ & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Rewording & $\hat{\tau}$ & 95\% CI & $\hat{\tau}$ & 95\% CI \\
+\midrule
+B1 lexical   & $+0.223$* & $[+0.158, +0.289]$ & $+0.261$* & $[+0.187, +0.336]$ \\
+B2 syntactic & $+0.120$* & $[+0.071, +0.169]$ & $+0.110$* & $[+0.045, +0.175]$ \\
+B3 format    & $+0.073$* & $[+0.026, +0.121]$ & $+0.121$* & $[+0.058, +0.185]$ \\
+C1 lexical   & $-0.443$* & $[-0.521, -0.366]$ & $-0.330$* & $[-0.410, -0.249]$ \\
+C2 syntactic & $-0.457$* & $[-0.534, -0.379]$ & $-0.424$* & $[-0.501, -0.348]$ \\
+C3 format    & $-0.073$* & $[-0.142, -0.005]$ & $-0.011$\phantom{*} & $[-0.071, +0.049]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Eleven of the twelve estimates exclude zero after correction. Ten of them do so in both cells, which means the same rewording produced the same change on two different sets of evidence. Only C3 at the retrieved level fails to, and it is the smallest effect in the table.
+
+The sizes are not small. Rewording baseline $C$ with synonyms costs it 44 points of adherence at the gold level, and rewriting the same requirements in the syntactic form costs it 46. Baseline $B$ moves the other way: every rewording of it scores higher than the published form, and the lexical rewording gains 22 points at the gold level and 26 at the retrieved level.
+
+\subsection{Faithfulness}
+
+One estimate of nine survives correction: B1 at the gold level, $\hat{\tau} = +0.031$ with a 95\% interval of $[+0.014, +0.047]$. The same comparison at the retrieved level gives $+0.009$ with an interval that contains zero. A result that appears in one cell and not the other is weak evidence. Given the ceiling reported in Section~\ref{sec:descriptive}, where faithfulness never falls below $0.91$, it should not be read as more than that.
+
+\subsection{Answer Relevance}
+
+Nothing survives correction, in either cell. The largest estimate is $+0.012$. Relevance sits between $0.693$ and $0.746$ in every condition and the rewordings do not move it.
+
+\subsection{Correctness}
+
+Correctness moves under most rewordings. Tables~\ref{tab:rouge} and~\ref{tab:bleu} give the estimates. Of the 36, 23 exclude zero after correction.
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of each rewording on correctness measured by ROUGE-L, against the canonical form of its own baseline. A star marks an interval that excludes zero after the correction across the nine rewordings at that evidence level.}
+\label{tab:rouge}
+\begin{tabular}{lllll}
+\toprule
+ & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Rewording & $\hat{\tau}$ & 95\% CI & $\hat{\tau}$ & 95\% CI \\
+\midrule
+A1 lexical   & $-0.022$* & $[-0.036, -0.008]$ & $-0.018$* & $[-0.031, -0.005]$ \\
+A2 syntactic & $+0.009$\phantom{*} & $[-0.002, +0.021]$ & $+0.008$\phantom{*} & $[-0.006, +0.022]$ \\
+A3 format    & $-0.002$\phantom{*} & $[-0.016, +0.012]$ & $+0.002$\phantom{*} & $[-0.007, +0.011]$ \\
+B1 lexical   & $+0.045$* & $[+0.027, +0.062]$ & $+0.064$* & $[+0.042, +0.087]$ \\
+B2 syntactic & $+0.034$* & $[+0.020, +0.049]$ & $+0.034$* & $[+0.016, +0.051]$ \\
+B3 format    & $+0.041$* & $[+0.027, +0.054]$ & $+0.049$* & $[+0.028, +0.070]$ \\
+C1 lexical   & $+0.010$\phantom{*} & $[-0.000, +0.020]$ & $+0.006$\phantom{*} & $[-0.002, +0.013]$ \\
+C2 syntactic & $+0.034$* & $[+0.025, +0.043]$ & $+0.027$* & $[+0.020, +0.034]$ \\
+C3 format    & $+0.060$* & $[+0.047, +0.072]$ & $+0.066$* & $[+0.054, +0.077]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of each rewording on correctness measured by BLEU-1, against the canonical form of its own baseline. A star marks an interval that excludes zero after the correction across the nine rewordings at that evidence level.}
+\label{tab:bleu}
+\begin{tabular}{lllll}
+\toprule
+ & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Rewording & $\hat{\tau}$ & 95\% CI & $\hat{\tau}$ & 95\% CI \\
+\midrule
+A1 lexical   & $-0.031$* & $[-0.049, -0.013]$ & $-0.017$\phantom{*} & $[-0.031, -0.003]$ \\
+A2 syntactic & $+0.011$\phantom{*} & $[-0.003, +0.025]$ & $+0.007$\phantom{*} & $[-0.009, +0.022]$ \\
+A3 format    & $-0.002$\phantom{*} & $[-0.020, +0.015]$ & $-0.001$\phantom{*} & $[-0.011, +0.009]$ \\
+B1 lexical   & $+0.047$* & $[+0.027, +0.068]$ & $+0.063$* & $[+0.037, +0.089]$ \\
+B2 syntactic & $+0.034$* & $[+0.018, +0.050]$ & $+0.035$* & $[+0.016, +0.054]$ \\
+B3 format    & $+0.042$* & $[+0.026, +0.058]$ & $+0.048$* & $[+0.028, +0.069]$ \\
+C1 lexical   & $+0.010$\phantom{*} & $[+0.002, +0.018]$ & $+0.006$\phantom{*} & $[+0.001, +0.010]$ \\
+C2 syntactic & $+0.029$* & $[+0.022, +0.037]$ & $+0.022$* & $[+0.017, +0.027]$ \\
+C3 format    & $+0.050$* & $[+0.041, +0.059]$ & $+0.051$* & $[+0.044, +0.058]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern is the same on both metrics and at both evidence levels. Every rewording of baseline $B$ raises correctness, by $0.034$ to $0.064$. Of the rewordings of $C$, the syntactic and format ones raise it, the format one most, by $0.050$ to $0.066$; no estimate for the lexical rewording C1 survives correction. For baseline $A$, the lexical rewording A1 lowers it: by $0.022$ on ROUGE-L and $0.031$ on BLEU-1 at the gold level, and by $0.018$ on ROUGE-L at the retrieved level. The BLEU-1 estimate there, $-0.017$, just misses the correction. The effects are small next to those on adherence, a few points against tens of points, but they are consistent. Section~\ref{sec:reading} shows that they follow the length of the answers closely.
+
+\section{The Verdict on the Hypothesis}
+\label{sec:verdict}
+
+Eighty-four estimates were made across the five measures of Section~\ref{sec:metrics}. Thirty-five exclude zero after the correction of Section~\ref{sec:decision}: eleven on adherence, twenty-three on the two correctness metrics, and one on faithfulness.
+
+$H_0$ states that prompts stating the same requirements in different wordings produce the same distribution of answer quality, so that $\tau_j = 0$ for every baseline and every wording. That is rejected. $H_1$ claims that at least one rewording changes answer quality, and seven of the nine rewordings do, most of them in both cells.
+
+The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where the effects are large and present in both directions, and on correctness, where they are small but consistent. On both, most effects replicate across the two evidence levels.
+
+That replication also answers the secondary question of Section~\ref{sec:goal}, which asked whether the answer to the main question survives a change in the quality of the evidence. It does. Ten of the eleven adherence effects appear at both evidence levels, and their sizes are close: B1 gains $0.223$ on gold and $0.261$ on the retrieved context, C2 loses $0.457$ and $0.424$. Giving the generator the real output of the retriever, distractors included, rather than only the passages the annotation marks as supporting, does not remove the effect of how the prompt is worded. The correctness effects behave the same way: every rewording with a ROUGE-L effect that survives correction at one level has one at the other.
+
+\section{How Robust the Verdict Is}
+\label{sec:robust}
+
+The verdict rests on choices that could reasonably have been made differently. Five checks test the most important of them. None of them changes an estimate reported above. Each asks whether a conclusion depends on the choice, and all five are reproduced by the module \texttt{evaluation/sensitivity.py}.
+
+\paragraph{The correction family.} Section~\ref{sec:decision} corrects within each measure at each evidence level. The strictest alternative is to correct all 84 estimates as one family. Under it, 30 of the 35 effects survive. The five that drop out are the three smallest adherence effects, B2 at the retrieved level and B3 and C3 at the gold level, and the two ROUGE-L effects of A1. $H_0$ is still rejected.
+
+\paragraph{The justification rule for baseline $C$.} As Section~\ref{sec:metrics} states, the rule accepts attribution phrases such as \textit{based on} and \textit{according to} as well as causal connectives. Re-scoring every answer with only \textit{because}, \textit{since} and \textit{therefore} gives pass rates of $78.2\%$ under C0, $39.9\%$ under C1, $28.2\%$ under C2 and $82.6\%$ under C3. The effects of C1 and C2 survive and grow: $-0.450$ and $-0.527$ at the gold level, $-0.307$ and $-0.470$ at the retrieved level, all excluding zero. C3 does not survive. It moves to $-0.020$ at the gold level, with an interval that contains zero, and to $+0.117$ at the retrieved level, which excludes zero in the opposite direction. The C3 effect in Table~\ref{tab:adherence} therefore depends on how the rule is read and is not interpreted further. The C1 and C2 effects do not depend on it.
+
+\paragraph{The sentence rule for baseline $B$.} The rule splits an answer into sentences at a full stop. A citation written after the full stop is therefore credited to the next sentence, and a list item is not split at all. Each of these occurs in at most $2\%$ of the answers under any $B$ condition. Re-scoring with a splitter that corrects both leaves every $B$ estimate unchanged to two decimal places.
+
+\paragraph{Truncated answers.} 88 of the 6,768 answers stopped at the 256-token limit, most of them under C0 and C1. Dropping them changes no verdict.
+
+\paragraph{The API backend.} Section~\ref{sec:collected} noted that almost all answers under B3 were served by one backend configuration. If that backend behaved differently, the B3 effect would be confounded with it. The same backend also served some answers under the other conditions, and in groups whose three repetitions were split between that backend and others, the scores can be compared directly: 104 answers ran on it and 133 elsewhere. There is no shift on faithfulness ($p = 0.55$), answer relevance ($p = 0.90$) or adherence ($p = 0.56$). On the two correctness metrics, answers served by that backend score about two points lower than their own repetitions served elsewhere ($p = 0.014$ for ROUGE-L, $p = 0.033$ for BLEU-1), and neither difference survives a correction across the five tests. If it were real it would work against B3, which was served almost entirely by that backend and still raises correctness. The backend therefore does not explain the B3 result, but the check rests on about two hundred answers and cannot rule out a small effect.
+
+\section{What Changed in the Answers}
+\label{sec:reading}
+
+An effect of forty points needs an explanation of what changed in the text. This section gives one for each baseline, and then looks at how the correctness effects relate to the length of the answers. It describes what the answers look like; it does not add anything to the test above.
+
+\subsection{Baseline B: The Model Cites, But Not in Every Sentence}
+
+Baseline $B$ asks for a citation in every sentence, and the rule of Section~\ref{sec:metrics} follows it strictly: one sentence without a citation fails the whole answer. Under the canonical form only $15.8\%$ of answers pass. That figure is easy to misread. The model does cite. A citation marker appears somewhere in $98.6\%$ of the canonical answers. What it fails to do is cite in every sentence: across all of $B_0$, $53.0\%$ of sentences carry a marker.
+
+The rewordings change that coverage. Under B1 it rises to $65.3\%$. Measured per sentence rather than per answer, the effect of B1 is $+0.153$ at the gold level and $+0.150$ at the retrieved level, both excluding zero. So the improvement in coverage is real.
+
+It is not the whole story, because the strict rule is easier to pass with fewer sentences to get right, and B1 writes fewer. Canonical answers run to $3.1$ sentences on average and B1 answers to $2.5$. Part of the $+0.223$ gain in Table~\ref{tab:adherence} is that shortening, and part is better coverage. The per-sentence estimate separates the two: the coverage gain survives on its own, at about two thirds the size.
+
+\subsection{Baseline C: Compliance Falls When the Instruction Stops Being an Instruction}
+
+Baseline $C$ asks for three things, and the rule checks the one a rule can decide: the answer must explain its choice. Under the canonical form $89.4\%$ of answers do. Under C1 that falls to $50.4\%$ and under C2 to $45.2\%$.
+
+The two prompts that lose compliance are the two that move furthest from a direct instruction. C0 says \textit{give the answer and explain why you choose this answer}. C1 says \textit{supply the response and justify why you select this response}, which asks for the same thing in different words. C2 says \textit{the answer is then given, with an explanation of why it is chosen}, which describes the requirement rather than issuing it. Compliance is lowest under C2. The syntactic rewording changes voice, mood and clause order at once, so this observation cannot be narrowed to any one of them; Section~\ref{sec:notshown} returns to that limit.
+
+C3 is the one rewording of $C$ that holds. It rewrites the prompt as a labelled list, with \texttt{EXPLAIN:} on its own line, and $84.9\%$ of its answers still explain. It also produces the shortest answers of the four, at 77 output tokens against 117 for the canonical form, so the compliance is not bought with length. The small negative effect C3 shows under the rule as run comes from attribution phrases rather than from explanations. The first marker the rule finds is \textit{based on} or \textit{according to} in 128 of the 564 canonical answers, against 28 under C3. Counting only causal connectives, C3 is no worse than the canonical form at the gold level and better at the retrieved level (Section~\ref{sec:robust}).
+
+\subsection{Correctness Follows Answer Length}
+
+The correctness effects line up with a change in how long the answers are. Within every baseline, ordering the three rewordings by how much they shorten the answers orders them by how much they raise correctness, on both metrics and at both evidence levels. All three rewordings of $B$ shorten the answers, from 88 output tokens under B0 to between 75 and 82, and all three raise correctness. Under $C$, C3 and C2 shorten the answers most, to 77 and 100 tokens against 117, and raise correctness most, while C1 barely shortens them and does not move it. A1 is the only rewording that lengthens its answers, from 53 to 61 tokens, and the only one that lowers correctness.
+
+This is what the two metrics would be expected to do. Both favour an answer that stays close to the reference in length, and a longer answer contains more words the reference does not. It also explains why baseline $C$ shows the two measures pulling apart. C's prompt asks the model to explain its answer, and an explanation is exactly the kind of text the reference lacks: C2 lowers adherence by 46 points at the gold level and raises ROUGE-L by 3. The data show that correctness and length move together, not that length is the whole reason. But a rise in these metrics cannot be read simply as the answers becoming more correct.
+
+\subsection{The Direction Is Not Fixed}
+
+The most useful thing in Table~\ref{tab:adherence} is that the signs differ. Every rewording of $B$ improves adherence, while the lexical and syntactic rewordings of $C$ damage it badly. Rewording is therefore not a source of degradation that a system should be protected from. It is a variable that can be set well or badly.
+
+It follows that the published form of a prompt is not the best form of it. Baseline $B$ is taken from a paper, and three separate rewritings of it, none of which changes what it asks for, all score higher than the original. A practitioner who copies a prompt from a paper is copying one point in a space, not the best point in it.
+
+\section{What These Results Do Not Show}
+\label{sec:notshown}
+
+The measured effects are large, but their reach is narrow, and several limits are worth stating directly.
+
+The large effects were found on adherence, which had the most room to move. Faithfulness and relevance sat near their ceilings in every condition, so this experiment cannot say whether rewording affects them. A failure to detect a change on a measure with a range of five points is not evidence that no change is there. Section~\ref{sec:limits} gives the size of effect this design could have found.
+
+The adherence effect rests on two of the three baselines. Adherence is undefined for baseline $A$, and this is worth stating plainly rather than leaving it as a note on a table. $A$ asks for one thing: \textit{use the following pieces of context to answer the question}. That is grounding, and grounding is what faithfulness measures. An adherence rule for $A$ would therefore be a second and cruder copy of a measure the design already has, and scoring it would count one failure twice and enter the two counts into the analysis as though they were independent. It would also flatter $A$: faithfulness runs near $0.95$, so a grounding rule would pass almost always and $A$ would appear to obey its prompt better than $B$ and $C$ on a rule it was never really tested against. The measure is therefore skipped rather than scored as satisfied, so that a condition never earns a free point for a requirement its prompt does not state.
+
+The consequence is that the adherence finding rests on baselines $B$ and $C$. Baseline $A$ is the shortest and plainest of the three prompts, and it is the one that cannot be tested on the measure where the largest effects appeared. It is not untouched, however. Its lexical rewording A1 lowers both correctness metrics at the gold level and ROUGE-L at the retrieved level, so even a prompt that asks for a single thing responds to how it is worded. What this design cannot say is whether A would respond on obedience the way $B$ and $C$ do, since it states nothing that adherence could check.
+
+The adherence rules are narrow proxies for what the prompts ask. Baseline $C$ asks the model to explain its choice. The rule as run accepts a causal connective such as \textit{because} or \textit{therefore}, but also attribution phrases such as \textit{according to} and \textit{based on}, which name a source rather than give a reason. Section~\ref{sec:robust} shows that the C1 and C2 effects survive, and grow, when only causal connectives are counted: $78.2\%$ of canonical answers contain one, against $39.9\%$ under C1 and $28.2\%$ under C2. The rewordings therefore genuinely reduce causal language. Even so, a connective is not an explanation, and whether the reasoning behind it is any good is not something this measure sees. The same holds for $B$, where a bracketed number is not a check that the cited passage supports the sentence. Faithfulness measures that separately, and it did not move.
+
+Everything here is one generator, one judge, one corpus and one retrieval depth. The judge scored the two judged measures without a human agreement study behind it, as Section~\ref{sec:judge} notes, so those two measures carry no reliability estimate. The two measures the verdict rests on are program-checked and do not depend on the judge, which limits the damage, but the faithfulness result does depend on it.
+
+The correctness metrics are not measures of truth. ROUGE-L and BLEU-1 reward overlapping words, so a fluent wrong answer that reuses the wording of the reference can score above a short correct one, and they favour answers close in length to the reference. Section~\ref{sec:reading} shows that the correctness effects follow answer length in all three baselines, so they may say more about how much an answer says than about whether it is right. They were also measured with metrics adopted after the planned measure failed, as Section~\ref{sec:limits} states.
 
 \chapter{Conclusion}
+\label{ch:conclusion}
+
+\section{Summary of Findings}
+\label{sec:summary}
+
+This thesis asked how far systematic changes in the system prompt influence the behaviour and outcomes of a RAG system when the user input, the knowledge base, the retrieval mechanism and the underlying language model are held fixed. The answer is that they influence it a great deal, and that the size of the influence depends on which property of the answer is measured.
+
+Twelve system prompts were built from three published baselines. Each baseline was written in four wordings: its canonical published form and three rewordings that change the vocabulary, the sentence structure or the layout. Every wording states the same requirements, so the only thing that varies across the four is $\varphi$. Each prompt was run over 100 MS MARCO queries at two evidence levels with three repetitions, which produced 6,768 answers, and every answer was scored on five measures, correctness being measured twice.
+
+The clearest result is on instruction adherence. Eleven of the twelve estimates exclude zero after correction, ten of them in both evidence levels, and the effects are large. Rewriting baseline $C$ in the syntactic form costs it 46 points of adherence at the gold level, and rewriting it with synonyms costs 44. The requirements did not change in either case. Only the phrasing did.
+
+The direction of the effect is not fixed. Every rewording of baseline $B$ scored higher than its published form, and the lexical and syntactic rewordings of baseline $C$ scored far lower. The format rewording of $C$ is the one estimate whose direction depends on how strictly the justification rule is read (Section~\ref{sec:robust}). Rewording is therefore not a hazard to be guarded against but a parameter that can be set well or badly. It also follows that a prompt published with a system is not the best form of that prompt: three rewritings of baseline $B$, none of which changes what it asks for, all outperform the original.
+
+On faithfulness and answer relevance no effect was found that survives correction, with one exception in one cell that does not replicate in the other. That is a weaker statement than it appears. Both measures sat near the top of their range in every condition, faithfulness never below $0.91$, so there was little room for a rewording to move them. This design could not have detected a small change there, and Section~\ref{sec:limits} gives the size it could have detected.
+
+Correctness, measured by ROUGE-L and BLEU-1, moved as well, in smaller steps. Every rewording of baseline $B$ and the syntactic and format rewordings of $C$ raised it, by two to seven points, and the lexical rewording of $A$ lowered it by two to three. These effects follow answer length closely: within every baseline, the more a rewording shortens the answers, the more it raises correctness. Both metrics favour answers close in length to the reference, so these effects may reflect how much an answer says rather than whether it is right. The metrics also replaced the measure planned before the run, which scored near zero everywhere and could detect nothing.
+
+Taken together, $H_0$ is rejected. Prompts that state the same requirements in different words do not produce the same behaviour from a RAG system. The wording of a system prompt is not a cosmetic property of it.
+
 \section{Contribution}
+\label{sec:contribution}
+
+The thesis makes four contributions.
+
+The first is formal. Chapter 4 extends the formulation of \citet{lewis2020rag} so that the system prompt is an explicit conditioning variable of the generator, and then splits it into a requirement set and a wording, $S = \rho(\Sigma, \varphi)$. That split is what makes the question answerable. Without it, changing a prompt changes what it asks for and how it asks at the same time, and no difference in behaviour can be assigned to either. With it, the wording becomes an independent variable that can be varied on its own, the assignment of a condition becomes an intervention $\mathrm{do}(S = S_j)$, and the quantity of interest becomes an average treatment effect rather than an observed association.
+
+The second is a design that holds the rest of the system fixed by construction rather than by assertion. Retrieval runs to completion and is written to disk before any prompt exists, so no execution path connects a prompt condition to what was retrieved. The context assembled for a query is drawn from a generator seeded on the query, the evidence level and the repetition, and never on the condition, so all twelve conditions receive an identical user turn. That property was checked on the collected data rather than assumed. The causal claim rests on these two facts, and both are enforced in code and tested.
+
+The third is empirical. Prompt sensitivity has been shown for user prompts outside retrieval-augmented settings. This thesis measures it for the system prompt inside one, with the retriever, the corpus, the index and the generator held constant, and reports effects on instruction adherence that are large, bidirectional and replicated across two evidence levels. It also gives a practical result for anyone building such a system: the published form of a prompt is one point in a space of equivalent wordings, not the best point in it.
+
+The fourth is methodological, and it was not planned. The correctness measure fixed before the run, containment of the reference answer, is standard in RAG evaluation but was designed for short answer spans. On MS MARCO's sentence-length references it scored near zero in every condition and could not have detected any effect, while the dataset's own metrics, applied to the same answers, found many. A study of this kind should check that a measure suits its references and has room to move before it reads a null as an absence of effect.
 
 \section{Future Work}
+\label{sec:futurework}
+
+Several directions follow from the limits of what was done here.
+
+The results rest on one generator. Whether a rewording that helps one model helps another, or whether the direction of the effect is a property of the model rather than of the wording, is open. Repeating the design across model families and sizes would settle it, and the design supports it: the generator is a single fixed parameter and nothing else would change.
+
+The judged measures carry no reliability estimate. Section~\ref{sec:judge} specifies an agreement study against human labels, and the sampling for it is implemented, but the labelling was not carried out. Completing it would put a bound on how far the judge itself is sensitive to the surface form of the answers it grades, which matters here more than usual, since the thesis assumes models are sensitive to their instructions and the judge is a model.
+
+The adherence measures are narrow. A bracketed number is not a check that the cited passage supports the sentence, and a connective or a source attribution is not an explanation. Both rules were chosen because a rule can decide them, and both are proxies for a requirement that is broader than the rule. Measures that check whether a citation is warranted, or whether a justification is sound, would test the same prompts against what they actually ask for.
+
+Correctness was measured by word overlap, and Section~\ref{sec:reading} shows its effects track answer length. A judged measure of agreement with the reference, or one that controls for length, would separate an answer being more correct from an answer being shorter.
+
+The three rewording axes each change several things at once. The lexical rewording of baseline $C$ replaces many words, and the syntactic one changes voice, mood and clause order together. The data show that compliance falls furthest under the syntactic rewording, which is the one that turns a direct instruction into a description of what happens. That is a plausible reading, but the design cannot establish it, because voice was not varied on its own. Varying one linguistic feature at a time would turn the observation in Section~\ref{sec:reading} into a claim.
+
+If published prompts are not optimal, the natural next question is how to find better ones. Searching over wordings with the requirement set held fixed is a well-defined problem, and the estimator used here already provides its objective.
+
+Finally, the query set is short factoid web search. Section~\ref{sec:usecase} motivates retrieval with settings such as clinical decision support and legal question answering, whose documents differ from web passages in length, structure and register. Whether an instruction that governs behaviour on MS MARCO governs it there is untested, and the effects reported here bound what may be expected in those settings without establishing it.
+
 
 \bibliographystyle{apalike}
 \bibliography{thesis}

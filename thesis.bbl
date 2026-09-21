@@ -6,11 +6,6 @@ Asai, A., Wu, Z., Wang, Y., Sil, A., and Hajishirzi, H. (2024).
   self-reflection.
 \newblock In {\em International Conference on Learning Representations (ICLR)}.
 
-\bibitem[Bush, 1945]{bush1945asmaythink}
-Bush, V. (1945).
-\newblock As we may think.
-\newblock {\em The Atlantic Monthly}, 176(1):101--108.
-
 \bibitem[Cheerla, 2025]{cheerla2025enterpriserag}
 Cheerla, C. (2025).
 \newblock Advancing retrieval-augmented generation for structured enterprise
@@ -26,11 +21,6 @@ Chen, J., Lin, H., Han, X., and Sun, L. (2024).
 Cheng, Z. and Mastropaolo, A. (2026).
 \newblock An empirical study on the effects of system prompts in
   instruction-tuned models for code generation.
-
-\bibitem[Codd, 1970]{codd1970relational}
-Codd, E.~F. (1970).
-\newblock A relational model of data for large shared data banks.
-\newblock {\em Communications of the ACM}, 13(6):377--387.
 
 \bibitem[Edge et~al., 2024]{edge2024graphrag}
 Edge, D., Trinh, H., Cheng, N., Bradley, J., Chao, A., Mody, A., Truitt, S.,
@@ -137,6 +127,12 @@ Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N.,
 \newblock In {\em Advances in Neural Information Processing Systems (NeurIPS)},
   volume~33, pages 9459--9474.
 
+\bibitem[Lin, 2004]{lin2004rouge}
+Lin, C.-Y. (2004).
+\newblock {ROUGE}: A package for automatic evaluation of summaries.
+\newblock In {\em Text Summarization Branches Out}, pages 74--81, Barcelona,
+  Spain. Association for Computational Linguistics.
+
 \bibitem[Lin et~al., 2025]{lin2025llminference}
 Lin, Y.-H., Chen, Q.-H., Cheng, Y.-J., Zhang, J.-R., Liu, Y.-H., Hsia, L.-Y.,
   and Chen, Y.-N. (2025).
@@ -195,6 +191,13 @@ Pan, J.~J., Wang, J., and Li, G. (2024).
 Pandya, H.~A. and Bhatt, B.~S. (2021).
 \newblock Question answering survey: Directions, challenges, datasets,
   evaluation matrices.
+
+\bibitem[Papineni et~al., 2002]{papineni2002bleu}
+Papineni, K., Roukos, S., Ward, T., and Zhu, W.-J. (2002).
+\newblock {BLEU}: A method for automatic evaluation of machine translation.
+\newblock In {\em Proceedings of the 40th Annual Meeting of the Association for
+  Computational Linguistics}, pages 311--318, Philadelphia, Pennsylvania, USA.
+  Association for Computational Linguistics.
 
 \bibitem[Pearl, 2009]{pearl2009causality}
 Pearl, J. (2009).

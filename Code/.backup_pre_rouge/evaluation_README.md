@@ -25,8 +25,7 @@ measures. It needs no API key, so it is the fast way to check the plumbing.
 |---------|-----|-----------------|
 | faithfulness | judged | claims the passages do not support |
 | relevance | judged + encoder | answers that drift, hedge or pad |
-| ROUGE-L | program | correctness: longest-common-subsequence overlap with the references |
-| BLEU-1 | program | correctness: clipped unigram overlap with the references |
+| correctness | program | disagreement with the reference answer |
 | adherence | program | rule-checkable requirements of the prompt not met |
 
 Each returns a `MetricResult` carrying `score`, the rate on [0,1] with higher
@@ -45,29 +44,24 @@ breach. A refusal when evidence was supplied scores zero. (The abstention branch
 that scored a refusal as *correct* applied to the empty evidence level, which
 this design no longer runs.)
 
-**Correctness** is measured twice, with the two metrics MS MARCO's free-form
-answer task is scored with and that Lewis et al. (2020) report on it. Both are
-computed against *every* well-formed answer of the query (`references` in
-`queries.json`, attached by the scoring runner), after lowercasing, removing
-citation markers such as `[3]`, and turning punctuation into spaces. Citation
-markers are removed because baseline B asks for them; left in, they would lower
-B's scores for obeying its prompt.
+**Correctness** checks whether the normalised answer contains the normalised
+reference, rather than matching it exactly. MS MARCO's well-formed answers are
+complete sentences, so exact match would report verbosity as error. Token F1 and
+exact match are kept in `detail`.
 
-- **ROUGE-L**: LCS precision and recall, each maximised over the references,
-  combined with beta = 1.2, as the MS MARCO / coco-caption scorer does.
-- **BLEU-1**: sentence-level unigram precision, each token clipped at its largest
-  count in any one reference, times the brevity penalty against the reference
-  closest in length. The official scorer is corpus-level; a per-answer value is
-  needed for the estimand, so the sentence-level form is used.
+Containment **floors on this data**: mean 0.053, exact match 0.012, and 849 of
+6,768 generations score zero while their token F1 is above 0.6. It cannot see
+through a paraphrase, and paraphrase is what the rewordings change. So token F1
+is reported beside it as a *secondary* measure, `correctness_f1` in
+`analysis.SECONDARY`, read from `detail["token_f1"]`.
 
-Both are proxies: they reward overlapping words, not truth, and they favour
-answers close in length to the reference.
-
-The measure fixed before the run was containment of the first reference. It
-floored (mean 0.052) because the references are full sentences, and was
-replaced after inspection by the dataset's own metrics. The thesis states this
-in Section 5.8. `python3 -m evaluation.run_scoring --update-program` re-scores
-the program measures of an existing `scores.jsonl` without re-judging.
+Secondary measures are estimated by the same estimator and corrected within
+their own family of nine rewordings, and they are **excluded from the verdict on
+H0**. The decision stays on the four measures fixed before the run. Swapping in
+the measure that gave the clearer answer would make the hypothesis depend on the
+result; reporting both does not. Where they disagree, the disagreement is a fact
+about the instrument: a null on containment means containment could not detect a
+change, not that none happened.
 
 **Adherence** is prompt-level strict: one failed requirement fails the whole
 generation. Only rule-verifiable requirements are checked, and only those the
@@ -84,8 +78,7 @@ measures it. Register, comprehension and concision-without-a-threshold are not
 decidable by rule and are recorded in `detail["not_checked"]`.
 
 Because adherence is undefined for baseline A, `tau_hat` for adherence is
-reported for baselines B and C only. Every other measure is estimated for all
-nine rewordings. An inapplicable measure is skipped rather
+reported for baselines B and C only. An inapplicable measure is skipped rather
 than counted as satisfied, which would put a free point into the mean.
 
 ## The judge
@@ -115,9 +108,9 @@ not been done**, so the judged measures currently carry no reliability estimate.
 
 ## The analysis
 
-There is **no cost function**. The five measures are never combined. Each is
+There is **no cost function**. The four measures are never combined. Each is
 used in turn as the measured property M of Equation 4.12, so a rewording gets
-five effect estimates rather than one pooled score. Combining them would hide
+four effect estimates rather than one pooled score. Combining them would hide
 direction: a rewording that improved grounding and damaged relevance equally
 would average to no effect.
 
@@ -151,8 +144,8 @@ thesis quotes. It changes no estimate and not the verdict; each check asks
 whether a conclusion depends on a choice that could have been made otherwise.
 
 1. **Holm family.** Confirmatory correction is per measure per evidence level
-   (10 families). Correcting all estimates as one family is the strictest
-   alternative; H0 is still rejected under it.
+   (8 families). As one family of 66, 9 of the 12 effects survive and H0 is
+   still rejected.
 2. **C justification rule.** The rule as run also accepts attribution phrases
    (`based on`, `according to`, `as the passage`). With only `because`,
    `since`, `therefore`, the C1 and C2 effects grow; C3 reverses sign, so the
@@ -176,12 +169,13 @@ temperature 0. Neither affects adherence, which is decided by rule.
 
     query_id, category, query_type, condition, evidence_level, depth, cell, repeat
     generator_model, judge_model
-    metrics    faithfulness, relevance, rouge_l, bleu1, adherence:
-               breaches, score, applicable, detail
+    metrics    per measure: breaches, score, applicable, detail
 
 `runs/results.json`:
 
     cell_means          mean of each measure per condition per cell
     tau_hat             per cell and measure: tau, se, ci, p, p_holm,
                         significant, n
+    tau_hat_secondary   the same, for the secondary measures
     hypothesis          h0_rejected, how many estimates, which survived
+                        (computed from `tau_hat` alone)

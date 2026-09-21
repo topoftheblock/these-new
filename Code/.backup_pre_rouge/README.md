@@ -110,7 +110,7 @@ Run these from inside `Code/`. Everything is written to `runs/`.
     runs/retrieval_k5.json     top-5 per query, plus that depth's gate result
     runs/retrieval_k10.json    top-10 per query, plus that depth's gate result
     runs/generations.jsonl     one line per generation, 18,000 on a full run
-    runs/scores.jsonl          per-generation scores for the five measures
+    runs/scores.jsonl          per-generation scores for the four measures
     runs/results.json          cell means, tau_hat with 95% CIs, the verdict
     runs/agreement.json        Cohen's kappa per condition
 
@@ -160,10 +160,10 @@ between different prompts.
 **One encoder, one index, built once.** Rebuilding the index mid-run would
 change what is retrieved and break the comparison between conditions.
 
-**Correctness is MS MARCO's own metrics.** ROUGE-L and BLEU-1 against every
-well-formed reference, citation markers removed. They replaced containment
-of the first reference, which floored on sentence-length references; the thesis
-discloses the switch. See `evaluation/README.md`.
+**The decision is made on the measures fixed before the run.** Containment
+correctness floors on this data, so token F1 is reported beside it as a
+secondary measure. Secondary measures never enter the verdict on H0, and
+`verify.py` fails if one does. See `evaluation/README.md`.
 
 **Adherence is checked per baseline.** A condition is held only to what its own
 prompt states. Baseline A states only grounding, which faithfulness already

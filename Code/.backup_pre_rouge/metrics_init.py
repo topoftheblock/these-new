@@ -1,29 +1,27 @@
 """
-The measures.
+The four measures.
 
-Two are computed by program for correctness, one by rule for adherence, and two
-are judged:
+Two are computed by program and two are judged:
 
 ============== ========= ==============================================
 faithfulness   judged    claims traceable to the supplied passages
 relevance      judged    answer addresses the question asked
-rouge_l        program   correctness: LCS overlap with the references
-bleu1          program   correctness: unigram overlap with the references
+correctness    program   agreement with the annotated reference
 adherence      program   every rule-verifiable requirement satisfied
 ============== ========= ==============================================
 
-Each returns a :class:`~evaluation.metrics.base.MetricResult` whose ``score``
-is the value the analysis reads as M(Y).
+Each returns a :class:`~evaluation.metrics.base.MetricResult` carrying the
+breach count that enters the cost and the rate that goes in the results table.
 """
 
 from .adherence import Adherence
 from .base import Metric, MetricResult
-from .correctness import Bleu1, RougeL
+from .correctness import Correctness
 from .faithfulness import Faithfulness
 from .relevance import AnswerRelevance
 
-#: the order the measures are reported in
-ORDER = ("faithfulness", "relevance", "rouge_l", "bleu1", "adherence")
+#: the order the cost function expects, matching n_1 to n_4 in the thesis
+ORDER = ("faithfulness", "relevance", "correctness", "adherence")
 
 __all__ = ["Metric", "MetricResult", "Faithfulness", "AnswerRelevance",
-           "RougeL", "Bleu1", "Adherence", "ORDER"]
+           "Correctness", "Adherence", "ORDER"]

@@ -93,7 +93,6 @@ def build_corpus(sampled, spare_texts, rng,
             # incidental property of whatever was sampled.
             "query_type": row.get("query_type"),
             "answer": row["answer"],
-            "references": row["references"],
             "gold_ids": gold_ids,
         })
 

@@ -6,8 +6,7 @@ samples the query set under a fixed seed, and writes two files to ``runs/``:
 
 ``queries.json``
     The query set. Each entry has ``query_id``, ``query``, ``category``,
-    the first well-formed ``answer``, every well-formed answer in
-    ``references`` (correctness is scored against all of them), and
+    the well-formed ``answer`` used as the correctness reference, and
     ``gold_ids`` pointing into the corpus.
 
 ``corpus.json``
@@ -69,8 +68,6 @@ def collect(path):
             "category": label,
             "query_type": row.get("query_type") or UNKNOWN_TYPE,
             "answer": well_formed_answers(row)[0],
-            # every well-formed answer: correctness is scored against all of them
-            "references": well_formed_answers(row),
             "gold": gold_passages(row),
             "others": others,             # distractors, if this row is not sampled
         })
