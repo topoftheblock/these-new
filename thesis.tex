@@ -338,7 +338,7 @@ from what was retrieved. Recent variants depart from this procedure and can be g
 \end{description}
 
 Each variant
-changes the retrieval function $R$, the generation function $G$, or the number of times they are applied. All of them, however, are still built from a retrieval step and a generation step. All of them still produce a distribution over outputs.
+changes the retrieval function $R$, the generation function $G$, or the number of times they are applied. All of them, however, are still built from a retrieval step and a generation step. 
 
 This thesis implements only the simplest architecture and none of the variants above.
 The reason is methodological: the objective is to estimate the causal effect of
@@ -347,9 +347,7 @@ $\mathrm{do}(S = S_{b,j})$. Because the prompt is set by intervention and
 everything else is held fixed, its total effect on the output can be estimated
 in any architecture. The simple architecture, however, makes the effect interpretable. In this architecture, the system prompt reaches the answer along a single path, through the
 generator, so the effect is an effect on generation. In the variants above the
-prompt, or the text it shapes, can also change what is retrieved, how often, or from where. The measured effect would then conflate a change in generation with a
-change in retrieval.
-
+prompt, or the text it shapes, can also change what is retrieved, how often, or from where. 
 \chapter{Literature Review}
 
 This chapter reviews two
@@ -382,7 +380,7 @@ matching).
 
 \citet{ying2024intuitive} study conflict
 between a model's parametric memory and the evidence supplied in its context, and
-classify models as intuitive or dependent according to which source they favour. Deferring to the supplied evidence is the behaviour a grounding instruction aims to secure, and it is the property that faithfulness measures in Chapter 5.
+classify models as intuitive or dependent according to which source they favour. 
 
 Two conclusions follow. The first, supported directly by the three system-prompt studies \citep{cheng2026systemprompts,mu2025robustness,zheng2024helpful}, is that the system prompt is a behavioural control variable whose effect can be isolated and measured in a properly controlled setup.
 The second is that model behaviour is sensitive to changes in the prompt that preserve its meaning. This holds whether the change is a rephrasing of the instruction \citep{zhuo2024prosa}, a perturbation as small as a trailing space \citep{salinas2024butterfly}, or a change of formatting alone \citep{sclar2024quantifying}. The apparent size of such an effect, however, depends on how it is measured \citep{hua2025flaw}. This second conclusion is established
@@ -423,12 +421,7 @@ shows that RAG outputs contain claims the retrieved context does not support,
 which is the failure the faithfulness measure of this thesis captures.
 
 Prompts have been compared within RAG research, but as a design choice rather
-than as the object of study. \citet{mao2024fitrag}, for example, compare a simple
-prompt, a chain-of-thought prompt and their own instruction and report that
-theirs gives the highest accuracy. Such comparisons change what the prompt asks
-for, and they are made to choose a prompt, not to measure how the system responds
-to its wording.
-
+than as the object of study \citet{mao2024fitrag}.
 
 \section{Synthesis and Research Gap}
 
@@ -521,7 +514,7 @@ Equation~\eqref{eq:token} defines the generator used in this thesis. It is here 
 p_{\mathrm{RAG}}(y \mid q,D,S) \;=\; \prod_{i=1}^{L} p_\theta\bigl(y_i \mid q,C(q,D),y_{1:i-1},S\bigr),
 \end{equation}
 
-where $C(q,D)$ is the context retrieved for $q$ from $D$. Because the retriever is deterministic, the context is a function of the query and the knowledge base. The only randomness left in Equation~\eqref{eq:ragdist} is that of decoding. Chapter 5 also sets the context directly, which is written $\mathrm{do}(C = c)$: the generator then conditions on $c$ in place of $C(q,D)$.
+where $C(q,D)$ is the context retrieved for $q$ from $D$. Because the retriever is deterministic, the context is a function of the query and the knowledge base. The only randomness left in Equation~\eqref{eq:ragdist} is that of decoding. 
 
 \section{The System Prompt: Requirements and Wording}
 \label{sec:promptreq}
@@ -541,9 +534,9 @@ The second component is the wording. For each requirement set, four wordings are
 
 This thesis follows their approach of varying the system prompt along linguistically defined, meaning-preserving dimensions one at a time. Writing $S_{b,j}$ for the $j$-th wording of baseline $b$:
 \begin{description}
-    \item[$S_{b,0} = \rho(\Sigma_b,\varphi_0)$, canonical.] The published form, unchanged. The reference the other three are measured against.
+    \item[$S_{b,0} = \rho(\Sigma_b,\varphi_0)$, canonical.] The published form, unchanged.
     \item[$S_{b,1} = \rho(\Sigma_b,\varphi_1)$, lexical.] Synonym substitution with clause order and voice held fixed.
-    \item[$S_{b,2} = \rho(\Sigma_b,\varphi_2)$, syntactic.] Clause reordering and conversion from active to passive voice, with the vocabulary kept as far as English allows.
+    \item[$S_{b,2} = \rho(\Sigma_b,\varphi_2)$, syntactic.] Clause reordering and conversion from active to passive voice.
     \item[$S_{b,3} = \rho(\Sigma_b,\varphi_3)$, format.] The same wording laid out as a list rather than as prose.
 
 \end{description}
@@ -602,7 +595,7 @@ The variants for baselines $B$ and $C$ are written on the same principle and are
 
 For the effect of the prompt to be interpretable, the following are held constant across conditions. Each query is used unchanged in every condition in which it is run, so that every comparison is made within a query rather than between queries, and the knowledge base is fixed at $D = D_0$. The retriever and its parameters are fixed at $\eta = \eta_0$, and the language model at $\theta = \theta_0$.
 
-The generator's output distribution, by contrast, is deliberately not held fixed. Although $\theta$ stays fixed, the conditional distribution it defines may differ between $S_{b,0}$ and $S_{b,j}$. That difference is the effect the experiment is built to measure. Decoding is also stochastic, so the same configuration can produce different outputs from one run to the next. The term $\varepsilon$ captures that variation:
+Decoding is also stochastic, so the same configuration can produce different outputs from one run to the next. The term $\varepsilon$ captures that variation:
 
 \begin{equation}
 \label{eq:noise}
@@ -619,13 +612,13 @@ Setting the system prompt to a fixed value is an intervention, written $\mathrm{
 Y \sim p_{\mathrm{RAG}}(y \mid q,D,S_{b,j}).
 \end{equation}
 
-For one query the effect of the prompt is the difference in the expected value of the measured property $M(Y)$ of Equation~\eqref{eq:potential} between the two conditions. That difference is not, however, the quantity of interest. A prompt that improves the answer to one question and degrades the answer to the next shows no systematic effect. A difference observed on a single input cannot be separated from the particular difficulty, phrasing or subject matter of that input. The research question concerns the behaviour of the system on the queries it will actually encounter. The effect therefore has to be defined as an average over the distribution from which queries are drawn. Writing $P_{\mathcal{Q}}$ for that distribution over the query space $\mathcal{Q}$, the causal effect of prompt condition $S_{b,j}$ relative to the canonical form $S_{b,0}$ of the same baseline is
+For one query the effect of the prompt is the difference in the expected value of the measured property $M(Y)$ of Equation~\eqref{eq:potential} between the two conditions. The research question concerns the behaviour of the system on the queries it will actually encounter. The effect therefore has to be defined as an average over the distribution from which queries are drawn. Writing $P_{\mathcal{Q}}$ for that distribution over the query space $\mathcal{Q}$, the causal effect of prompt condition $S_{b,j}$ relative to the canonical form $S_{b,0}$ of the same baseline is
 \begin{equation}
 \label{eq:estimand}
 \tau_{b,j} \;=\; \mathbb{E}_{q \sim P_{\mathcal{Q}}}\Bigl[\; \mathbb{E}_{Y \sim p_{\mathrm{RAG}}(\cdot \mid q,D,S_{b,j})}\bigl[M(Y)\bigr] \;-\; \mathbb{E}_{Y \sim p_{\mathrm{RAG}}(\cdot \mid q,D,S_{b,0})}\bigl[M(Y)\bigr] \;\Bigr],
 \end{equation}
 
-which connects the probability model of Section~\ref{sec:ragdist} directly to the quantity Chapter 5 estimates. There is one such effect for every rewording, every measure $M$ and every setting of the context; the indices for the last two are omitted where they are clear from the surrounding text.
+which connects the probability model of Section~\ref{sec:ragdist} directly to the quantity Chapter 5 estimates. 
 
 Equation~\eqref{eq:estimand} is an average treatment effect in the standard sense: the query plays the role of the unit, the prompt condition the role of the treatment, and $\tau_{b,j}$ the mean over units of the difference between the two treatments. The expectations are nested: the inner expectation averages over the randomness of decoding at a fixed query and a fixed context, while the outer averages over the queries themselves.
 
@@ -640,14 +633,14 @@ $D$ and the query set are instantiated from an established question-answer datas
 
 The collection is built from queries sampled from Bing search logs, with candidate passages retrieved for each query and free-form answers written by human judges. MS MARCO provides the queries $q$, the documents that populate $D$, and, through its annotations, the reference answers $A_q$ and the passages the annotators marked as supporting them.
 
-What it does not provide is a definition of a good answer. An annotation records a reference answer; it says nothing about whether an answer is grounded in the evidence actually retrieved, whether it addresses the question directly, or whether it obeys the requirements the system prompt states. 
+What it does not provide is a definition of a good answer. 
+
 \section{What Counts as a Good Answer}
 \label{sec:goodanswer}
 Answer quality in a retrieval-augmented system comprises several properties that can fail independently of one another. The first is groundedness: an answer should rest on the documents the retriever actually supplied. The second is relevance: an answer should address the question that was asked, and address it directly. The third is correctness: an answer should agree with the reference answer recorded in the dataset, which is a different demand from the first and is treated separately here for the reason given below. The fourth is instruction adherence: whatever the system prompt asks for should be visible in the output itself, whether in length, in form, or in the handling of missing evidence. Instruction adherence is the property through which a prompt is meant to act, although a prompt can also change an answer in ways it did not ask for.
 
 Groundedness and correctness are kept apart deliberately, because collapsing them would conceal the failure this thesis is concerned with. The retrieved context is neither complete nor guaranteed to be free of error. An answer can therefore be correct while ignoring the evidence entirely, drawing instead on what the generator already holds in its parameters. It can also use the evidence faithfully and still be wrong, because the evidence was wrong. A high correctness score alone would reveal nothing about whether retrieval was used at all, and the use of retrieval is exactly what a system prompt is supposed to govern.
 
-All four are properties of the text the generator produces. 
 \chapter{Experimental Setup}
 
 This chapter turns that model into a concrete experiment.
@@ -664,7 +657,6 @@ Wording refers to how the prompt is written: which words are used, how the sente
     \item[$H_1$.] At least one rewording changes answer quality: $\tau_{b,j} \neq 0$ for some rewording in some baseline on some measure at some evidence level.
 \end{description}
 
-A secondary question is whether the answer to the main question depends on the quality of the evidence. Does a rewording that changes behaviour when the generator is given only the supporting passages do the same when it is given the retriever's actual output?
 
 \section{Overview of the Experiment}
 \label{sec:overview}
@@ -685,7 +677,7 @@ Embedding model & \texttt{all-mpnet-base-v2} \citep{reimers2019sbert}, mean pool
 Vector index & FAISS flat inner-product index, exact search \\
 Retrieval depth $K$ & 10 \\
 Generator $\theta$ & \texttt{gpt-4o-mini} \citep{openai2024gpt4omini} via the chat completions API \\
-Decoding & temperature $1.0$ (the API default), at most 256 new tokens \\
+Decoding & temperature $1.0$ (the API default) \\
 Judge & \texttt{gpt-4.1-mini} \citep{openai2025gpt41}, temperature $0$, fixed prompts \\
 Query set & 100 MS MARCO queries, seed 20260904 \\
 Repetitions $n$ & 3 per cell \\
@@ -830,7 +822,7 @@ This yields twelve conditions: three baselines in four wordings each. They are w
 
 \paragraph{Independent variable.} The wording $j$ of the system prompt for each baseline $b$. 
 
-\paragraph{Dependent variable.} The quality of the answer, as scored by the measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence, with correctness measured by three metrics: ROUGE-L, BLEU-1 and BERTScore. Each of the six is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated six times, once per measure. All six take part in the test of $H_0$. They are reported separately.
+\paragraph{Dependent variable.} The quality of the answer, as scored by the measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence, with correctness measured by three metrics: ROUGE-L, BLEU-1 and BERTScore. Each of the six is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated six times. All six take part in the test of $H_0$. They are reported separately.
 
 \paragraph{Controlled factor.}  The context $C$ passed to the generator is set directly, as the intervention $\mathrm{do}(C = c_{ie})$ of Section~\ref{sec:ragdist}, at two evidence levels $e$:
 \begin{description}
@@ -901,14 +893,13 @@ Each property is estimated by one measure, except correctness, which is estimate
 
 \subsection{Six Measures for Four Properties}
 
-\paragraph{Faithfulness.} Whether every claim in the answer can be traced to a supplied passage. It is scored reference-free, after \citet{es2023ragas}, in two steps. First the judge (Section~\ref{sec:judge}) breaks the answer into atomic factual claims. Then, for each claim, the judge decides whether the passages state it explicitly. The score is the fraction of claims that are supported. Every one of the twelve conditions directs the model to the supplied passages, and baseline $B$ and wording C3 restrict it to them. Faithfulness shows whether the answer in fact stays within them. 
+\paragraph{Faithfulness.} Whether every claim in the answer can be traced to a supplied passage. It is scored reference-free, after \citet{es2023ragas}, in two steps. First the judge (Section~\ref{sec:judge}) breaks the answer into atomic factual claims. Then, for each claim, the judge decides whether the passages state it explicitly.  
 
 \paragraph{Answer relevance.} Whether the answer addresses the question actually asked. A prompt can degrade an answer without making it false. Relevance is scored reference-free, following \citet{es2023ragas}: the judge generates three questions to which the answer would be a suitable response. The score is the mean cosine similarity between these questions and the original question, computed in the embedding space of the retrieval encoder. 
 
-\paragraph{Correctness.} Whether the answer agrees with the reference answers $A_q$. It is measured with the two metrics that MS MARCO uses for its free-form answers \citep{nguyen2016msmarco} and that \citet{lewis2020rag} report on this task: ROUGE-L \citep{lin2004rouge} and BLEU-1 \citep{papineni2002bleu}. Both compare the answer with the references word by word. Before scoring, the text is lowercased and punctuation is replaced by spaces. Citation markers such as \texttt{[3]} are also removed from the answer. Baseline $B$ asks for them, and they would otherwise penalise its answers for following the prompt. ROUGE-L is the F-measure based on the longest common subsequence of the answer and the reference. BLEU-1 is the share of the answer's words that also occur in a reference. Each word is counted at most as often as it appears in any single reference. The result is multiplied by a brevity penalty when the answer is shorter than the reference closest to it in length. The third metric, BERTScore \citep{zhang2020bertscore}, embeds the answer and the reference with a pretrained encoder, matches every word of one to the most similar word of the other by the cosine of their embeddings, and combines the two directions into an F1 score. It is computed with the standard settings for English: the encoder RoBERTa-large \citep{liu2019roberta}, its 17th layer, and rescaling with the published baseline, so that the scores span an interpretable range.
+\paragraph{Correctness.} Whether the answer agrees with the reference answers $A_q$. It is measured with the two metrics that MS MARCO uses for its free-form answers \citep{nguyen2016msmarco} and that \citet{lewis2020rag} report on this task: ROUGE-L \citep{lin2004rouge} and BLEU-1 \citep{papineni2002bleu}. Both compare the answer with the references word by word. Before scoring, the text is lowercased and punctuation is replaced by spaces. Citation markers such as \texttt{[3]} are also removed from the answer. Baseline $B$ asks for them, and they would otherwise penalise its answers for following the prompt. ROUGE-L is the F-measure based on the longest common subsequence of the answer and the reference. BLEU-1 is the share of the answer's words that also occur in a reference. Each word is counted at most as often as it appears in any single reference. The result is multiplied by a brevity penalty when the answer is shorter than the reference closest to it in length. The third metric, BERTScore \citep{zhang2020bertscore}, embeds the answer and the reference with a pretrained encoder, matches every word of one to the most similar word of the other by the cosine of their embeddings, and combines the two directions into an F1 score. It is computed with the standard settings for English \citep{liu2019roberta}.
 
-
-\paragraph{Instruction adherence.} Whether the answer complies with the instructions in the prompt. It is scored as strict accuracy in the sense of \citet{zhou2023ifeval}: an answer is adherent only if it satisfies every checked requirement. The score is binary. Only requirements that can be decided by rule are checked; tone, concision and understanding cannot, so the score covers only part of what a prompt requires. For baseline $B$ the rule parses the citation markers and checks that every sentence carries between one and three of them, which is what the prompt asks for. For baseline $C$ the rule checks that the answer gives a justification. It accepts three kinds of marker: (i) explanatory phrases, namely the causal connectives \textit{because}, \textit{since} and \textit{therefore}, the phrases \textit{this is why} and \textit{the reason}, and three source references (\textit{as the passage}, \textit{according to}, \textit{based on}); (ii) a section labelled \textit{Explanation:}, \textit{Justification:} or \textit{Reason:}; and (iii) a statement of choice such as \textit{I chose} or \textit{this answer was selected}. The rule accepts the vocabulary of all four wordings of $C$ alike. 
+\paragraph{Instruction adherence.} Whether the answer complies with the instructions in the prompt. It is scored as strict accuracy in the sense of \citet{zhou2023ifeval}: an answer is adherent only if it satisfies every checked requirement. The score is binary. 
 \subsection{The Judge}
 \label{sec:judge}
 
@@ -924,9 +915,8 @@ For one measure $M$, one evidence level $e$ and one baseline $b$, the estimate o
 \label{eq:tauhat}
 \hat{\tau}_{b,j} \;=\; \frac{1}{|I|} \sum_{i \in I} \Bigl( \bar{M}_{ij} - \bar{M}_{i0} \Bigr), \qquad \bar{M}_{ij} \;=\; \frac{1}{n} \sum_{r=1}^{n} M\bigl(y_{ijer}\bigr),
 \end{equation}
-where $I$ is the set of queries in that cell and $\bar{M}_{ij}$ is the mean of the measure over the $n$ repetitions of query $i$ under condition $S_{b,j}$. Equation~\eqref{eq:tauhat} is the sample version of Equation~\eqref{eq:estimand}. The inner average estimates the expectation over decoding, and the outer one the expectation over queries. The repetitions are averaged first, so that each query contributes one difference. Treating them as separate observations would overstate the sample size.
+where $I$ is the set of queries and $\bar{M}_{ij}$ is the mean of the measure over the $n$ repetitions of query $i$ under condition $S_{b,j}$. Equation~\eqref{eq:tauhat} is the sample version of Equation~\eqref{eq:estimand}. The inner average estimates the expectation over decoding, and the outer one the expectation over queries. The repetitions are averaged first, so that each query contributes one difference. 
 
-The confidence interval of $\hat{\tau}_{b,j}$ is the $t$-interval of the mean paired difference. Its $p$-value comes from a one-sample $t$-test of that difference against zero. Because $H_1$ is an at-least-one claim, the $p$-values are Holm-adjusted across the rewordings of each measure and evidence level. With 100 and 88 queries, the design has 80\% power to detect a standardised paired effect of about $0.37$ to $0.39$.
 
 \chapter{Results and Discussion}
 \label{ch:results}
@@ -994,14 +984,14 @@ retrieved & 67 & 80 & 64 & 68 & 112 & 93 & 104 & 99 & 140 & 136 & 119 & 88 \\
 \end{tabular}
 \end{table}
 
-The measures differ sharply in how sensitive they are to the prompt. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$. Adherence runs from $0.083$ to $0.943$. Most of that range lies between the baselines, since baseline $B$ imposes a much stricter requirement than baseline $C$. Within baseline $B$, however, adherence still spans more than twenty percentage points across wordings that ask for the same thing. ROUGE-L runs from $0.201$ to $0.550$, BLEU-1 from $0.119$ to $0.505$ and BERTScore from $0.276$ to $0.610$. All three are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose answers are the longest, because they must include a justification.
+The measures differ sharply in how sensitive they are to the prompt. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$. Adherence runs from $0.083$ to $0.943$. ROUGE-L runs from $0.201$ to $0.550$, BLEU-1 from $0.119$ to $0.505$ and BERTScore from $0.276$ to $0.610$. All three are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose answers are the longest, because they must include a justification.
 
 Faithfulness is higher at the retrieved level than at the gold level in every condition, although the gold passages are the better evidence.
 
 \section{The Effect of Rewording}
 \label{sec:effects}
 
-In the tables that follow, a star marks an estimate that is significant after the Holm adjustment of Section~\ref{sec:analysis}; the intervals are unadjusted.
+In the tables that follow, a star marks an estimate that is significant after the Holm adjustment.
 
 \subsection{Instruction Adherence}
 
@@ -1026,11 +1016,11 @@ C3 format    & $-0.020$\phantom{*} & $[-0.067, +0.027]$ & $+0.008$\phantom{*} & 
 \end{tabular}
 \end{table}
 
-Eight of the twelve estimates are significant. Every rewording of baseline $B$ raises adherence at both evidence levels, by 7 to 26 percentage points. Of the rewordings of $C$, only the syntactic one, C2, has a significant effect: it lowers adherence by 9 and 12 percentage points at the gold and retrieved levels. C1 and C3 have no significant effect.
+Eight of the twelve estimates are significant. Every rewording of baseline $B$ raises adherence at both evidence levels. Of the rewordings of $C$, only the syntactic one, C2, has a significant effect. C1 and C3 have no significant effect.
 
-The effect on baseline $B$ can be traced in the answers. The rule fails an answer when any of its sentences carries no citation. Under the canonical wording B0 the first sentence of an answer is uncited in 77\% of the gold answers and in 90\% of the retrieved ones: the model tends to open with an uncited summary and cite only afterwards. Under B1 these shares fall to 53\% and 63\%. B1 answers are also shorter, with 2.1 sentences on average against 2.5 at the gold level. Adherence rises because the answers contain fewer sentences, and fewer of those sentences lack a citation. The prompt of B1 differs from B0 only in its words, for example \textit{Invariably reference every factual assertion} instead of \textit{Always cite for any factual claim}. The choice of words alone therefore changed how often the model cited sources from the first sentence onward. Unlike the lexical perturbations of \citet{kostic2026samemeaning}, the lexical rewording B1 improved rather than degraded performance.
+Regarding $B$ the rule fails an answer when any of its sentences carries no citation. Under the canonical wording B0 the first sentence of an answer is uncited in 77\% of the gold answers and in 90\% of the retrieved ones. Under B1 these shares fall to 53\% and 63\%. 
 
-For baseline $C$, the rewording that lowers adherence is the one that turns the instructions into plain passive statements, such as \textit{The answer is then given, with an explanation of why it is chosen}. A plausible explanation is that it reads as a description rather than a request, and is therefore followed less often. This fits the concern raised in Section~\ref{sec:conditions}, that such statements may state a requirement less strongly than the canonical imperative. C1, whose wording asks the model to \textit{justify} its answer, is followed as often as C0: its answers contain a justification equally often, usually in a section labelled \textit{Justification:}, mirroring the verb of its instruction.
+For baseline $C$, the rewording that lowers adherence is the one that turns the instructions into plain passive statements, such as \textit{The answer is then given, with an explanation of why it is chosen}. A plausible explanation is that it reads as a description rather than a request, and is therefore followed less often. This fits the concern raised in Section~\ref{sec:conditions}, that such statements may state a requirement less strongly than the canonical imperative.
 
 \subsection{Faithfulness}
 
@@ -1113,7 +1103,7 @@ C3 format    & $+0.037$* & $[+0.025, +0.049]$ & $+0.061$* & $[+0.047, +0.076]$ \
 \end{tabular}
 \end{table}
 
-Every rewording of baseline $B$ raises correctness, by $0.034$ to $0.064$. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most, by $0.050$ to $0.066$. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it: by $0.022$ on ROUGE-L and $0.031$ on BLEU-1 at the gold level, and by $0.018$ on ROUGE-L at the retrieved level. The BLEU-1 estimate there, $-0.017$, is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. BERTScore finds one further effect: the syntactic rewording A2 raises it by $0.013$ at the gold level. The effects are small compared with those on adherence: a few points against up to 26 points.
+Every rewording of baseline $B$ raises correctness. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it. The BLEU-1 estimate there is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. 
 
 These effects track answer length. Every rewording that raised correctness produced shorter answers than its canonical form (Table~\ref{tab:length}), and A1, which lowered it, produced longer ones. A2, which raised BERTScore, produced slightly shorter answers as well. Across the eighteen comparisons, the change in mean length and the change in ROUGE-L have a correlation of $-0.79$, and for BERTScore the correlation is $-0.87$. The reason is that the references are short, so a shorter answer shares a larger fraction of its words, and of its meaning, with them. BERTScore is also affected, because its precision component penalises an answer for everything it says beyond the reference. The recall component of ROUGE-L alone, which measures how much of the reference an answer contains and does not penalise length, shows no significant gain for any rewording. The rewordings therefore changed how closely the answers matched the reference mainly by changing their length, not their content.
 
@@ -1124,11 +1114,9 @@ One hundred and two estimates were made across the six measures of Section~\ref{
 
 The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on correctness, where the effects are small and track answer length.
 
-The secondary question of Section~\ref{sec:goal} asked whether the answer to the main question depends on the quality of the evidence. The results give no indication that it does. Every rewording that changes adherence at one evidence level changes it at the other, in the same direction and by a similar amount: B1 gains $0.223$ on gold and $0.261$ on the retrieved context, and C2 loses $0.090$ and $0.125$. The correctness effects behave the same way: every rewording with a significant ROUGE-L effect at one level has one at the other. The same holds for BERTScore, except for the small effect of A2. The two levels use the same queries and prompts, so this is consistency across evidence levels rather than an independent replication.
-
 \section{Limitations}
 \label{sec:limits}
-Five limitations apply to these results. The first is the collection. Every figure is conditional on MS MARCO, whose queries are short and mostly factoid, and on a knowledge base that contains the gold passages of every query. The effects therefore suggest, but do not establish, what may be expected on other data. The second is the minimum effect size the design can detect: after adjustment, this is a standardised effect of about $0.37$ to $0.39$ (Section~\ref{sec:analysis}). A decoding temperature of $1.0$ increases the variation within a cell. Three repetitions per cell average out only part of it. As a result, a measure that showed no significant change is not thereby shown to be unaffected. The third concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The correctness effects track answer length in every baseline. The fourth concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fifth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
+Four limitations apply to these results. The first is the collection. Every figure is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
 
 
 \chapter{Conclusion and Future Work}
@@ -1138,27 +1126,18 @@ Five limitations apply to these results. The first is the collection. Every figu
 
 This thesis asked to what extent systematic changes in the system prompt influence the behaviour and outcomes of a RAG system when the user input, the knowledge base, the retrieval mechanism and the underlying language model are held fixed. It answered the question for one kind of change, a change of wording that leaves the requirements of the prompt unchanged.
 
-The answer is that wording matters. It mattered most for whether the answers complied with the prompt. Rewording the citation instruction of \citet{gao2023alce} raised the share of fully cited answers by up to 26 percentage points. Turning the instruction of \citet{mao2024fitrag} into passive statements lowered the share of justified answers by up to 12. Wording also changed the length of the answers, and thereby their agreement with the reference answer. It had no consistent effect on whether the answers stayed within the supplied passages or addressed the question. These results held at both evidence levels, that is, both with only the supporting passages and with the actual output of the retriever.
+The answer is that wording matters. It mattered most for whether the answers complied with the prompt. Rewording the citation instruction of \citet{gao2023alce} raised the share of fully cited answers. Turning the instruction of \citet{mao2024fitrag} into passive statements lowered the share of justified answers. Wording also changed the length of the answers, and thereby their agreement with the reference answer. It had no consistent effect on whether the answers stayed within the supplied passages or addressed the question. These results held at both evidence levels, that is, both with only the supporting passages and with the actual output of the retriever.
 
-Three points follow from this.
-
-The first concerns practice. A published prompt is not necessarily the best wording of its own requirements. For baseline $B$, the canonical form was followed least often of the four wordings. A prompt that is copied from a paper or a template should therefore be checked, and, where adherence matters, compared against rewordings of it before it is used.
-
-The second concerns evaluation. Measuring adherence by rule is fragile when the prompt itself is reworded. The model tends to reuse the words of its instruction. A rule that recognises only one wording's vocabulary would therefore count answers to a lexical rewording as non-compliant. Any study that varies the wording of an instruction has to check that its measures do not depend on that wording.
-
-The third concerns correctness. ROUGE-L, BLEU-1 and BERTScore all varied with answer length. On a dataset with short reference answers, a rise in these metrics after a change of prompt is primarily a sign that the answers became shorter. It is not by itself evidence that they became more correct.
-
-The contribution of this thesis is a controlled method for investigating this question. The formal model of Chapter 4 makes the system prompt an explicit variable of the generator and defines its effect as an average treatment effect over queries. The design of Chapter 5 separates what a prompt asks for from how it is worded, fixes everything else, sets the evidence directly, and pairs every comparison within a query. The same design can be reused with other prompts, models and datasets.
+The contribution of this thesis: The formal model of Chapter 4 makes the system prompt an explicit variable of the generator and defines its effect as an average treatment effect over queries. The design of Chapter 5 separates what a prompt asks for from how it is worded, fixes everything else, sets the evidence directly, and pairs every comparison within a query. The same design can be reused with other prompts, models and datasets.
 
 \section{Future Work}
-
-
+ 
 
 \paragraph{More generators.} Every result here comes from one model, \texttt{gpt-4o-mini}. Whether other models respond to the same rewordings in the same way remains an open question. Repeating the experiment with a second API model and an open model of a different size would show whether the effects are specific to the model or arise from the wording itself.
 
 \paragraph{Correctness beyond overlap.} The three correctness metrics compare wording and meaning with a reference but do not verify factual accuracy. A judge that decides whether an answer contains the fact stated in the reference, validated against human labels on a sample, would measure correctness independently of answer length.
 
-\paragraph{Other data.} MS MARCO has short, mostly factoid questions, and its knowledge base contains the supporting passages of every query. A dataset with longer answers, and an open collection in which the answer may be missing, would test whether the effects hold where retrieval is harder and where the prompt has to govern what the model does when the evidence does not suffice.
+\paragraph{Other data.}  A dataset with longer answers, and an open collection in which the answer may be missing, would test whether the effects hold where retrieval is harder and where the prompt has to govern what the model does when the evidence does not suffice.
 
 \bibliographystyle{apalike}
 \bibliography{thesis}
