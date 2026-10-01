@@ -642,9 +642,7 @@ Answer quality in a retrieval-augmented system comprises several properties that
 Groundedness and correctness are kept apart deliberately, because collapsing them would conceal the failure this thesis is concerned with. The retrieved context is neither complete nor guaranteed to be free of error. An answer can therefore be correct while ignoring the evidence entirely, drawing instead on what the generator already holds in its parameters. It can also use the evidence faithfully and still be wrong, because the evidence was wrong. A high correctness score alone would reveal nothing about whether retrieval was used at all, and the use of retrieval is exactly what a system prompt is supposed to govern.
 
 \chapter{Experimental Setup}
-
-This chapter turns that model into a concrete experiment.
-
+ 
 \section{Research Question and Hypothesis}
 \label{sec:goal}
 
@@ -851,7 +849,7 @@ Following Section~\ref{sec:knowledgebase}, both the knowledge base and the query
 
 \paragraph{The query set.} A total of $N_Q = 100$ queries are sampled from the same 12,467 rows. They fall into two categories. A row is \textit{single-passage} when exactly one of its passages is marked \texttt{is\_selected}, and \textit{multi-passage} when two or more are. Fifty queries are drawn from each category.
 
-Within each category the draw is balanced across MS MARCO's five intent types, \textsc{description}, \textsc{entity}, \textsc{location}, \textsc{numeric} and \textsc{person}, ten queries per type. The distribution within MS MARCO is uneven: on the well-formed rows \textsc{description} makes up 44\% and \textsc{person} 7\%. Of the 12,467 well-formed rows, 12,062 are single-passage and only 386 multi-passage. The remaining 19 rows have no passage marked and are not sampled.
+Within each category the draw is balanced across MS MARCO's five intent types, \textsc{description}, \textsc{entity}, \textsc{location}, \textsc{numeric} and \textsc{person}, ten queries per type. The distribution within MS MARCO is not uniform: on the well-formed rows \textsc{description} makes up 44\% and \textsc{person} 7\%. Of the 12,467 well-formed rows, 12,062 are single-passage and only 386 multi-passage. The remaining 19 rows have no passage marked and are not sampled.
 
 \section{Experimental Procedure}
 \label{sec:procedure}
@@ -991,7 +989,7 @@ Faithfulness is higher at the retrieved level than at the gold level in every co
 \section{The Effect of Rewording}
 \label{sec:effects}
 
-In the tables that follow, a star marks an estimate that is significant after the Holm adjustment.
+In the tables that follow, a star marks an estimate whose Holm-adjusted $p$-value is below $0.05$.\footnote{Each estimate $\hat{\tau}_{b,j}$ is tested with a one-sample $t$-test on its paired differences per query. With 102 tests at $\alpha = 0.05$, some would be significant by chance alone, so the $p$-values are adjusted by the procedure of \citet{holm1979}.} The 95\% intervals are not adjusted, so an interval can exclude zero although its estimate carries no star.
 
 \subsection{Instruction Adherence}
 
@@ -1110,13 +1108,13 @@ These effects track answer length. Every rewording that raised correctness produ
 \section{The Verdict on the Hypothesis}
 \label{sec:verdict}
 
-One hundred and two estimates were made across the six measures of Section~\ref{sec:metrics}, and forty-five of them are significant after adjustment: eight on adherence, thirty-six on the three correctness metrics and one on faithfulness. $H_0$ is therefore rejected. $H_1$, that at least one rewording changes answer quality, is supported: seven of the nine rewordings have a significant effect on at least one measure. A3 and C1 have no significant effect on any measure.
+One hundred and two estimates were made across the six measures of Section~\ref{sec:metrics}, and forty-five of them are significant after the Holm adjustment: eight on adherence, thirty-six on the three correctness metrics and one on faithfulness. $H_0$ is therefore rejected. $H_1$, that at least one rewording changes answer quality, is supported: seven of the nine rewordings have a significant effect on at least one measure. A3 and C1 have no significant effect on any measure.
 
 The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on correctness, where the effects are small and track answer length.
 
 \section{Limitations}
 \label{sec:limits}
-Four limitations apply to these results. The first is the collection. Every figure is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
+Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
 
 
 \chapter{Conclusion and Future Work}
