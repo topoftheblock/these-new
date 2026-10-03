@@ -112,8 +112,7 @@ randomness.\\
 
 The null hypothesis of
 equal behaviour across wordings is rejected. The clearest effects are on
-instruction adherence, which three rewordings raised by up to 26 percentage points and one
-lowered by up to 12. Correctness, measured by ROUGE-L, BLEU-1 and BERTScore, changed by a few percentage points, mostly because the answers changed in length. Faithfulness and answer relevance showed no consistent change. 
+instruction adherence. Correctness, measured by ROUGE-L, BLEU-1 and BERTScore, changed by a few percentage points, mostly because the answers changed in length. Faithfulness and answer relevance showed no consistent change. 
 
 
 \selectlanguage{english}
@@ -158,7 +157,7 @@ retrieved.
 
 \section{Thesis Structure}
 
-This thesis has seven chapters. Chapter 2 outlines why retrieval-augmented generation was developed and introduces the components of a
+This thesis has seven chapters. Chapter 2 outlines why RAG was developed and introduces the components of a
 RAG system. Chapter 3 reviews the literature and identifies the research gap. Chapter 4 builds the formal model used here. It takes the probabilistic formulation of \citet{lewis2020rag} and extends it so that the system prompt becomes an explicit variable of the generator. It also instantiates the knowledge base with an established dataset and defines what counts as a good answer.
 Chapter 5 describes the experimental setup. Chapter 6 presents and discusses the
 results and states the limits of the design. Chapter 7 draws conclusions and outlines directions for future work.
@@ -222,7 +221,7 @@ The notation follows \citet{lewis2020rag} for the RAG system and the interventio
 
 
 \section{Path towards RAG}
-Large language models generate text from parametric knowledge alone, that is, from information encoded in their weights during training
+Large language models (LLM) generate text from parametric knowledge alone, that is, from information encoded in their weights during training
 \citep{wang2024knowledgemechanisms}. This leads to two problems. First, a model's
 knowledge is fixed at the time its training data was collected. Information that appears later is unknown to the model unless the model is retrained or fine-tuned. Second, purely parametric models are prone to
 hallucination: nothing in their design forces an output to trace back to a
@@ -284,7 +283,7 @@ the order of the passages.
 \subsection{Generator}
 \label{sec:generator}
 
-The generator is the large language model that produces the final response. It generates text by autoregressive decoding. Its parameters, written
+The generator is the LLM that produces the final response. It generates text by autoregressive decoding. Its parameters, written
 $\theta$ in Chapter 4, encode what the model learned during training. This
 encoded knowledge is often called parametric memory.
 
@@ -351,7 +350,7 @@ prompt, or the text it shapes, can also change what is retrieved, how often, or 
 \chapter{Literature Review}
 
 This chapter reviews two
-bodies of literature relevant to how the system prompt affects such a system (prompt sensitivity in language models, and retrieval-augmented generation itself) and then identifies the gap between them.
+bodies of literature relevant to how the system prompt affects such a system (prompt sensitivity in language models, and RAG itself) and then identifies the gap between them.
 
 \section{Prompt Sensitivity and Instruction-Following in Language Models}
 \label{sec:promptlit}
@@ -387,9 +386,9 @@ The second is that model behaviour is sensitive to changes in the prompt that pr
 for the user-side prompt, and its transfer to the system prompt is an assumption rather than an empirical finding. The assumption is reasonable, since both texts reach the
 same decoder as tokens in the same context window, but it is untested.
 
-\section{Retrieval-Augmented Generation: Architecture, Evaluation, and Failure Modes}
+\section{RAG: Architecture, Evaluation, and Failure Modes}
 
-The second body of literature concerns retrieval-augmented generation itself.
+The second body of literature concerns RAG itself.
 \citet{lewis2020rag} introduce RAG, combining a
 retriever with a pretrained sequence-to-sequence generator, and show that a generator conditioned on retrieved evidence outperforms purely
 parametric models on knowledge-intensive tasks. Their probabilistic formulation,
@@ -528,7 +527,7 @@ S = \rho(\Sigma,\varphi), \qquad \Sigma = \{\sigma_1,\ldots,\sigma_m\}.
 
 This formulation separates what a prompt asks for from how it is worded. 
 
-Three requirement sets are used. Each was taken from a prompt published in retrieval-augmented generation research and is reproduced in Section~\ref{sec:conditions}. $\Sigma_A$ is the response-generation prompt of the RAGBench benchmark \citep{friel2024ragbench}, which states a single requirement. $\Sigma_B$ is the VANILLA instruction of \citet{gao2023alce}, which comprises about ten clauses in four families (accuracy and concision, source restriction, citation, and tone). Of these, only citation can be checked by rule. $\Sigma_C$ is the instruction of \citet{mao2024fitrag}, which states three.
+Three requirement sets are used. Each was taken from a prompt published in RAG research and is reproduced in Section~\ref{sec:conditions}. $\Sigma_A$ is the response-generation prompt of the RAGBench benchmark \citep{friel2024ragbench}, which states a single requirement. $\Sigma_B$ is the VANILLA instruction of \citet{gao2023alce}, which comprises about ten clauses in four families (accuracy and concision, source restriction, citation, and tone). Of these, only citation can be checked by rule. $\Sigma_C$ is the instruction of \citet{mao2024fitrag}, which states three.
 
 The second component is the wording. For each requirement set, four wordings are written that are intended to hold $\Sigma$ fixed and change only $\varphi$. The lexical and syntactic dimensions are taken from three prior studies. \citet{wahle2024paraphrase} vary prompts by linguistically defined paraphrase type, and group those types into families, among them lexicon and syntax. \citet{zhan2024lexical} examine the lexical dimension by replacing individual words with semantically similar ones, and report that models are over-sensitive to variations undetectable to a reader. \citet{kostic2026samemeaning} separate a lexical pipeline built on synonym substitution from a syntactic one built on dependency parsing. They find that the two behave differently: lexical perturbation degrades performance consistently, while syntactic perturbation has more heterogeneous effects and occasionally improves results. The third dimension, layout, follows \citet{sclar2024quantifying}, who change only the formatting of a prompt.
 
@@ -1114,7 +1113,7 @@ The rejection does not rest on the single faithfulness result. It rests on instr
 
 \section{Limitations}
 \label{sec:limits}
-Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
+Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. Further, collected questions from Bing are not queries intended from an LLM. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
 
 
 \chapter{Conclusion and Future Work}
@@ -1131,7 +1130,7 @@ The contribution of this thesis: The formal model of Chapter 4 makes the system 
 \section{Future Work}
  
 
-\paragraph{More generators.} Every result here comes from one model, \texttt{gpt-4o-mini}. Whether other models respond to the same rewordings in the same way remains an open question. Repeating the experiment with a second API model and an open model of a different size would show whether the effects are specific to the model or arise from the wording itself.
+\paragraph{More generators.} Every result here comes from one model, \texttt{gpt-4o-mini}. Whether other models respond to the same rewordings in the same way remains an open question. 
 
 \paragraph{Correctness beyond overlap.} The three correctness metrics compare wording and meaning with a reference but do not verify factual accuracy. A judge that decides whether an answer contains the fact stated in the reference, validated against human labels on a sample, would measure correctness independently of answer length.
 
