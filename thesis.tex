@@ -924,7 +924,7 @@ The run produced 6,768 answers. At the gold level all 100 queries are usable, wh
 \section{Descriptive Results}
 \label{sec:descriptive}
 
-Table~\ref{tab:cellmeans} gives the mean of each measure in each cell, and Table~\ref{tab:length} the mean length of the answers.
+Table~\ref{tab:cellmeans} gives the mean of each measure in each cell, and Table~\ref{tab:length} the mean length of the answers.\footnote{The means summarise per-answer scores whose distributions differ considerably between the measures. The distributions and further summary statistics are given in Appendix~\ref{app:distributions}.}
 
 \begin{table}[htbp]
 \centering
@@ -1135,6 +1135,43 @@ The contribution of this thesis: The formal model of Chapter 4 makes the system 
 \paragraph{Correctness beyond overlap.} The three correctness metrics compare wording and meaning with a reference but do not verify factual accuracy. A judge that decides whether an answer contains the fact stated in the reference, validated against human labels on a sample, would measure correctness independently of answer length.
 
 \paragraph{Other data.}  A dataset with longer answers, and an open collection in which the answer may be missing, would test whether the effects hold where retrieval is harder and where the prompt has to govern what the model does when the evidence does not suffice.
+
+\appendix
+
+\chapter{Distribution of the Measures}
+\label{app:distributions}
+
+Chapter~\ref{ch:results} reports the measures as means per cell. This appendix shows how the per-answer scores behind those means are distributed. Table~\ref{tab:distsummary} summarises each measure over all 6,768 answers. Figure~\ref{fig:distall} shows the pooled distributions, Figure~\ref{fig:distevidence} separates them by evidence level, and Figure~\ref{fig:distbaseline} by baseline. The histograms use bins of width 0.025, and bar heights are shares of the answers for which a measure is defined. Adherence is binary and is shown as the share of failed and passed answers. It is undefined for baseline $A$, so its $n$ is smaller than that of the other measures.
+
+\begin{table}[htbp]
+\centering
+\caption{Summary statistics of each measure over all answers. The last column gives the share of answers with the maximum score of 1. BERTScore is rescaled against a baseline and can therefore fall slightly below zero.}
+\label{tab:distsummary}
+\setlength{\tabcolsep}{4pt}
+\small
+\input{figures/dist_summary.tex}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/dist_all.pdf}
+\caption{Distribution of each measure over all answers. The dashed line marks the median. Faithfulness is concentrated at its maximum: 81.2\% of the answers score exactly 1. Answer relevance lies in a narrow band and never reaches 1. The three correctness metrics are spread widely and skewed to the right.}
+\label{fig:distall}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/dist_evidence.pdf}
+\caption{Distribution of each measure by evidence level: 3,600 answers at the gold level and 3,168 at the retrieved level ($K = 10$). The histograms are drawn as outlines so that neither level hides the other.}
+\label{fig:distevidence}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/dist_baseline.pdf}
+\caption{Distribution of each measure by baseline, with 2,256 answers per baseline. Adherence is undefined for baseline $A$; 27.1\% of the answers under baseline $B$ and 90.2\% under baseline $C$ pass it.}
+\label{fig:distbaseline}
+\end{figure}
 
 \bibliographystyle{apalike}
 \bibliography{thesis}
