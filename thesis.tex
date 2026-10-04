@@ -80,7 +80,7 @@
         \textbf{Name:} Christian Block \\
         \textbf{Matriculation Number:} 6522508 \\
         \textbf{First examiner:} Prof. Dr. Visvanathan Ramesh \\
-        \textbf{Date of Submission:}
+        \textbf{Date of Submission:} 6 October 2026
     \end{flushleft}
     \vfill
 \end{titlepage}
@@ -90,10 +90,13 @@
 \chapter*{Erklärung zur Abschlussarbeit}
 gemäß § 35, Abs. 16 der Ordnung für den Bachelorstudiengang Informatik vom 17. Juni 2019:\\
 Hiermit erkläre ich (Nachname, Vorname) \textbf{Block, Christian}, dass ich die vorliegende Arbeit selbstständig und ohne Benutzung anderer als der angegebenen Quellen und Hilfsmittel verfasst habe. Ich bestätige außerdem, dass die vorliegende Arbeit nicht, auch nicht auszugsweise, für eine andere Prüfung oder Studienleistung verwendet wurde. Zudem versichere ich, dass alle eingereichten schriftlichen gebundenen Versionen meiner vorliegenden Bachelorarbeit mit der digital eingereichten elektronischen Version meiner Bachelorarbeit übereinstimmen.\\
-Frankfurt am Main, den DATUM \hfill \rule{5cm}{0.4pt}\\
+Frankfurt am Main, den 6. Oktober 2026 \hfill \rule{5cm}{0.4pt}\\
 \hspace*{0pt}\hfill Unterschrift der/des Studierenden
 
 \selectlanguage{english}
+\chapter*{Declaration on the Use of AI Tools}
+In preparing this thesis, I used a large language model to check grammar, spelling and style.
+
 \chapter*{Abstract}
 
 Retrieval-augmented generation (RAG) combines information retrieval with language generation, so that a language model can condition its output on external and updatable evidence. The system prompt specifies the instructions, constraints, and output
@@ -921,6 +924,7 @@ where $I$ is the set of queries and $\bar{M}_{ij}$ is the mean of the measure ov
 
 
 The run produced 6,768 answers. At the gold level all 100 queries are usable, which gives $100 \times 12 \times 3 = 3{,}600$ answers. At the retrieved level 88 of the 100 queries pass the gate of Section~\ref{sec:procedure} at $K = 10$, which gives $88 \times 12 \times 3 = 3{,}168$. 
+
 \section{Descriptive Results}
 \label{sec:descriptive}
 
@@ -983,13 +987,12 @@ retrieved & 67 & 80 & 64 & 68 & 112 & 93 & 104 & 99 & 140 & 136 & 119 & 88 \\
 
 The measures differ sharply in how sensitive they are to the prompt. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$. Adherence runs from $0.083$ to $0.943$. ROUGE-L runs from $0.201$ to $0.550$, BLEU-1 from $0.119$ to $0.505$ and BERTScore from $0.276$ to $0.610$. All three are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose answers are the longest, because they must include a justification.
 
-Faithfulness is higher at the retrieved level than at the gold level in every condition, although the gold passages are the better evidence.
+Faithfulness is higher at the retrieved level than at the gold level in every condition, although the gold passages are the better evidence. 
 
 \section{The Effect of Rewording}
 \label{sec:effects}
 
-In the tables that follow, a star marks an estimate whose Holm-adjusted $p$-value is below $0.05$.\footnote{Each estimate $\hat{\tau}_{b,j}$ is tested with a one-sample $t$-test on its paired differences per query. With 102 tests at $\alpha = 0.05$, some would be significant by chance alone, so the $p$-values are adjusted by the procedure of \citet{holm1979}.} The 95\% intervals are not adjusted, so an interval can exclude zero although its estimate carries no star.
-
+In the tables that follow, a star marks an estimate whose Holm-adjusted $p$-value is below $0.05$.\footnote{Each estimate $\hat{\tau}_{b,j}$ is tested with a one-sample $t$-test on its paired differences per query. With 102 tests at $\alpha = 0.05$, some would be significant by chance alone, so the $p$-values are adjusted by the procedure of \citet{holm1979}.} The 95\% intervals are not adjusted, so an interval can exclude zero although its estimate carries no star. 
 \subsection{Instruction Adherence}
 
 The largest effects appear on this measure. Table~\ref{tab:adherence} gives all six estimates at both evidence levels, for baselines $B$ and $C$.
@@ -997,7 +1000,7 @@ The largest effects appear on this measure. Table~\ref{tab:adherence} gives all 
 \centering
 \caption{Effect of each rewording on instruction adherence, against the canonical form of its own baseline. A star marks a Holm-adjusted $p$-value below $0.05$.}
 \label{tab:adherence}
-\begin{tabular}{lllll}
+\begin{tabular}{lrlrl}
 \toprule
  & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
@@ -1013,11 +1016,11 @@ C3 format    & $-0.020$\phantom{*} & $[-0.067, +0.027]$ & $+0.008$\phantom{*} & 
 \end{tabular}
 \end{table}
 
-Eight of the twelve estimates are significant. Every rewording of baseline $B$ raises adherence at both evidence levels. Of the rewordings of $C$, only the syntactic one, C2, has a significant effect. C1 and C3 have no significant effect.
+Eight of the twelve estimates are significant. Every rewording of baseline $B$ raises adherence at both evidence levels. The largest effect, that of B1, raises the share of adherent answers by 22 percentage points at the gold level and by 26 at the retrieved level. Of the rewordings of $C$, only the syntactic one, C2, has a significant effect. C1 and C3 have no significant effect.
 
-Regarding $B$ the rule fails an answer when any of its sentences carries no citation. Under the canonical wording B0 the first sentence of an answer is uncited in 77\% of the gold answers and in 90\% of the retrieved ones. Under B1 these shares fall to 53\% and 63\%. 
+Regarding $B$, the rule fails an answer when any of its sentences carries no citation. Under the canonical wording B0 the first sentence of an answer is uncited in 77\% of the gold answers and in 90\% of the retrieved ones. Under B1 these shares fall to 53\% and 63\%. 
 
-For baseline $C$, the rewording that lowers adherence is the one that turns the instructions into plain passive statements, such as \textit{The answer is then given, with an explanation of why it is chosen}. A plausible explanation is that it reads as a description rather than a request, and is therefore followed less often. This fits the concern raised in Section~\ref{sec:conditions}, that such statements may state a requirement less strongly than the canonical imperative.
+For baseline $C$, the rewording that lowers adherence is the one that turns the instructions into plain passive statements, such as \textit{The answer is then given, with an explanation of why it is chosen}. A plausible explanation is that it reads as a description rather than a request, and is therefore followed less often. This fits the concern raised in Section~\ref{sec:conditions}, that such statements may state a requirement less strongly than the canonical imperative. The effect of C2 may therefore be partly an effect of a weaker requirement rather than of wording alone.
 
 \subsection{Faithfulness}
 
@@ -1025,7 +1028,7 @@ One of the nine estimates at the gold level is significant, namely B1, $\hat{\ta
 
 \subsection{Answer Relevance}
 
-No estimate is significant at either level. The largest estimate in absolute value is $+0.012$.
+No estimate is significant at either level. The largest estimate in absolute value is $+0.012$, and every interval lies within $[-0.016, +0.023]$. Any effect of rewording on relevance is therefore at most about two hundredths.
 
 \subsection{Correctness}
 
@@ -1035,7 +1038,7 @@ Tables~\ref{tab:rouge}, \ref{tab:bleu} and~\ref{tab:bertscore} give the estimate
 \centering
 \caption{Effect of each rewording on correctness measured by ROUGE-L, against the canonical form of its own baseline. A star marks a Holm-adjusted $p$-value below $0.05$.}
 \label{tab:rouge}
-\begin{tabular}{lllll}
+\begin{tabular}{lrlrl}
 \toprule
  & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
@@ -1058,7 +1061,7 @@ C3 format    & $+0.060$* & $[+0.047, +0.072]$ & $+0.066$* & $[+0.054, +0.077]$ \
 \centering
 \caption{Effect of each rewording on correctness measured by BLEU-1, against the canonical form of its own baseline. A star marks a Holm-adjusted $p$-value below $0.05$.}
 \label{tab:bleu}
-\begin{tabular}{lllll}
+\begin{tabular}{lrlrl}
 \toprule
  & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
@@ -1081,7 +1084,7 @@ C3 format    & $+0.050$* & $[+0.041, +0.059]$ & $+0.051$* & $[+0.044, +0.058]$ \
 \centering
 \caption{Effect of each rewording on correctness measured by BERTScore, against the canonical form of its own baseline. A star marks a Holm-adjusted $p$-value below $0.05$.}
 \label{tab:bertscore}
-\begin{tabular}{lllll}
+\begin{tabular}{lrlrl}
 \toprule
  & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5}
@@ -1100,20 +1103,20 @@ C3 format    & $+0.037$* & $[+0.025, +0.049]$ & $+0.061$* & $[+0.047, +0.076]$ \
 \end{tabular}
 \end{table}
 
-Every rewording of baseline $B$ raises correctness. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it. The BLEU-1 estimate there is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. 
+Every rewording of baseline $B$ raises correctness, on all three metrics and at both evidence levels. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most: C3 raises ROUGE-L by $0.060$ at the gold level, almost a quarter of the mean of $0.262$ under C0. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it. The BLEU-1 estimate at the retrieved level is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. 
 
-These effects track answer length. Every rewording that raised correctness produced shorter answers than its canonical form (Table~\ref{tab:length}), and A1, which lowered it, produced longer ones. A2, which raised BERTScore, produced slightly shorter answers as well. Across the eighteen comparisons, the change in mean length and the change in ROUGE-L have a correlation of $-0.79$, and for BERTScore the correlation is $-0.87$. The reason is that the references are short, so a shorter answer shares a larger fraction of its words, and of its meaning, with them. BERTScore is also affected, because its precision component penalises an answer for everything it says beyond the reference. The recall component of ROUGE-L alone, which measures how much of the reference an answer contains and does not penalise length, shows no significant gain for any rewording. The rewordings therefore changed how closely the answers matched the reference mainly by changing their length, not their content.
+Every rewording that raised correctness produced shorter answers than its canonical form (Table~\ref{tab:length}), and A1, which lowered it, produced longer ones. A2, which raised BERTScore, produced slightly shorter answers as well. Across the eighteen comparisons, the change in mean length and the change in ROUGE-L have a correlation of $-0.79$, and for BERTScore the correlation is $-0.87$ (Appendix~\ref{app:effects}). A likely reason is that the references are short, so a shorter answer shares a larger fraction of its words, and of its meaning, with them. BERTScore is also affected, because its precision component penalises an answer for everything it says beyond the reference. The recall component of ROUGE-L alone, which measures how much of the reference an answer contains and does not penalise length, shows no significant gain for any rewording, and a loss for C3 at the retrieved level ($-0.042$). The shorter answers therefore did not contain more of the reference. They matched it more closely mainly because they left out material that the reference does not contain.
 
 \section{The Verdict on the Hypothesis}
 \label{sec:verdict}
 
 One hundred and two estimates were made across the six measures of Section~\ref{sec:metrics}, and forty-five of them are significant after the Holm adjustment: eight on adherence, thirty-six on the three correctness metrics and one on faithfulness. $H_0$ is therefore rejected. $H_1$, that at least one rewording changes answer quality, is supported: seven of the nine rewordings have a significant effect on at least one measure. A3 and C1 have no significant effect on any measure.
 
-The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on correctness, where the effects are small and track answer length.
+The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on correctness. Small here means a few hundredths, against a difference of $0.28$ in ROUGE-L between the canonical forms of $A$ and $C$ at the gold level (Table~\ref{tab:cellmeans}). The thirty-six correctness results are also not independent: thirty of them come from five rewordings, each confirmed by all three metrics at both levels.
 
 \section{Limitations}
 \label{sec:limits}
-Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. Further, collected questions from Bing are not queries intended from an LLM. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
+Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. Further, its questions were typed into a search engine, not addressed to a language model. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. Moreover, each dimension is represented by one rewording per baseline and one generator, so the effects belong to these wordings and not to lexical, syntactic or format changes in general. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
 
 
 \chapter{Conclusion and Future Work}
@@ -1171,6 +1174,40 @@ Chapter~\ref{ch:results} reports the measures as means per cell. This appendix s
 \includegraphics[width=\textwidth]{figures/dist_baseline.pdf}
 \caption{Distribution of each measure by baseline, with 2,256 answers per baseline. Adherence is undefined for baseline $A$; 27.1\% of the answers under baseline $B$ and 90.2\% under baseline $C$ pass it.}
 \label{fig:distbaseline}
+\end{figure}
+
+\chapter{The Rewording Effects in Detail}
+\label{app:effects}
+
+Section~\ref{sec:effects} reports each effect as an estimate $\hat{\tau}_{b,j}$ with its interval. This appendix shows three views of the same estimates. All of them are computed as in Equation~\eqref{eq:tauhat}: the three repetitions of a query are averaged first, and every rewording is compared with the canonical form of its own baseline.
+
+\section{Per-Query Differences}
+
+$\hat{\tau}_{b,j}$ is the mean over queries of the paired difference $\bar{M}_{ij} - \bar{M}_{i0}$. Figures~\ref{fig:pairedgold} and~\ref{fig:pairedret} show these differences for every query, together with their mean. They show whether an effect comes from many queries moving a little or from a few queries moving a lot, which the mean alone does not show. For faithfulness, 56\% of the differences at the gold level and 54\% at the retrieved level are exactly zero, because both forms of the prompt score 1 on most queries. Adherence takes only the values $0, \frac{1}{3}, \frac{2}{3}$ and $1$ per query, so its differences fall on a grid of thirds.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/paired_gold.pdf}
+\caption{Per-query differences between each rewording and the canonical form of its baseline at the gold level ($|I| = 100$). Each dot is one query, jittered vertically. The diamond marks $\hat{\tau}_{b,j}$ and the bar its 95\% interval. A filled diamond marks a Holm-adjusted $p$-value below $0.05$. Adherence is undefined for baseline $A$.}
+\label{fig:pairedgold}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/paired_ret.pdf}
+\caption{Per-query differences between each rewording and the canonical form of its baseline at the retrieved level ($K = 10$, $|I| = 88$). Encoding as in Figure~\ref{fig:pairedgold}.}
+\label{fig:pairedret}
+\end{figure}
+
+\section{Answer Length and Correctness}
+
+Section~\ref{sec:effects} reports that the effects on correctness are correlated with a the change in answer length. Figure~\ref{fig:lengtheffects} plots this relation for all eighteen rewording contrasts. Each point is one rewording at one evidence level. Its horizontal position is the change in mean answer length against the canonical form, and its vertical position the change in ROUGE-L or BERTScore. The three largest gains in ROUGE-L, for C3 at both evidence levels and for B1 at the retrieved level, come with three of the four largest reductions in length. A1 lengthened the answers at both evidence levels and is the only rewording that lowered correctness significantly.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/length_effects.pdf}
+\caption{Change in mean answer length against change in ROUGE-L (left) and BERTScore (right) for the eighteen rewording contrasts. The dashed line is the least-squares fit, and $r$ the correlation across the contrasts.}
+\label{fig:lengtheffects}
 \end{figure}
 
 \bibliographystyle{apalike}
