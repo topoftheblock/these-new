@@ -69,7 +69,7 @@
     \vspace{1cm}
     {\scshape\LARGE Goethe-Universität Frankfurt am Main \par}
     \vspace{0.5cm}
-    {\scshape\Large Fachbereich Informatik \par}
+    {\scshape\Large Fachbereich Informatik und Mathematik \par}
     \vspace{2cm}
     {\huge\bfseries Instruction Robustness in RAG/GraphRAG Agent Pipelines \par}
     \vspace{1.5cm}
@@ -115,7 +115,7 @@ randomness.\\
 
 The null hypothesis of
 equal behaviour across wordings is rejected. The clearest effects are on
-instruction adherence. Correctness, measured by ROUGE-L, BLEU-1 and BERTScore, changed by a few percentage points, mostly because the answers changed in length. Faithfulness and answer relevance showed no consistent change. 
+instruction adherence. Correctness measured by overlap with the reference answer (ROUGE-L, BLEU-1 and BERTScore) changed by a few percentage points, mostly because the answers changed in length. Correctness judged by whether an answer states the fact of the reference did not change. Faithfulness and answer relevance showed no consistent change. 
 
 
 \selectlanguage{english}
@@ -822,7 +822,7 @@ This yields twelve conditions: three baselines in four wordings each. They are w
 
 \paragraph{Independent variable.} The wording $j$ of the system prompt for each baseline $b$. 
 
-\paragraph{Dependent variable.} The quality of the answer, as scored by the measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence, with correctness measured by three metrics: ROUGE-L, BLEU-1 and BERTScore. Each of the six is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated six times. All six take part in the test of $H_0$. They are reported separately.
+\paragraph{Dependent variable.} The quality of the answer, as scored by the measures of Section~\ref{sec:metrics}: faithfulness, answer relevance, correctness and instruction adherence, with correctness measured by four metrics: ROUGE-L, BLEU-1, BERTScore and judged correctness. Each of the seven is used in turn as the measured property $M$ of Equation~\eqref{eq:estimand}, so the effect of a rewording is estimated seven times. All seven take part in the test of $H_0$. They are reported separately.
 
 \paragraph{Controlled factor.}  The context $C$ passed to the generator is set directly, as the intervention $\mathrm{do}(C = c_{ie})$ of Section~\ref{sec:ragdist}, at two evidence levels $e$:
 \begin{description}
@@ -889,9 +889,9 @@ The order of the passages within the context is shuffled, because answer accurac
 
 The evaluation scores each answer on the four properties of Section~\ref{sec:goodanswer}.
 
-Each property is estimated by one measure, except correctness, which is estimated by three. The first three are the measures that the survey of \citet{yu2024ragevalsurvey} names as the evaluation targets of the generation component: faithfulness relates the response to the retrieved documents, answer relevance relates it to the query, and correctness relates it to the reference answer. Retrieval measures are excluded by construction, because the system prompt cannot change what is retrieved.
+Each property is estimated by one measure, except correctness, which is estimated by four. The first three are the measures that the survey of \citet{yu2024ragevalsurvey} names as the evaluation targets of the generation component: faithfulness relates the response to the retrieved documents, answer relevance relates it to the query, and correctness relates it to the reference answer. Retrieval measures are excluded by construction, because the system prompt cannot change what is retrieved.
 
-\subsection{Six Measures for Four Properties}
+\subsection{Seven Measures for Four Properties}
 
 \paragraph{Faithfulness.} Whether every claim in the answer can be traced to a supplied passage. It is scored reference-free, after \citet{es2023ragas}, in two steps. First the judge (Section~\ref{sec:judge}) breaks the answer into atomic factual claims. Then, for each claim, the judge decides whether the passages state it explicitly.  
 
@@ -899,16 +899,36 @@ Each property is estimated by one measure, except correctness, which is estimate
 
 \paragraph{Correctness.} Whether the answer agrees with the reference answers $A_q$. It is measured with the two metrics that MS MARCO uses for its free-form answers \citep{nguyen2016msmarco} and that \citet{lewis2020rag} report on this task: ROUGE-L \citep{lin2004rouge} and BLEU-1 \citep{papineni2002bleu}. Both compare the answer with the references word by word. Before scoring, the text is lowercased and punctuation is replaced by spaces. Citation markers such as \texttt{[3]} are also removed from the answer. Baseline $B$ asks for them, and they would otherwise penalise its answers for following the prompt. ROUGE-L is the F-measure based on the longest common subsequence of the answer and the reference. BLEU-1 is the share of the answer's words that also occur in a reference. Each word is counted at most as often as it appears in any single reference. The result is multiplied by a brevity penalty when the answer is shorter than the reference closest to it in length. The third metric, BERTScore \citep{zhang2020bertscore}, embeds the answer and the reference with a pretrained encoder, matches every word of one to the most similar word of the other by the cosine of their embeddings, and combines the two directions into an F1 score. It is computed with the standard settings for English \citep{liu2019roberta}.
 
+The three metrics measure overlap with the reference. None of them checks whether the answer states the fact the reference states, and all three favour answers close in length to the reference. The fourth metric, \textit{judged correctness}, asks for the fact directly. The judge of Section~\ref{sec:judge} grades every answer on the six-point scale of Table~\ref{tab:judgescale}. It sees the question, the reference answers and the answer, with citation markers removed. It does not see the passages, so the grade is independent of faithfulness. Several reference answers count as alternatives. The judge is instructed to grade only agreement with the reference, to count a different wording with the same meaning as correct, and not to reward or penalise length, style or additional information unless that information contradicts the reference. For the estimate, the grade is used on its own scale, so an effect is given in grade points.
+
+\begin{table}[htbp]
+\centering
+\caption{The grading scale of judged correctness.}
+\label{tab:judgescale}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{0.72\textwidth}}
+\toprule
+Grade & Meaning \\
+\midrule
+5 & fully correct: every essential element of the reference, nothing contradicting it \\
+4 & correct with a minor gap: the key fact is correct, a secondary detail is missing or slightly imprecise \\
+3 & partially correct: part of the essential information is correct, another essential part is missing or wrong \\
+2 & mostly incorrect: addresses the question, but the key fact is missing or wrong \\
+1 & incorrect: the key fact contradicts the reference \\
+0 & no answer: refuses, says the information is unavailable, or does not address the question \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Instruction adherence.} Whether the answer complies with the instructions in the prompt. It is scored as strict accuracy in the sense of \citet{zhou2023ifeval}: an answer is adherent only if it satisfies every checked requirement. The score is binary. 
 \subsection{The Judge}
 \label{sec:judge}
 
-Faithfulness and answer relevance have no reference string. Therefore, they are scored by a second language model, as \citet{es2023ragas} and \citet{saadfalcon2024ares} do. The judge is \texttt{gpt-4.1-mini}, a different model from the generator, so that the generator never grades its own output. It is run at temperature 0 so that the verdict depends as far as possible on the answer and the passages and not on a random draw. \citet{zheng2023judge} document several biases of language-model judges, among them a preference for longer answers.
+Faithfulness and answer relevance have no reference string. Therefore, they are scored by a second language model, as \citet{es2023ragas} and \citet{saadfalcon2024ares} do. The same model grades judged correctness against the reference. The judge is \texttt{gpt-4.1-mini}, a different model from the generator, so that the generator never grades its own output. It is run at temperature 0 so that the verdict depends as far as possible on the answer and the passages and not on a random draw. It never sees the condition, and the answers are judged in random order. \citet{zheng2023judge} document several biases of language-model judges, among them a preference for longer answers.
 
 \subsection{Estimating the Effect of a Rewording}
 \label{sec:analysis}
 
-The quantity estimated is the average treatment effect of Equation~\eqref{eq:estimand}. Here, $M$ is instantiated by each of the six measures in turn. Every measure is oriented so that a higher value is better. A positive effect means the rewording improved that measure.
+The quantity estimated is the average treatment effect defined in Equation~\eqref{eq:estimand}. Here, $M$ is instantiated by each of the seven measures in turn. Every measure is oriented so that a higher value is better. A positive effect means the rewording improved that measure.
 
 For one measure $M$, one evidence level $e$ and one baseline $b$, the estimate of the effect of wording $j$ is
 \begin{equation}
@@ -932,40 +952,40 @@ Table~\ref{tab:cellmeans} gives the mean of each measure in each cell, and Table
 
 \begin{table}[htbp]
 \centering
-\caption{Mean of each measure per condition. The gold level rests on 100 queries and the retrieved level on the 88 that pass the gate at $K = 10$. Correctness is given as ROUGE-L, BLEU-1 and BERTScore. Adherence is undefined for baseline $A$, whose only requirement is grounding.}
+\caption{Mean of each measure per condition. The gold level rests on 100 queries and the retrieved level on the 88 that pass the gate at $K = 10$. Correctness is given as ROUGE-L, BLEU-1, BERTScore and judged correctness, the last on the scale of 0 to 5 of Table~\ref{tab:judgescale}. Adherence is undefined for baseline $A$, whose only requirement is grounding.}
 \label{tab:cellmeans}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrr}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lrrrrrrr}
 \toprule
- & Faithful. & Relevance & ROUGE-L & BLEU-1 & BERTScore & Adherence \\
+ & Faithful. & Relevance & ROUGE-L & BLEU-1 & BERTScore & Judged & Adher. \\
 \midrule
-\multicolumn{7}{l}{\textit{gold, $|I| = 100$}} \\
-A0 & 0.917 & 0.736 & 0.541 & 0.494 & 0.597 & n/a \\
-A1 & 0.922 & 0.730 & 0.519 & 0.463 & 0.583 & n/a \\
-A2 & 0.930 & 0.734 & 0.550 & 0.505 & 0.610 & n/a \\
-A3 & 0.930 & 0.741 & 0.539 & 0.492 & 0.603 & n/a \\
-B0 & 0.912 & 0.696 & 0.362 & 0.285 & 0.440 & 0.223 \\
-B1 & 0.942 & 0.705 & 0.407 & 0.332 & 0.470 & 0.447 \\
-B2 & 0.924 & 0.703 & 0.397 & 0.319 & 0.464 & 0.343 \\
-B3 & 0.931 & 0.703 & 0.403 & 0.327 & 0.473 & 0.297 \\
-C0 & 0.924 & 0.729 & 0.262 & 0.164 & 0.358 & 0.943 \\
-C1 & 0.919 & 0.738 & 0.272 & 0.174 & 0.359 & 0.940 \\
-C2 & 0.941 & 0.728 & 0.296 & 0.193 & 0.387 & 0.853 \\
-C3 & 0.939 & 0.731 & 0.322 & 0.214 & 0.395 & 0.923 \\
+\multicolumn{8}{l}{\textit{gold, $|I| = 100$}} \\
+A0 & 0.917 & 0.736 & 0.541 & 0.494 & 0.597 & 4.49 & n/a \\
+A1 & 0.922 & 0.730 & 0.519 & 0.463 & 0.583 & 4.54 & n/a \\
+A2 & 0.930 & 0.734 & 0.550 & 0.505 & 0.610 & 4.55 & n/a \\
+A3 & 0.930 & 0.741 & 0.539 & 0.492 & 0.603 & 4.51 & n/a \\
+B0 & 0.912 & 0.696 & 0.362 & 0.285 & 0.440 & 4.50 & 0.223 \\
+B1 & 0.942 & 0.705 & 0.407 & 0.332 & 0.470 & 4.51 & 0.447 \\
+B2 & 0.924 & 0.703 & 0.397 & 0.319 & 0.464 & 4.52 & 0.343 \\
+B3 & 0.931 & 0.703 & 0.403 & 0.327 & 0.473 & 4.50 & 0.297 \\
+C0 & 0.924 & 0.729 & 0.262 & 0.164 & 0.358 & 4.43 & 0.943 \\
+C1 & 0.919 & 0.738 & 0.272 & 0.174 & 0.359 & 4.45 & 0.940 \\
+C2 & 0.941 & 0.728 & 0.296 & 0.193 & 0.387 & 4.44 & 0.853 \\
+C3 & 0.939 & 0.731 & 0.322 & 0.214 & 0.395 & 4.47 & 0.923 \\
 \addlinespace
-\multicolumn{7}{l}{\textit{retrieved, $K = 10$, $|I| = 88$}} \\
-A0 & 0.968 & 0.737 & 0.436 & 0.377 & 0.497 & n/a \\
-A1 & 0.976 & 0.734 & 0.418 & 0.359 & 0.481 & n/a \\
-A2 & 0.974 & 0.732 & 0.443 & 0.383 & 0.508 & n/a \\
-A3 & 0.976 & 0.736 & 0.438 & 0.376 & 0.499 & n/a \\
-B0 & 0.962 & 0.693 & 0.233 & 0.157 & 0.325 & 0.083 \\
-B1 & 0.971 & 0.705 & 0.297 & 0.220 & 0.369 & 0.345 \\
-B2 & 0.957 & 0.696 & 0.267 & 0.192 & 0.349 & 0.193 \\
-B3 & 0.965 & 0.702 & 0.282 & 0.205 & 0.358 & 0.205 \\
-C0 & 0.963 & 0.734 & 0.201 & 0.119 & 0.276 & 0.913 \\
-C1 & 0.973 & 0.738 & 0.207 & 0.125 & 0.279 & 0.932 \\
-C2 & 0.973 & 0.746 & 0.229 & 0.141 & 0.306 & 0.788 \\
-C3 & 0.959 & 0.730 & 0.267 & 0.170 & 0.337 & 0.920 \\
+\multicolumn{8}{l}{\textit{retrieved, $K = 10$, $|I| = 88$}} \\
+A0 & 0.968 & 0.737 & 0.436 & 0.377 & 0.497 & 4.33 & n/a \\
+A1 & 0.976 & 0.734 & 0.418 & 0.359 & 0.481 & 4.35 & n/a \\
+A2 & 0.974 & 0.732 & 0.443 & 0.383 & 0.508 & 4.36 & n/a \\
+A3 & 0.976 & 0.736 & 0.438 & 0.376 & 0.499 & 4.38 & n/a \\
+B0 & 0.962 & 0.693 & 0.233 & 0.157 & 0.325 & 4.44 & 0.083 \\
+B1 & 0.971 & 0.705 & 0.297 & 0.220 & 0.369 & 4.41 & 0.345 \\
+B2 & 0.957 & 0.696 & 0.267 & 0.192 & 0.349 & 4.41 & 0.193 \\
+B3 & 0.965 & 0.702 & 0.282 & 0.205 & 0.358 & 4.38 & 0.205 \\
+C0 & 0.963 & 0.734 & 0.201 & 0.119 & 0.276 & 4.31 & 0.913 \\
+C1 & 0.973 & 0.738 & 0.207 & 0.125 & 0.279 & 4.33 & 0.932 \\
+C2 & 0.973 & 0.746 & 0.229 & 0.141 & 0.306 & 4.41 & 0.788 \\
+C3 & 0.959 & 0.730 & 0.267 & 0.170 & 0.337 & 4.32 & 0.920 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -985,14 +1005,14 @@ retrieved & 67 & 80 & 64 & 68 & 112 & 93 & 104 & 99 & 140 & 136 & 119 & 88 \\
 \end{tabular}
 \end{table}
 
-The measures differ sharply in how sensitive they are to the prompt. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$. Adherence runs from $0.083$ to $0.943$. ROUGE-L runs from $0.201$ to $0.550$, BLEU-1 from $0.119$ to $0.505$ and BERTScore from $0.276$ to $0.610$. All three are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose answers are the longest, because they must include a justification.
+The measures differ sharply in how sensitive they are to the prompt. Faithfulness is between $0.912$ and $0.976$ everywhere. Relevance is stable, between $0.693$ and $0.746$. Adherence runs from $0.083$ to $0.943$. ROUGE-L runs from $0.201$ to $0.550$, BLEU-1 from $0.119$ to $0.505$ and BERTScore from $0.276$ to $0.610$. All three are highest under baseline $A$, whose answers are the shortest, and lowest under baseline $C$, whose answers are the longest, because they must include a justification. Judged correctness does not follow this pattern. It lies between $4.43$ and $4.55$ at the gold level and between $4.31$ and $4.44$ at the retrieved level, and differs little between the baselines.
 
 Faithfulness is higher at the retrieved level than at the gold level in every condition, although the gold passages are the better evidence. 
 
 \section{The Effect of Rewording}
 \label{sec:effects}
 
-In the tables that follow, a star marks an estimate whose Holm-adjusted $p$-value is below $0.05$.\footnote{Each estimate $\hat{\tau}_{b,j}$ is tested with a one-sample $t$-test on its paired differences per query. With 102 tests at $\alpha = 0.05$, some would be significant by chance alone, so the $p$-values are adjusted by the procedure of \citet{holm1979}.} The 95\% intervals are not adjusted, so an interval can exclude zero although its estimate carries no star. 
+In the tables that follow, a star marks an estimate whose Holm-adjusted $p$-value is below $0.05$.\footnote{Each estimate $\hat{\tau}_{b,j}$ is tested with a one-sample $t$-test on its paired differences per query. With 120 tests at $\alpha = 0.05$, some would be significant by chance alone, so the $p$-values are adjusted by the procedure of \citet{holm1979}.} The 95\% intervals are not adjusted, so an interval can exclude zero although its estimate carries no star. 
 \subsection{Instruction Adherence}
 
 The largest effects appear on this measure. Table~\ref{tab:adherence} gives all six estimates at both evidence levels, for baselines $B$ and $C$.
@@ -1032,7 +1052,7 @@ No estimate is significant at either level. The largest estimate in absolute val
 
 \subsection{Correctness}
 
-Tables~\ref{tab:rouge}, \ref{tab:bleu} and~\ref{tab:bertscore} give the estimates.
+The three overlap metrics and judged correctness are reported in turn. Tables~\ref{tab:rouge}, \ref{tab:bleu} and~\ref{tab:bertscore} give the estimates for the overlap metrics.
 
 \begin{table}[htbp]
 \centering
@@ -1103,20 +1123,45 @@ C3 format    & $+0.037$* & $[+0.025, +0.049]$ & $+0.061$* & $[+0.047, +0.076]$ \
 \end{tabular}
 \end{table}
 
-Every rewording of baseline $B$ raises correctness, on all three metrics and at both evidence levels. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most: C3 raises ROUGE-L by $0.060$ at the gold level, almost a quarter of the mean of $0.262$ under C0. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it. The BLEU-1 estimate at the retrieved level is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. 
+Every rewording of baseline $B$ raises the overlap with the reference, on all three metrics and at both evidence levels. Of the rewordings of $C$, the syntactic and format ones raise it. The format one raises it most: C3 raises ROUGE-L by $0.060$ at the gold level, almost a quarter of the mean of $0.262$ under C0. No estimate for the lexical rewording C1 is significant. For baseline $A$, the lexical rewording A1 lowers it. The BLEU-1 estimate at the retrieved level is not significant after adjustment. Every significant BERTScore effect has the same direction as the ROUGE-L and BLEU-1 effects of that rewording. 
 
-Every rewording that raised correctness produced shorter answers than its canonical form (Table~\ref{tab:length}), and A1, which lowered it, produced longer ones. A2, which raised BERTScore, produced slightly shorter answers as well. Across the eighteen comparisons, the change in mean length and the change in ROUGE-L have a correlation of $-0.79$, and for BERTScore the correlation is $-0.87$ (Appendix~\ref{app:effects}). A likely reason is that the references are short, so a shorter answer shares a larger fraction of its words, and of its meaning, with them. BERTScore is also affected, because its precision component penalises an answer for everything it says beyond the reference. The recall component of ROUGE-L alone, which measures how much of the reference an answer contains and does not penalise length, shows no significant gain for any rewording, and a loss for C3 at the retrieved level ($-0.042$). The shorter answers therefore did not contain more of the reference. They matched it more closely mainly because they left out material that the reference does not contain.
+Every rewording that raised the overlap produced shorter answers than its canonical form (Table~\ref{tab:length}), and A1, which lowered it, produced longer ones. A2, which raised BERTScore, produced slightly shorter answers as well. Across the eighteen comparisons, the change in mean length and the change in ROUGE-L have a correlation of $-0.79$, and for BERTScore the correlation is $-0.87$ (Appendix~\ref{app:effects}). A likely reason is that the references are short, so a shorter answer shares a larger fraction of its words, and of its meaning, with them. BERTScore is also affected, because its precision component penalises an answer for everything it says beyond the reference. The recall component of ROUGE-L alone, which measures how much of the reference an answer contains and does not penalise length, shows no significant gain for any rewording, and a loss for C3 at the retrieved level ($-0.042$). The shorter answers therefore did not contain more of the reference. They matched it more closely mainly because they left out material that the reference does not contain. Judged correctness tests this reading directly. Table~\ref{tab:judgeeffects} gives the estimates.
+
+\begin{table}[htbp]
+\centering
+\caption{Effect of each rewording on judged correctness, in grade points, against the canonical form of its own baseline. No Holm-adjusted $p$-value is below $0.05$.}
+\label{tab:judgeeffects}
+\begin{tabular}{lrlrl}
+\toprule
+ & \multicolumn{2}{c}{gold} & \multicolumn{2}{c}{retrieved, $K = 10$} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Rewording & $\hat{\tau}$ & 95\% CI & $\hat{\tau}$ & 95\% CI \\
+\midrule
+A1 lexical   & $+0.047$ & $[-0.035, +0.129]$ & $+0.023$ & $[-0.050, +0.095]$ \\
+A2 syntactic & $+0.053$ & $[-0.017, +0.124]$ & $+0.030$ & $[-0.076, +0.136]$ \\
+A3 format    & $+0.020$ & $[-0.051, +0.091]$ & $+0.049$ & $[-0.029, +0.128]$ \\
+B1 lexical   & $+0.010$ & $[-0.061, +0.081]$ & $-0.030$ & $[-0.114, +0.053]$ \\
+B2 syntactic & $+0.027$ & $[-0.060, +0.113]$ & $-0.030$ & $[-0.094, +0.034]$ \\
+B3 format    & $+0.007$ & $[-0.072, +0.085]$ & $-0.068$ & $[-0.145, +0.008]$ \\
+C1 lexical   & $+0.013$ & $[-0.067, +0.094]$ & $+0.023$ & $[-0.063, +0.109]$ \\
+C2 syntactic & $+0.010$ & $[-0.074, +0.094]$ & $+0.098$ & $[-0.012, +0.209]$ \\
+C3 format    & $+0.037$ & $[-0.070, +0.143]$ & $+0.011$ & $[-0.116, +0.139]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+No rewording changes judged correctness, and none of the eighteen intervals excludes zero. The largest estimate, $+0.098$ for C2 at the retrieved level, is a tenth of a grade point. The rewordings that raised the three overlap metrics, and A1, which lowered them, leave it unchanged. Across the eighteen comparisons, the change in mean length and the change in judged correctness have a correlation of $+0.08$, against $-0.79$ for ROUGE-L. The same holds between the baselines: at the gold level the canonical forms of $A$ and $C$ differ by $0.28$ in ROUGE-L but by $0.06$ grade points in judged correctness. The rewordings therefore changed how closely the answers matched the reference in length and wording, not whether they stated the fact the reference states. Appendix~\ref{app:judgedcorrectness} reports the stability of the judge and how its grade relates to answer length.
 
 \section{The Verdict on the Hypothesis}
 \label{sec:verdict}
 
-One hundred and two estimates were made across the six measures of Section~\ref{sec:metrics}, and forty-five of them are significant after the Holm adjustment: eight on adherence, thirty-six on the three correctness metrics and one on faithfulness. $H_0$ is therefore rejected. $H_1$, that at least one rewording changes answer quality, is supported: seven of the nine rewordings have a significant effect on at least one measure. A3 and C1 have no significant effect on any measure.
+One hundred and twenty estimates were made across the seven measures of Section~\ref{sec:metrics}, and forty-five of them are significant after the Holm adjustment: eight on adherence, thirty-six on the three overlap metrics of correctness and one on faithfulness. None is significant on judged correctness or answer relevance. $H_0$ is therefore rejected. $H_1$, that at least one rewording changes answer quality, is supported: seven of the nine rewordings have a significant effect on at least one measure. A3 and C1 have no significant effect on any measure.
 
-The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on correctness. Small here means a few hundredths, against a difference of $0.28$ in ROUGE-L between the canonical forms of $A$ and $C$ at the gold level (Table~\ref{tab:cellmeans}). The thirty-six correctness results are also not independent: thirty of them come from five rewordings, each confirmed by all three metrics at both levels.
+The rejection does not rest on the single faithfulness result. It rests on instruction adherence, where four rewordings have clear effects, three positive and one negative, and on the overlap metrics of correctness, whose effects are small and follow the length of the answers rather than their content. Small here means a few hundredths, against a difference of $0.28$ in ROUGE-L between the canonical forms of $A$ and $C$ at the gold level (Table~\ref{tab:cellmeans}). The thirty-six overlap results are also not independent: thirty of them come from five rewordings, each confirmed by all three metrics at both levels.
 
 \section{Limitations}
 \label{sec:limits}
-Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. Further, its questions were typed into a search engine, not addressed to a language model. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. Moreover, each dimension is represented by one rewording per baseline and one generator, so the effects belong to these wordings and not to lexical, syntactic or format changes in general. The fourth concerns the judge: faithfulness and answer relevance are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
+Four limitations apply to these results. The first is the collection. Every result is conditional on MS MARCO. The effects therefore suggest, but do not establish, what may be expected on other data. Further, its questions were typed into a search engine, not addressed to a language model. The second concerns correctness. ROUGE-L and BLEU-1 reward word overlap and BERTScore semantic similarity. None of them measures factual accuracy, and all three favour answers close in length to the reference. Judged correctness checks the fact, but its grades have not been validated against human labels, and it is anchored on the short MS MARCO references, so correct information that a reference lacks is not credited. The third concerns the rewordings themselves. Four places where a rewording may have changed how strongly a requirement is stated were named in Section~\ref{sec:conditions}. The effect of C2 in particular may partly reflect a weaker statement of the requirement rather than a change of wording alone. Moreover, each dimension is represented by one rewording per baseline and one generator, so the effects belong to these wordings and not to lexical, syntactic or format changes in general. The fourth concerns the judge: faithfulness, answer relevance and judged correctness are scored by a language model, which may be biased, for example towards longer answers (Section~\ref{sec:judge}).
 
 
 \chapter{Conclusion and Future Work}
@@ -1126,7 +1171,7 @@ Four limitations apply to these results. The first is the collection. Every resu
 
 This thesis asked to what extent systematic changes in the system prompt influence the behaviour and outcomes of a RAG system when the user input, the knowledge base, the retrieval mechanism and the underlying language model are held fixed. It answered the question for one kind of change, a change of wording that leaves the requirements of the prompt unchanged.
 
-The answer is that wording matters. It mattered most for whether the answers complied with the prompt. Rewording the citation instruction of \citet{gao2023alce} raised the share of fully cited answers. Turning the instruction of \citet{mao2024fitrag} into passive statements lowered the share of justified answers. Wording also changed the length of the answers, and thereby their agreement with the reference answer. It had no consistent effect on whether the answers stayed within the supplied passages or addressed the question. These results held at both evidence levels, that is, both with only the supporting passages and with the actual output of the retriever.
+The answer is that wording matters. It mattered most for whether the answers complied with the prompt. Rewording the citation instruction of \citet{gao2023alce} raised the share of fully cited answers. Turning the instruction of \citet{mao2024fitrag} into passive statements lowered the share of justified answers. Wording also changed the length of the answers, and thereby their overlap with the reference answer, but not whether they stated the fact the reference states. It had no consistent effect on whether the answers stayed within the supplied passages or addressed the question. These results held at both evidence levels, that is, both with only the supporting passages and with the actual output of the retriever.
 
 The contribution of this thesis: The formal model of Chapter 4 makes the system prompt an explicit variable of the generator and defines its effect as an average treatment effect over queries. The design of Chapter 5 separates what a prompt asks for from how it is worded, fixes everything else, sets the evidence directly, and pairs every comparison within a query. The same design can be reused with other prompts, models and datasets.
 
@@ -1135,7 +1180,7 @@ The contribution of this thesis: The formal model of Chapter 4 makes the system 
 
 \paragraph{More generators.} Every result here comes from one model, \texttt{gpt-4o-mini}. Whether other models respond to the same rewordings in the same way remains an open question. 
 
-\paragraph{Correctness beyond overlap.} The three correctness metrics compare wording and meaning with a reference but do not verify factual accuracy. A judge that decides whether an answer contains the fact stated in the reference, validated against human labels on a sample, would measure correctness independently of answer length.
+\paragraph{Validating judged correctness.} Judged correctness grades whether an answer states the fact of the reference, independently of answer length. Its grades are stable, but they have not been compared with human labels. Such a comparison on a sample, reported per condition, would show whether the judge can replace the overlap metrics.
 
 \paragraph{Other data.}  A dataset with longer answers, and an open collection in which the answer may be missing, would test whether the effects hold where retrieval is harder and where the prompt has to govern what the model does when the evidence does not suffice.
 
@@ -1144,7 +1189,7 @@ The contribution of this thesis: The formal model of Chapter 4 makes the system 
 \chapter{Distribution of the Measures}
 \label{app:distributions}
 
-Chapter~\ref{ch:results} reports the measures as means per cell. This appendix shows how the per-answer scores behind those means are distributed. Table~\ref{tab:distsummary} summarises each measure over all 6,768 answers. Figure~\ref{fig:distall} shows the pooled distributions, Figure~\ref{fig:distevidence} separates them by evidence level, and Figure~\ref{fig:distbaseline} by baseline. The histograms use bins of width 0.025, and bar heights are shares of the answers for which a measure is defined. Adherence is binary and is shown as the share of failed and passed answers. It is undefined for baseline $A$, so its $n$ is smaller than that of the other measures.
+Chapter~\ref{ch:results} reports the measures as means per cell. This appendix shows how the per-answer scores behind those means are distributed. Table~\ref{tab:distsummary} summarises each measure over all 6,768 answers. Judged correctness takes only six values and is described in Appendix~\ref{app:judgedcorrectness}. Figure~\ref{fig:distall} shows the pooled distributions, Figure~\ref{fig:distevidence} separates them by evidence level, and Figure~\ref{fig:distbaseline} by baseline. The histograms use bins of width 0.025, and bar heights are shares of the answers for which a measure is defined. Adherence is binary and is shown as the share of failed and passed answers. It is undefined for baseline $A$, so its $n$ is smaller than that of the other measures.
 
 \begin{table}[htbp]
 \centering
@@ -1158,7 +1203,7 @@ Chapter~\ref{ch:results} reports the measures as means per cell. This appendix s
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/dist_all.pdf}
-\caption{Distribution of each measure over all answers. The dashed line marks the median. Faithfulness is concentrated at its maximum: 81.2\% of the answers score exactly 1. Answer relevance lies in a narrow band and never reaches 1. The three correctness metrics are spread widely and skewed to the right.}
+\caption{Distribution of each measure over all answers. The dashed line marks the median. Faithfulness is concentrated at its maximum: 81.2\% of the answers score exactly 1. Answer relevance lies in a narrow band and never reaches 1. The three overlap metrics of correctness are spread widely and skewed to the right.}
 \label{fig:distall}
 \end{figure}
 
@@ -1179,7 +1224,7 @@ Chapter~\ref{ch:results} reports the measures as means per cell. This appendix s
 \chapter{The Rewording Effects in Detail}
 \label{app:effects}
 
-Section~\ref{sec:effects} reports each effect as an estimate $\hat{\tau}_{b,j}$ with its interval. This appendix shows three views of the same estimates. All of them are computed as in Equation~\eqref{eq:tauhat}: the three repetitions of a query are averaged first, and every rewording is compared with the canonical form of its own baseline.
+Section~\ref{sec:effects} reports each effect as an estimate $\hat{\tau}_{b,j}$ with its interval. This appendix shows three views of the same estimates for the measures with a continuous score; judged correctness is treated in Appendix~\ref{app:judgedcorrectness}. All of them are computed as in Equation~\eqref{eq:tauhat}: the three repetitions of a query are averaged first, and every rewording is compared with the canonical form of its own baseline.
 
 \section{Per-Query Differences}
 
@@ -1209,6 +1254,25 @@ Section~\ref{sec:effects} reports that the effects on correctness are correlated
 \caption{Change in mean answer length against change in ROUGE-L (left) and BERTScore (right) for the eighteen rewording contrasts. The dashed line is the least-squares fit, and $r$ the correlation across the contrasts.}
 \label{fig:lengtheffects}
 \end{figure}
+
+\chapter{Judged Correctness in Detail}
+\label{app:judgedcorrectness}
+
+Section~\ref{sec:metrics} introduces judged correctness and Section~\ref{sec:effects} reports its effects. This appendix gives the stability of the judge, the distribution of the grades and their relation to answer length and to the overlap metrics.
+
+\section{Stability of the Judge}
+
+A random sample of 300 answers was graded a second time. 97.3\% received the same grade and all received a grade within one point of the first. Every one of the 6,768 answers received a valid grade.
+
+\section{Distribution of the Grades}
+
+72.4\% of the answers are graded 5, 13.1\% 4, 4.6\% 3, 6.0\% 2, 3.6\% 1 and 0.4\% 0. The mean grade is $4.49$ at the gold level and $4.37$ at the retrieved level. 75.2\% of the answers are graded 5 at the gold level and 69.2\% at the retrieved level.
+
+\section{Relation to Length and to the Overlap Metrics}
+
+Over individual answers, the grade correlates with answer length at $-0.34$ (Spearman). Queries whose answers are long are also graded lower (Spearman $-0.62$ over the query means), plausibly because a difficult query produces a long, hedged answer. Centred on the mean of its query and evidence level, the grade has a correlation of $-0.05$ with length, while ROUGE-L has one of $-0.60$. Within a query, the judge therefore does not penalise long answers, and ROUGE-L does. This is the comparison that matters for the effects, because every effect is estimated within a query.
+
+The grade agrees moderately with the three overlap metrics. Its Spearman correlation over individual answers is $0.36$ with ROUGE-L, $0.33$ with BLEU-1 and $0.43$ with BERTScore.
 
 \bibliographystyle{apalike}
 \bibliography{thesis}
